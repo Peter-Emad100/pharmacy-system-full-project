@@ -21,15 +21,24 @@ int user_data = 0;
 int requestcounter = 0;
 int chosenOption; // variable to choose with which order you want to go through after log in
 bool activeDisplay = true; // Initialize active display to display1
+bool activeS1 = true, activeS2 = false, activeS3 = false, activesS4 = false, activeS5 = false;
+bool IsHeAUser= true;
 RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Fullscreen);
 Font Calibri;
+Texture BackgroundSign;
 Texture ButtonTexture, TextTexture, darkbox, textbox, headerbox, Signbox, buttonup, buttonin;
 Texture ButtonEditInfo, ButtonLogOut, ButtonMakeOrder, Buttonsearch, ButtonViewPrev, backgroundUser;
 Texture  ButtonManageUser, ButtonManagePay, ButtonManageOrder, ButtonManageMedicine, backgroundAdmin;
+Texture changeButton, WhiteBox;
 Texture byName, byCategory, searchBar, resultTable, backgroundsearch;
 Texture backgroundShowReceipt, showTable, confirm;
 string display1, display2;
 Text displaytext1, displaytext2;
+string displayS1, displayS2, displayS3, displayS4, displayS5;
+Text displayStext1, displayStext2, displayStext3, displayStext4, displayStext5;
+Texture userButton, notuserButton, adminButton, notadminButton;
+
+
 
 struct medicine {
 	int ID;
@@ -101,12 +110,14 @@ struct order {
 	}
 };
 order orders[Size] = {};
+
 struct request {
 	int userID;
 	string medicineName;
 	int amountNeeded;
 };
 request requests[15];
+
 //All GUI structures
 struct Edit_Info {
 	Texture edit_background, change_phone, change_address, make_admin_green, make_user_green, make_user_red, make_admin_red;
@@ -117,6 +128,7 @@ struct Edit_Info {
 
 };
 Edit_Info edit_info;
+
 struct searchMedicine {
 	Sprite backgroundx;
 	Sprite byName, byCategory, searchBar, resultTable;
@@ -126,6 +138,7 @@ struct showReceipt {
 	Sprite backgroundy;
 	Sprite showTable, confirm;
 };
+
 struct Header
 {
 	Sprite background;
@@ -137,15 +150,20 @@ struct SignUp {
 	Sprite buttonup, buttonin;
 	Sprite valuefield1, valuefield2, valuefield3, valuefield4, valuefield5; //username, phone num, location, role, new password
 	Text user, location, number, role, forgot, password;
-
+	Sprite Background;
+	Sprite userButton1, adminButton1,userButton2, adminButton2;
+	Text UsernameTaken;
 };
+SignUp signup;
 
 struct SignIn {
 	Sprite background1, background2;    // background 1 is for fields ..... background 2 is for sign in instead option 
 	Sprite buttonup, buttonin;
 	Sprite valuefield1, valuefield2;
 	Text user, password, alreadyhave;
+	Sprite Background;
 };
+
 struct userMenu {
 	Sprite buttonEditInfo, buttonLogOut, buttonMakeOrder, buttonsearch, buttonViewPrev;
 	Sprite background;
@@ -158,11 +176,19 @@ struct adminMenu {
 };
 adminMenu adminmenu;
 
+struct EditOrderInfo
+{
+	Sprite textboxID, textBoxPrice, semiTransparentBack , changeButton, changeButton2, WhiteBox1, WhiteBox2;
+	Sprite Background;
+	Text OrderID, OrderDetails, MedicineNme, MedicineConcentration, OrderDate, OrderState, TotalPrice;
+	Text WantChange, OrderState2, TotalPrice2;
+};
+
 //********Function Declares***********//
 void manage_orders(order orders[Size]);
 void dataForTestPurposes();
 bool isUsernameTaken(string username);
-void signUp();
+void signUp(string user, string phonenumber, string location, string email, string password);
 bool validateUser(string username, string password, user& currentUser);
 void logInInterface();
 void userPermissions();
@@ -217,6 +243,9 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin, userMenu& use
 void Set_EditInfo_User(Edit_Info& edit_info);
 void Set_EditInfo_Admin(Edit_Info& edit_info);
 
+void SetEditOrderInfo(EditOrderInfo& edit);
+void DrawEditOrderInfo(EditOrderInfo edit);
+
 
 bool sign_up;
 bool show_order_receipt = 0;
@@ -231,6 +260,7 @@ int main()
 	Header header;
 	SignUp signup;
 	SignIn signin;
+	EditOrderInfo editOrder;
 	//userMenu usermenu;
 	//adminMenu adminmenu;
 	searchMedicine searchmedicine;
@@ -254,7 +284,10 @@ int main()
 	Set_EditInfo_Admin(edit_info);
 	Set_EditInfo_User(edit_info);
 	dataForTestPurposes();
+	SetEditOrderInfo(editOrder);
 
+
+	//functioningSignUp();
 	//window display
 	while (window.isOpen())
 	{
@@ -265,12 +298,12 @@ int main()
 			{
 				window.close();
 			}*/
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
+			if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
 			{
 				window.close();
 			}
-
-			if (event.type == Event::MouseButtonPressed) {
+			//createEditMedicineWindow(window);
+			/*if (event.type == Event::MouseButtonPressed) {
 				// Check if left mouse button is pressed
 				if (show_order_receipt) {
 					if (event.mouseButton.button == Mouse::Left) {
@@ -293,7 +326,7 @@ int main()
 						}
 					}
 				}
-			}
+			}*/
 
 			if (event.type == Event::MouseButtonPressed) {
 				// Check if left mouse button is pressed
@@ -317,6 +350,9 @@ int main()
 				}
 			}
 			window.clear();
+			DrawEditOrderInfo(editOrder);
+			//DrawSignUp(signup);
+			window.display();
 			/*if (sign_up) {
 				DrawSignUp(signup);
 				window.draw(displaytext);
@@ -325,12 +361,11 @@ int main()
 				DrawSignIn(signin);
 
 			}*/
-			page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
-				showreceipt, edit_info, "12:00");
+			//page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,showreceipt, edit_info, "12:00");
 		}
 
 	}
-	}
+}
 //**********Functions***********//
 
 void dataForTestPurposes() {
@@ -370,54 +405,46 @@ void dataForTestPurposes() {
 }
 
 
-void signUp() {
+void signUp(string user, string phonenumber,string location,string email,string password) {
 
 	int id = user_data + 1; // Next available ID
 
 	newUser.ID = id;
+	newUser.username = user;
+	newUser.phone = phonenumber;
+	newUser.address = location;
+	newUser.password = password;
+	newUser.email = email;
 
 	do {
-		cout << "Enter your username: ";
-		cin >> newUser.username;
 
 		if (isUsernameTaken(newUser.username))
-			cout << "A user with that username already exists. Please enter a different username: ";
+		{
+			user.resize(0);
+			for (int i = 0;i < 7;i++)
+			{
+				window.draw(signup.UsernameTaken);
+			}
+		}
 
 
 	} while (isUsernameTaken(newUser.username)); //Checks if username is already in our database or no.
 
-	cout << "Enter your password: ";
-	cin >> newUser.password;
-	cout << "Enter your e-mail: ";
-	cin >> newUser.email;
-	cout << "Enter your address: ";
-	cin.ignore(1, '\n');
-	getline(cin, newUser.address);
-	cout << "Enter your phone: ";
-	cin >> newUser.phone;
-
-	int roleChoice;
-	do {
-		cout << "Pick your role\n1-User\n2-Admin\n";
-		cin >> roleChoice;
-		if (roleChoice == 1) {
-			newUser.his_role = user::User;
-		}
-		else if (roleChoice == 2) {
-			newUser.his_role = user::Admin;
-		}
-		else {
-			cout << "Invalid role choice. Please enter 1 for User or 2 for Admin.\n";
-		}
-	} while (roleChoice != 1 && roleChoice != 2); // Loop until a valid role choice is made
-
+	
 	users[id - 1] = newUser; // Save the new user data into our users array
 
-	cout << "Congratulations! Your account has been successfully created.\n";
+	if (newUser.his_role == user::Admin)
+	{
+		page_num = 3;
+	}
+	else
+	{
+		page_num = 2;
+	}
 
 	saveOneUserDataLocally();
 
-	user_data++;										 // Increment user_data to keep track of the total number of users
+	user_data++;  // Increment user_data to keep track of the total number of users
 }
 
 
@@ -1120,6 +1147,8 @@ void logOut()
 {
 	logInInterface(); //Basically, just open the log in interface again if you are willing to log out 
 }
+
+
 void TextureAFonts()
 {
 	//inserting images and fonts
@@ -1148,6 +1177,13 @@ void TextureAFonts()
 	backgroundShowReceipt.loadFromFile("Assets/pharmacy_order.jpg");
 	showTable.loadFromFile("Assets/receipt_back.png");
 	confirm.loadFromFile("Assets/confirm.png");
+	BackgroundSign.loadFromFile("Assets/pharmacy2.jpg");
+	userButton.loadFromFile("Assets/user_sign.png");
+	notuserButton.loadFromFile("Assets/red_user_sign.png");
+	adminButton.loadFromFile("Assets/admin_sign.png");
+	notadminButton.loadFromFile("Assets/red_admin_sign.png");
+	WhiteBox.loadFromFile("Assets/WhiteBox.png");
+	changeButton.loadFromFile("Assets/change.png");
 
 	// edit info images
 	edit_info.edit_background.loadFromFile("Assets/pharmacy-with-nurse-in-counter-drugstore-cartoon-character-vector (1).jpg");
@@ -1181,6 +1217,7 @@ void SetHeader(Header& header)
 
 void DrawSignUp(SignUp signup)
 {
+	window.draw(signup.Background);
 	window.draw(signup.background1);
 	window.draw(signup.valuefield1);
 	window.draw(signup.valuefield2);
@@ -1196,9 +1233,24 @@ void DrawSignUp(SignUp signup)
 	window.draw(signup.background2);
 	window.draw(signup.forgot);
 	window.draw(signup.buttonin);
+	
+	if (IsHeAUser == true)
+	{
+		window.draw(signup.adminButton1);
+		window.draw(signup.userButton1);
+	}
+	else
+	{
+		window.draw(signup.adminButton2);
+		window.draw(signup.userButton2);
+	}
+	
 }
 void SetSignUp(SignUp& signup)
 {
+	//Background
+	signup.Background.setTexture(BackgroundSign);
+	signup.Background.setScale(0.276, 0.218);
 	//background 1 located behind value fields
 	signup.background1.setTexture(Signbox);
 	signup.background1.setPosition(650, 156.2);
@@ -1206,23 +1258,23 @@ void SetSignUp(SignUp& signup)
 	// valuefield1 -> username
 	signup.valuefield1.setTexture(textbox);
 	signup.valuefield1.setScale(0.6, 0.4);
-	signup.valuefield1.setPosition(800, 175);
+	signup.valuefield1.setPosition(800, 165);
 	//valuefield2-> phone num
 	signup.valuefield2.setTexture(textbox);
 	signup.valuefield2.setScale(0.6, 0.4);
-	signup.valuefield2.setPosition(800, 275);
+	signup.valuefield2.setPosition(800, 250);
 	//valuefield3->location
 	signup.valuefield3.setTexture(textbox);
 	signup.valuefield3.setScale(0.6, 0.4);
-	signup.valuefield3.setPosition(800, 375);
-	//valuefield4->role
+	signup.valuefield3.setPosition(800, 335);
+	//valuefield4->email
 	signup.valuefield4.setTexture(textbox);
 	signup.valuefield4.setScale(0.6, 0.4);
-	signup.valuefield4.setPosition(800, 475);
+	signup.valuefield4.setPosition(800, 420);
 	//valuefield5-> new password
 	signup.valuefield5.setTexture(textbox);
 	signup.valuefield5.setScale(0.6, 0.4);
-	signup.valuefield5.setPosition(800, 575);
+	signup.valuefield5.setPosition(800, 505);
 
 	//button for sign up
 	signup.buttonup.setTexture(buttonup);
@@ -1232,24 +1284,39 @@ void SetSignUp(SignUp& signup)
 	//texts for info needed in sign up
 	signup.user.setFont(Calibri);
 	signup.user.setString("Username:");
-	signup.user.setPosition(680, 190);
+	signup.user.setPosition(680, 180);
 	signup.user.setScale(0.8, 0.7);
 	signup.number.setFont(Calibri);
 	signup.number.setString("Phone num:");
-	signup.number.setPosition(680, 290);
+	signup.number.setPosition(680, 265);
 	signup.number.setScale(0.8, 0.7);
 	signup.location.setFont(Calibri);
 	signup.location.setString("Location:");
-	signup.location.setPosition(680, 390);
+	signup.location.setPosition(680, 350);
 	signup.location.setScale(0.8, 0.7);
 	signup.role.setFont(Calibri);
-	signup.role.setString("Role:");
-	signup.role.setPosition(680, 490);
+	signup.role.setString("Email:");
+	signup.role.setPosition(680, 435);
 	signup.role.setScale(0.8, 0.7);
 	signup.password.setFont(Calibri);
-	signup.password.setString("password:");
-	signup.password.setPosition(680, 590);
+	signup.password.setString("Password:");
+	signup.password.setPosition(680, 520);
 	signup.password.setScale(0.8, 0.7);
+
+	//role button
+	signup.adminButton1.setTexture(notadminButton);
+	signup.adminButton1.setScale(0.25, 0.25);
+	signup.adminButton1.setPosition(1050, 580);
+	signup.adminButton2.setTexture(adminButton);
+	signup.adminButton2.setScale(0.25, 0.25);
+	signup.adminButton2.setPosition(1050, 580);
+
+	signup.userButton1.setTexture(userButton);
+	signup.userButton1.setScale(0.25, 0.25);
+	signup.userButton1.setPosition(820, 580);
+	signup.userButton2.setTexture(notuserButton);
+	signup.userButton2.setScale(0.25, 0.25);
+	signup.userButton2.setPosition(820, 580);
 
 	//log in button
 	signup.buttonin.setTexture(buttonin);
@@ -1266,6 +1333,228 @@ void SetSignUp(SignUp& signup)
 	signup.background2.setTexture(Signbox);
 	signup.background2.setPosition(66, 525);
 	signup.background2.setScale(0.55, 0.45);
+
+	signup.UsernameTaken.setFont(Calibri);
+	signup.UsernameTaken.setString("Username taken, Please choose another username!");
+	signup.UsernameTaken.setScale(1, 1);
+	signup.UsernameTaken.setPosition(100, 100);
+	signup.UsernameTaken.setFillColor(Color::Red);
+}
+void functioningSignUp()
+{
+	
+	while (window.isOpen())
+	{
+		//setting display1 :: username
+		displayStext1.setFont(Calibri);
+		displayStext1.setScale(1, 1);
+		displayStext1.setPosition(810, 170);
+		displayStext1.setFillColor(Color::Black);
+		displayStext1.setString(displayS1);
+
+		//setting display1 :: phonenum
+		displayStext2.setFont(Calibri);
+		displayStext2.setScale(1, 1);
+		displayStext2.setPosition(810, 255);
+		displayStext2.setFillColor(Color::Black);
+		displayStext2.setString(displayS2);
+
+		//setting display1 :: location
+		displayStext3.setFont(Calibri);
+		displayStext3.setScale(1, 1);
+		displayStext3.setPosition(810, 340);
+		displayStext3.setFillColor(Color::Black);
+		displayStext3.setString(displayS3);
+
+		//setting display1 :: email
+		displayStext4.setFont(Calibri);
+		displayStext4.setScale(1, 1);
+		displayStext4.setPosition(810, 425);
+		displayStext4.setFillColor(Color::Black);
+		displayStext4.setString(displayS4);
+
+		//setting display1 :: password
+		displayStext5.setFont(Calibri);
+		displayStext5.setScale(1, 1);
+		displayStext5.setPosition(810, 510);
+		displayStext5.setFillColor(Color::Black);
+		displayStext5.setString(displayS5);
+
+		TextureAFonts();
+		SetSignUp(signup);
+
+		//Texture backgroundTexture;
+		//backgroundTexture.loadFromFile("Assets/pharmacy2.jpg");
+		//Sprite background;
+		//background.setTexture(backgroundTexture);
+		//background.setScale(0.276, 0.218);
+
+		window.clear();
+		DrawSignUp(signup);
+		window.draw(displayStext1);
+		window.draw(displayStext2);
+		window.draw(displayStext3);
+		window.draw(displayStext4);
+		window.draw(displayStext5);
+		
+		window.display();
+
+		Event event;
+		while (window.pollEvent(event))
+		{
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
+			{
+				window.close();
+			}
+
+			if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+				Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+				// Check if the mouse click is inside the first text field
+
+				if (signup.valuefield1.getGlobalBounds().contains(mousePos)) {
+
+					activeS1 = true;
+					activeS2 = false;
+					activeS3 = false;
+					activesS4 = false;
+					activeS5 = false;
+				}
+				else if (signup.valuefield2.getGlobalBounds().contains(mousePos)) {
+
+					activeS1 = false;
+					activeS2 = true;
+					activeS3 = false;
+					activesS4 = false;
+					activeS5 = false;
+				}
+				else if (signup.valuefield3.getGlobalBounds().contains(mousePos)) {
+
+					activeS1 = false;
+					activeS2 = false;
+					activeS3 = true;
+					activesS4 = false;
+					activeS5 = false;
+				}
+				else if (signup.valuefield4.getGlobalBounds().contains(mousePos)) {
+
+					activeS1 = false;
+					activeS2 = false;
+					activeS3 = false;
+					activesS4 = true;
+					activeS5 = false;
+				}
+				else if (signup.valuefield5.getGlobalBounds().contains(mousePos)) {
+
+					activeS1 = false;
+					activeS2 = false;
+					activeS3 = false;
+					activesS4 = false;
+					activeS5 = true;
+				}
+				if (signup.adminButton1.getGlobalBounds().contains(mousePos))
+				{
+					IsHeAUser = false;
+					newUser.his_role = user::Admin;
+				}
+				if (signup.userButton2.getGlobalBounds().contains(mousePos))
+				{
+					IsHeAUser = true;
+					newUser.his_role = user::User;
+				}
+				if (signup.buttonin.getGlobalBounds().contains(mousePos))
+				{
+					page_num = 1;
+				}
+				if (signup.buttonup.getGlobalBounds().contains(mousePos))
+				{
+					signUp(displayS1,displayS2,displayS3,displayS4,displayS5);
+				}
+			}
+
+			if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
+				if (activeS1)
+				{
+					if (displayS1.size() < 20) {
+						displayS1 += static_cast<char>(event.text.unicode);
+						displayStext1.setString(displayS1);
+					}
+				}
+				else if (activeS2)
+				{
+					if (displayS2.size() < 20) {
+						if (event.text.unicode >= 48 && event.text.unicode <= 57)
+						{
+							displayS2 += static_cast<char>(event.text.unicode);
+							displayStext2.setString(displayS2);
+						}
+						
+					}
+				}
+				else if (activeS3)
+				{
+					if (displayS3.size() < 20) {
+						displayS3 += static_cast<char>(event.text.unicode);
+						displayStext3.setString(displayS3);
+					}
+				}
+				else if (activesS4)
+				{
+					if (displayS4.size() < 20) {
+						displayS4 += static_cast<char>(event.text.unicode);
+						displayStext4.setString(displayS4);
+					}
+				}
+				else if (activeS5)
+				{
+					if (displayS5.size() < 20) {
+						displayS5 += static_cast<char>(event.text.unicode);
+						displayStext5.setString(displayS5);
+					}
+				}
+			}
+
+			// Handle backspace key
+			if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace) {
+				if (activeS1) {
+					// Delete the last character from the first text display
+					if (!displayS1.empty()) {
+						displayS1.pop_back();
+						displayStext1.setString(displayS1);
+					}
+				}
+				else if (activeS2)
+				{
+					if (!displayS2.empty()) {
+						displayS2.pop_back();
+						displayStext2.setString(displayS2);
+					}
+				}
+				else if (activeS3)
+				{
+					if (!displayS3.empty()) {
+						displayS3.pop_back();
+						displayStext3.setString(displayS3);
+					}
+				}
+				else if (activesS4)
+				{
+					if (!displayS4.empty()) {
+						displayS4.pop_back();
+						displayStext4.setString(displayS4);
+					}
+				}
+				else if (activeS5)
+				{
+					if (!displayS5.empty()) {
+						displayS5.pop_back();
+						displayStext5.setString(displayS5);
+					}
+				}
+			}
+		}
+	}
 }
 
 void DrawSignIn(SignIn signin) {
@@ -1285,7 +1574,6 @@ void SetSignIn(SignIn& signin) {
 	signin.background1.setTexture(Signbox);
 	signin.background1.setPosition(650, 365.5);
 	signin.background1.setScale(0.7, 0.8);
-
 
 	// valuefield1 -> username
 	signin.valuefield1.setTexture(textbox);
@@ -1369,7 +1657,7 @@ void functioningSignIn() {
 
 		while (window.pollEvent(event))
 		{
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
+			if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
 			{
 				window.close();
 			}
@@ -1402,7 +1690,7 @@ void functioningSignIn() {
 
 			// Handle text input
 			 // Handle text input
-			if (event.type == Event::TextEntered && std::isprint(event.text.unicode)) {
+			if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
 				if (activeDisplay) {
 					// Append the entered character to the first text display
 					if (display1.size() < 20) {
@@ -1574,6 +1862,7 @@ void SetSearch(searchMedicine& searchmedicine) {
 	searchmedicine.resultTable.setScale(0.71, 0.49);
 	searchmedicine.resultTable.setPosition(0, 254);
 }
+
 void SetShowReceipt(showReceipt& showreceipt)
 {
 	//setting showtable
@@ -1780,6 +2069,9 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin, userMenu& use
 		break;
 	}
 }
+
+
+
 void logInInterface(string username, string password)
 {
 	TextureAFonts();
@@ -1915,6 +2207,7 @@ void showOrderReceipt(order lastOrder, string current_time) {
 	window.draw(text);
 
 }
+
 void makeOrder(string medicineIDS) {
 	// this function might take some time to be understood ... 
 	// i tried my best to make it more understandable with comments
@@ -1982,4 +2275,223 @@ void makeOrder(string medicineIDS) {
 		orders[i] = lastyorder;
 	}
 	showOrderReceipt(lastyorder, current_time);
+}
+
+void createEditMedicineWindow(RenderWindow& window) {
+	Font font = Calibri;
+
+	// Create three text boxes
+	Text text1("Medicine ID:", font, 40);
+	text1.setPosition(40, 203);
+
+	Text text2("Quantity :", font, 45);
+	text2.setPosition(40, 315);
+
+	Text text3("Order price:", font, 40);
+	text3.setPosition(40, 440);
+
+	RectangleShape backgroundRect1(Vector2f(745, 380));
+	backgroundRect1.setPosition(20, 170);
+	backgroundRect1.setFillColor(Color(0, 0, 0, 150));
+
+	Texture backgroundImage;
+	if (!backgroundImage.loadFromFile("Assets/pharmacy3.jpg")) {
+		cerr << "Failed to load background image!" << endl;
+		return;
+	}
+
+	Sprite backgroundSprite(backgroundImage);
+
+	backgroundSprite.setScale(
+		static_cast<float>(window.getSize().x) / backgroundSprite.getLocalBounds().width,
+		static_cast<float>(window.getSize().y) / backgroundSprite.getLocalBounds().height
+	);
+
+	Texture buttonTexture1, buttonTexture2, buttonTexture3;
+	if (!buttonTexture1.loadFromFile("Assets/confirm.png") ||
+		!buttonTexture2.loadFromFile("Assets/edit_quantity.png") ||
+		!buttonTexture3.loadFromFile("Assets/edit_price.png")) {
+		cerr << "Failed to load button textures!" << endl;
+		return;
+	}
+
+
+	Sprite button1(buttonTexture1);
+	button1.setPosition(580, 208);
+	button1.setScale(160.f / button1.getLocalBounds().width, 54.f / button1.getLocalBounds().height);
+
+	Sprite button2(buttonTexture2);
+	button2.setPosition(580, 320);
+	button2.setScale(160.f / button2.getLocalBounds().width, 54.f / button2.getLocalBounds().height);
+
+	Sprite button3(buttonTexture3);
+	button3.setPosition(580, 440);
+	button3.setScale(160.f / button3.getLocalBounds().width, 54.f / button3.getLocalBounds().height);
+
+	Texture textboxTexture1, textboxTexture2, textboxTexture3;
+	if (!textboxTexture1.loadFromFile("Assets/textbox.png") ||
+		!textboxTexture2.loadFromFile("Assets/textbox.png") ||
+		!textboxTexture3.loadFromFile("Assets/textbox.png")) {
+		cerr << "Failed to load textbox textures!" << endl;
+		return;
+	}
+	Sprite textbox1(textboxTexture1);
+	textbox1.setPosition(250, 210);
+	textbox1.setScale(330.f / textbox1.getLocalBounds().width, 50.f / textbox1.getLocalBounds().height);
+
+	Sprite textbox2(textboxTexture2);
+	textbox2.setPosition(250, 325);
+	textbox2.setScale(330.f / textbox2.getLocalBounds().width, 50.f / textbox2.getLocalBounds().height);
+
+	Sprite textbox3(textboxTexture3);
+	textbox3.setPosition(250, 445);
+	textbox3.setScale(330.f / textbox3.getLocalBounds().width, 50.f / textbox3.getLocalBounds().height);
+
+	// Main loop
+	while (window.isOpen()) {
+		Event event;
+		while (window.pollEvent(event)) {
+			if (event.type == Event::Closed) {
+				window.close();
+			}
+		}
+
+		window.clear(Color::White);
+		window.draw(backgroundSprite);
+
+		window.draw(backgroundRect1);
+
+		window.draw(textbox1);
+		window.draw(textbox2);
+		window.draw(textbox3);
+
+		window.draw(button1);
+		window.draw(button2);
+		window.draw(button3);
+
+		window.draw(text1);
+		window.draw(text2);
+		window.draw(text3);
+		window.display();
+	}
+}
+
+void SetEditOrderInfo(EditOrderInfo& edit){
+	//Background
+	edit.Background.setTexture(BackgroundSign);
+	edit.Background.setScale(0.276, 0.218);
+
+	//SemitransparentBackground
+	edit.semiTransparentBack.setTexture(Signbox);
+	edit.semiTransparentBack.setScale(0.7,1.3);
+	edit.semiTransparentBack.setPosition(600, 150);
+
+	//OrderId Text
+	edit.OrderID.setFont(Calibri);
+	edit.OrderID.setPosition(660, 180);
+	edit.OrderID.setString("Order ID:");
+
+	//OrderID TextBox
+	edit.textboxID.setTexture(textbox);
+	edit.textboxID.setScale(0.5, 0.4);
+	edit.textboxID.setPosition(790, 170);
+
+	//1st WhiteBox
+	edit.WhiteBox1.setTexture(WhiteBox);
+	edit.WhiteBox1.setPosition(650, 240);
+	edit.WhiteBox1.setScale(1.05, 0.8);
+
+	//Order Details Text
+	edit.OrderDetails.setFont(Calibri);
+	edit.OrderDetails.setPosition(670, 245);
+	edit.OrderDetails.setFillColor(Color::Black);
+	edit.OrderDetails.setString("Order Details:");
+
+	//MedicineName Text
+	edit.MedicineNme.setFont(Calibri);
+	edit.MedicineNme.setPosition(680, 285);
+	edit.MedicineNme.setFillColor(Color::Black);
+	edit.MedicineNme.setString("-Medicine Name:");
+
+	//MedicineConcentration Text
+	edit.MedicineConcentration.setFont(Calibri);
+	edit.MedicineConcentration.setPosition(680, 325);
+	edit.MedicineConcentration.setFillColor(Color::Black);
+	edit.MedicineConcentration.setString("-Medicine Conc.:");
+
+	//Orderdate Text
+	edit.OrderDate.setFont(Calibri);
+	edit.OrderDate.setPosition(680, 365);
+	edit.OrderDate.setFillColor(Color::Black);
+	edit.OrderDate.setString("-Order's Date:");
+
+	//OrderState Text
+	edit.OrderState.setFont(Calibri);
+	edit.OrderState.setPosition(680, 405);
+	edit.OrderState.setFillColor(Color::Black);
+	edit.OrderState.setString("-Order's State:");
+
+	//TotalPrice Text
+	edit.TotalPrice.setFont(Calibri);
+	edit.TotalPrice.setPosition(680, 445);
+	edit.TotalPrice.setFillColor(Color::Black);
+	edit.TotalPrice.setString("-Total Price:");
+
+	//2nd WhiteBox
+	edit.WhiteBox2.setTexture(WhiteBox);
+	edit.WhiteBox2.setPosition(650, 500);
+	edit.WhiteBox2.setScale(1.05, 0.6);
+
+	//WantToChange Text
+	edit.WantChange.setFont(Calibri);
+	edit.WantChange.setPosition(670, 505);
+	edit.WantChange.setFillColor(Color::Black);
+	edit.WantChange.setString("Want to change:");
+
+	//2nd OrderState Text
+	edit.OrderState2.setFont(Calibri);
+	edit.OrderState2.setPosition(680, 560);
+	edit.OrderState2.setFillColor(Color::Black);
+	edit.OrderState2.setString("-Order's State:");
+
+	//1st Change button
+	edit.changeButton.setTexture(changeButton);
+	edit.changeButton.setScale(0.25, 0.25);
+	edit.changeButton.setPosition(860, 555);
+
+	//2nd TotalPrice Text
+	edit.TotalPrice2.setFont(Calibri);
+	edit.TotalPrice2.setPosition(680, 620);
+	edit.TotalPrice2.setFillColor(Color::Black);
+	edit.TotalPrice2.setString("-Total Price:");
+
+	//TotalPrice Textbox
+	edit.textBoxPrice.setTexture(textbox);
+	edit.textBoxPrice.setPosition(830, 610);
+	edit.textBoxPrice.setScale(0.2, 0.4);
+
+	//2nd Change button
+	edit.changeButton2.setTexture(changeButton);
+	edit.changeButton2.setScale(0.25, 0.25);
+	edit.changeButton2.setPosition(990, 615);
+}
+void DrawEditOrderInfo(EditOrderInfo edit) {
+	window.draw(edit.Background);
+	window.draw(edit.semiTransparentBack);
+	window.draw(edit.WhiteBox1);
+	window.draw(edit.WhiteBox2);
+	window.draw(edit.changeButton);
+	window.draw(edit.changeButton2);
+	window.draw(edit.MedicineConcentration);
+	window.draw(edit.MedicineNme);
+	window.draw(edit.OrderDate);
+	window.draw(edit.OrderDetails);
+	window.draw(edit.OrderID);
+	window.draw(edit.OrderState);
+	window.draw(edit.OrderState2);
+	window.draw(edit.textboxID);
+	window.draw(edit.textBoxPrice);
+	window.draw(edit.TotalPrice);
+	window.draw(edit.TotalPrice2);
+	window.draw(edit.WantChange);
 }
