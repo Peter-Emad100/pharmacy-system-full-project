@@ -392,7 +392,7 @@ void DrawEditOrderInfo(EditOrderInfo edit);
 
 bool sign_up;
 bool show_order_receipt = 0;
-int page_num = 0;
+int page_num = 2;
 bool medicineEdit = 0;
 int main() {
     dataForTestPurposes();
@@ -400,7 +400,7 @@ int main() {
 
     TextureAFonts();
     sign_up = true;
-   
+
     // background
     Texture backgroundTexture;
     backgroundTexture.loadFromFile("Assets/pharmacy2.jpg");
@@ -568,7 +568,7 @@ void dataForTestPurposes() {
 
 void signUp(string user, string phonenumber, string location, string email,
     string password) {
-   
+
     int id = user_data + 1; // Next available ID
 
     newUser.ID = id;
@@ -1467,7 +1467,7 @@ void SetSignUp(SignUp& signup) {
     signup.UsernameTaken.setFillColor(Color::Red);
 }
 void functioningSignUp() {
-   
+
     while (window.isOpen())
     {
         //setting display1 :: username
@@ -1591,7 +1591,7 @@ void functioningSignUp() {
                 if (signup.buttonin.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 1;
-                    page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine, showreceipt, edit_info, "12:00",makeorder);
+                    page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine, showreceipt, edit_info, "12:00", makeorder);
                 }
                 if (signup.buttonup.getGlobalBounds().contains(mousePos))
                 {
@@ -2127,7 +2127,7 @@ void functioningUserMenu() {
         window.clear();
         DrawUserMenu(usermenu);
         window.display();
-
+        bool breaked=false;
         Event event;
         while (window.pollEvent(event))
         {
@@ -2137,36 +2137,40 @@ void functioningUserMenu() {
                 if (usermenu.buttonEditInfo.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 7;
-                    window.clear();
-                    page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine, showreceipt, edit_info, "12:00", makeorder);
-
+                    breaked = true;
+                    break;
+                    
                 }
                 if (usermenu.buttonMakeOrder.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 8;
-                    window.clear();
-                    page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine, showreceipt, edit_info, "12:00", makeorder);
+                    breaked = true;
+                    break;
+                    
                 }
                 if (usermenu.buttonsearch.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 4;
-                    window.clear();
-                    page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine, showreceipt, edit_info, "12:00", makeorder);
-
+                    breaked = true;
+                    break;
+                    
                 }
                 if (usermenu.buttonViewPrev.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 9;
-                    window.clear();
-                    page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine, showreceipt, edit_info, "12:00", makeorder);
+                    breaked = true;
+                    break;
                 }
                 if (usermenu.buttonLogOut.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 1;
-                    window.clear();
-                    page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine, showreceipt, edit_info, "12:00", makeorder);
+                    breaked = true;
+                    break;
                 }
             }
+        }
+        if (breaked) {
+            break;
         }
     }
 
@@ -3724,7 +3728,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         window.display();
         break;
     case 4:
-        
+
         DrawSearch(searchmedicine);
         window.display();
 
@@ -3738,11 +3742,11 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         window.display();
         break;
     case 7:
-      
+
         Draw_EditInfo_User(edit_info);
         window.display();
-        
-       break;
+
+        break;
     case 8:
         makeOrderFunctional(makeorder);
         break;
