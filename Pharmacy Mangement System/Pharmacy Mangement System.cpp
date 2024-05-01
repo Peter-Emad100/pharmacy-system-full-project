@@ -26,6 +26,7 @@ bool activeDisplay = true;  // Initialize active display to display1
 bool activeS1 = true, activeS2 = false, activeS3 = false, activesS4 = false,
 activeS5 = false;
 bool IsHeAUser = true;
+bool issignin = false; //check if i need to switch to sign in page
 RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Fullscreen);
 Font Calibri;
 Texture BackgroundSign;
@@ -248,7 +249,7 @@ struct managePayment {
 
     Sprite valuefield1, valuefield2;
 
-    Text button1, button2;
+    Text button1, button2, method, numb;
 
 } manage_payment;
 
@@ -316,6 +317,7 @@ void logInInterface(string username, string password);
 //**********GUI FUNCTIONS DECLARATION***********//
 void TextureAFonts();
 
+// user menu
 void DrawUserMenu(userMenu usermenu);
 void SetUserMenu(userMenu& usermenu);
 void functioningUserMenu();
@@ -323,6 +325,7 @@ void functioningUserMenu();
 void drawShowAllOrders(strShowAllOrders ShowAllOrders);
 void setShowAllOrders(strShowAllOrders& ShowAllOrders);
 
+// admin menu
 void DrawAdminMenu(adminMenu adminmenu);
 void SetAdminMenu(adminMenu& adminmenu);
 void functioningAdminMenu();
@@ -355,8 +358,7 @@ void DrawSignIn(SignIn signin);
 void SetSignIn(SignIn& signin);
 void functioningSignIn();
 
-void Draw_EditInfo_User(Edit_Info& edit_info);
-void Draw_EditInfo_Admin(Edit_Info& edit_info);
+
 void SetMedicineEdit(MedicineInfo& medicineinfo);
 
 void MedicineEditShow();
@@ -373,6 +375,7 @@ void draw_manageMedicine(manageMedicine manage_medicine);
 // manage payment
 void set_managePayment(managePayment& manage_payment);
 void Draw_managePayment(managePayment& manage_payment);
+void ManagePayment_functional(managePayment& manage_payment);
 
 void showOrderReceipt(order lastOrder, string current_time);
 void ShowReceiptFunctional(order lastOrder, bool& show_order_receipt,
@@ -384,22 +387,32 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
     Edit_Info& edit_info, string current_time,
     StmakeOrder makeorder);
 
+//edit info pages:-
+
+//user
 void Set_EditInfo_User(Edit_Info& edit_info);
+void Draw_EditInfo_User(Edit_Info& edit_info);
+void EditInfo_User_Functional(Edit_Info& edit_info);
+
+
+
+//admin
 void Set_EditInfo_Admin(Edit_Info& edit_info);
+void Draw_EditInfo_Admin(Edit_Info& edit_info);
 
 void SetEditOrderInfo(EditOrderInfo& edit);
 void DrawEditOrderInfo(EditOrderInfo edit);
 
 bool sign_up;
 bool show_order_receipt = 0;
-int page_num = 2;
+int page_num = 0;
 bool medicineEdit = 0;
 int main() {
     dataForTestPurposes();
     saveAllDataToArr();
 
     TextureAFonts();
-    sign_up = true;
+   // sign_up = true;
 
     // background
     Texture backgroundTexture;
@@ -428,7 +441,28 @@ int main() {
     setShowAllOrders(ShowAllOrders);
     // functioningSignUp();
     // window display
-    while (window.isOpen()) {
+   
+    displaytext1.setFont(Calibri);
+    displaytext1.setScale(1, 1);
+    displaytext1.setPosition(810, 435);
+    displaytext1.setFillColor(Color::Black);
+    displaytext1.setString(display1);
+
+    //settind display2 :: password
+    displaytext2.setFont(Calibri);
+    displaytext2.setScale(1, 1);
+    displaytext2.setPosition(810, 555);
+    displaytext2.setFillColor(Color::Black);
+    displaytext2.setString(display2);
+
+
+    TextureAFonts();
+
+   // SetSignIn(signin);
+
+
+
+   
         Event event;
         while (window.pollEvent(event)) {
             /*if (event.type == Event::Closed)
@@ -487,9 +521,9 @@ int main() {
             }*/
 
             window.clear();
-            // DrawEditOrderInfo(editOrder);
+            //ManagePayment_functional(manage_payment);
             // DrawSignUp(signup);
-            // window.display();
+            window.display();
             /*if (sign_up) {
                     DrawSignUp(signup);
                     window.draw(displaytext);
@@ -498,10 +532,15 @@ int main() {
                     DrawSignIn(signin);
 
             }*/
-            page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
-                showreceipt, edit_info, "12:00", makeorder);
+            while (window.isOpen())
+            {
+                page_num =10;
+                page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
+                    showreceipt, edit_info, "12:00", makeorder);
+            }
+              
         }
-    }
+   
 }
 //**********Functions***********//
 
@@ -584,11 +623,9 @@ void signUp(string user, string phonenumber, string location, string email,
     user_data++;  // Increment user_data to keep track of the total number of users
 
 
-    while (window.isOpen()) {
+    
         page_num = 1;
-        page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
-            showreceipt, edit_info, "12:00", makeorder);
-    }
+    
 
 }
 
@@ -822,72 +859,8 @@ void showAllPreviousOrders() {
     cout << "------------------------------------------ \n ";
 }
 
-void showPaymentMehtode(vector<string> x) {
-    int c = 1;
-    for (auto it = x.begin(); it != x.end(); ++it) {
-        cout << "[" << c << "] " << *it << endl;
-        c++;
-    }
-}
 
-void managePaymentMethodes() {
-    vector<string>::iterator it = paymentMethods.begin();
-    char chooseP;
 
-    int m = 0;
-    while (true) {
-        if (m > 0) {
-            cout << "invalid input try again from the list given : \n";
-        }
-        cout << "Edit payment methodes : "
-            << "\n";
-        cout << "[1] show existed payment methodes\n";
-        cout << "[2] add new payment methode      \n";
-        cout << "[3] delete payment methode       \n";
-        cout << "choose from the above : ";
-        cin >> chooseP;
-        m++;
-        if (chooseP >= '1' && chooseP <= '3') {
-            break;
-        }
-        system("cls");
-    }
-
-    switch (chooseP) {
-    case '1': {
-        system("cls");
-        cout << "=== payment methodes available now are === \n";
-        showPaymentMehtode(paymentMethods);
-        break;
-    }
-    case '2': {
-        system("cls");
-        string newMethode;
-        cout << "=== Adding new Payment methode ===\n";
-        cout << "insert method's name: ";
-        cin.ignore(1, '\n');
-        getline(cin, newMethode, '\n');
-        cout << "methode now available are: \n";
-        paymentMethods.push_back(newMethode);
-        showPaymentMehtode(paymentMethods);
-        savePayMethodeLocally();
-        break;
-    }
-    case '3': {
-        system("cls");
-        int chooseD;
-        cout << "\n=== delete payment methode ===\n";
-        showPaymentMehtode(paymentMethods);
-        cout << "\nchoose methode to delete from the given list: ";
-        cin >> chooseD;
-        *it = chooseD - 1;
-        paymentMethods.erase(it, it + 1);
-        cout << "methodes available now is : \n\n";
-        showPaymentMehtode(paymentMethods);
-        savePayMethodeLocally();
-    }
-    }
-}
 
 void addUser() {
     int id = user_data + 1;
@@ -1467,46 +1440,51 @@ void SetSignUp(SignUp& signup) {
     signup.UsernameTaken.setFillColor(Color::Red);
 }
 void functioningSignUp() {
+    displayStext1.setFont(Calibri);
+    displayStext1.setScale(1, 1);
+    displayStext1.setPosition(810, 170);
+    displayStext1.setFillColor(Color::Black);
+    displayStext1.setString(displayS1);
+    displayStext2.setFont(Calibri);
+    displayStext2.setScale(1, 1);
+    displayStext2.setPosition(810, 255);
+    displayStext2.setFillColor(Color::Black);
+    displayStext2.setString(displayS2);
 
+    //setting display1 :: location
+    displayStext3.setFont(Calibri);
+    displayStext3.setScale(1, 1);
+    displayStext3.setPosition(810, 340);
+    displayStext3.setFillColor(Color::Black);
+    displayStext3.setString(displayS3);
+
+    //setting display1 :: email
+    displayStext4.setFont(Calibri);
+    displayStext4.setScale(1, 1);
+    displayStext4.setPosition(810, 425);
+    displayStext4.setFillColor(Color::Black);
+    displayStext4.setString(displayS4);
+
+    //setting display1 :: password
+    displayStext5.setFont(Calibri);
+    displayStext5.setScale(1, 1);
+    displayStext5.setPosition(810, 510);
+    displayStext5.setFillColor(Color::Black);
+    displayStext5.setString(displayS5);
+
+   
+    SetSignUp(signup);
+     issignin = false;
     while (window.isOpen())
     {
+        if (issignin) {
+            break;
+        }
         //setting display1 :: username
-        displayStext1.setFont(Calibri);
-        displayStext1.setScale(1, 1);
-        displayStext1.setPosition(810, 170);
-        displayStext1.setFillColor(Color::Black);
-        displayStext1.setString(displayS1);
+       
 
         //setting display1 :: phonenum
-        displayStext2.setFont(Calibri);
-        displayStext2.setScale(1, 1);
-        displayStext2.setPosition(810, 255);
-        displayStext2.setFillColor(Color::Black);
-        displayStext2.setString(displayS2);
-
-        //setting display1 :: location
-        displayStext3.setFont(Calibri);
-        displayStext3.setScale(1, 1);
-        displayStext3.setPosition(810, 340);
-        displayStext3.setFillColor(Color::Black);
-        displayStext3.setString(displayS3);
-
-        //setting display1 :: email
-        displayStext4.setFont(Calibri);
-        displayStext4.setScale(1, 1);
-        displayStext4.setPosition(810, 425);
-        displayStext4.setFillColor(Color::Black);
-        displayStext4.setString(displayS4);
-
-        //setting display1 :: password
-        displayStext5.setFont(Calibri);
-        displayStext5.setScale(1, 1);
-        displayStext5.setPosition(810, 510);
-        displayStext5.setFillColor(Color::Black);
-        displayStext5.setString(displayS5);
-
-        TextureAFonts();
-        SetSignUp(signup);
+       
 
         //Texture backgroundTexture;
         //backgroundTexture.loadFromFile("Assets/pharmacy2.jpg");
@@ -1514,7 +1492,7 @@ void functioningSignUp() {
         //background.setTexture(backgroundTexture);
         //background.setScale(0.276, 0.218);
 
-        window.clear();
+        //window.clear();
         DrawSignUp(signup);
         window.draw(displayStext1);
         window.draw(displayStext2);
@@ -1591,7 +1569,11 @@ void functioningSignUp() {
                 if (signup.buttonin.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 1;
-                    page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine, showreceipt, edit_info, "12:00", makeorder);
+                    
+                    //page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
+                      //  showreceipt, edit_info, "12:00", makeorder);
+                    issignin = true;
+                    break;
                 }
                 if (signup.buttonup.getGlobalBounds().contains(mousePos))
                 {
@@ -1802,35 +1784,12 @@ void SetSignIn(SignIn& signin) {
     signin.buttonin.setPosition(890, 630);
 }
 void functioningSignIn() {
+    
     while (window.isOpen()) {
 
         //setting display1 :: username
 
-        displaytext1.setFont(Calibri);
-        displaytext1.setScale(1, 1);
-        displaytext1.setPosition(810, 435);
-        displaytext1.setFillColor(Color::Black);
-        displaytext1.setString(display1);
-
-        //settind display2 :: password
-        displaytext2.setFont(Calibri);
-        displaytext2.setScale(1, 1);
-        displaytext2.setPosition(810, 555);
-        displaytext2.setFillColor(Color::Black);
-        displaytext2.setString(display2);
-
-
-        TextureAFonts();
-
-        SetSignIn(signin);
-
-
-
-        Texture backgroundTexture;
-        backgroundTexture.loadFromFile("Assets/pharmacy2.jpg");
-        Sprite background;
-        background.setTexture(backgroundTexture);
-        background.setScale(0.276, 0.218);
+      
 
 
         window.clear();
@@ -2127,7 +2086,7 @@ void functioningUserMenu() {
         window.clear();
         DrawUserMenu(usermenu);
         window.display();
-        bool breaked=false;
+        bool breaked = false;
         Event event;
         while (window.pollEvent(event))
         {
@@ -2139,21 +2098,21 @@ void functioningUserMenu() {
                     page_num = 7;
                     breaked = true;
                     break;
-                    
+
                 }
                 if (usermenu.buttonMakeOrder.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 8;
                     breaked = true;
                     break;
-                    
+
                 }
                 if (usermenu.buttonsearch.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 4;
                     breaked = true;
                     break;
-                    
+
                 }
                 if (usermenu.buttonViewPrev.getGlobalBounds().contains(mousePos))
                 {
@@ -2324,6 +2283,11 @@ void Draw_EditInfo_User(Edit_Info& edit_info) {
     window.draw(edit_info.changePhone);
     window.draw(edit_info.valuefield1);
     window.draw(edit_info.valuefield2);
+}
+
+void EditInfo_Admin_functional(Edit_Info& edit_info) {
+    Set_EditInfo_Admin(edit_info);
+    Draw_EditInfo_Admin(edit_info);
 }
 
 void Set_EditInfo_Admin(Edit_Info& edit_info) {
@@ -2954,7 +2918,195 @@ void Draw_managePayment(managePayment& manage_payment) {
 
     window.draw(manage_payment.button2);
 }
+void ManagePayment_functional(managePayment& manage_payment) {
+    Event event;
 
+    window.clear();
+    set_managePayment(manage_payment);
+    Draw_managePayment(manage_payment);
+    managePaymentMethodes();
+    window.display();
+}
+void showPaymentMehtode(vector<string> x) {
+    int c = 1;
+    float pos_x = 70, pos_y = 80;
+    for (auto it = x.begin(); it != x.end(); ++it) {
+        manage_payment.method.setFont(Calibri);
+        manage_payment.method.setString("[" + to_string(c) + "] " + *it);
+        manage_payment.method.setCharacterSize(24);
+        manage_payment.method.setFillColor(Color::Black);
+        manage_payment.method.setPosition(pos_x, pos_y);
+        c++;
+        pos_y += 20;
+    }
+}
+void managePaymentMethodes()
+{
+    vector<string>::iterator it = paymentMethods.begin();
+
+    string newMethode;
+
+    // setting display1 :: adding payments
+
+    displaytext1.setFont(Calibri);
+
+    displaytext1.setScale(1, 1);
+
+    displaytext1.setPosition(940, 330);
+
+    displaytext1.setFillColor(Color::Black);
+
+    displaytext1.setString(display1);
+
+    // settind display2 :: deleting payments
+
+    displaytext2.setFont(Calibri);
+
+    displaytext2.setScale(1, 1);
+
+    displaytext2.setPosition(940, 540);
+
+    displaytext2.setFillColor(Color::Black);
+
+    displaytext2.setString(display2);
+
+  //  TextureAFonts();
+    
+    window.draw(displaytext1);
+
+    window.draw(displaytext2);
+
+    window.display();
+    while (window.isOpen()) {
+        Event event;
+
+        if (window.pollEvent(event)) {
+            // Handle mouse click
+            Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+            {
+                window.close();
+            }
+            showPaymentMehtode(paymentMethods);
+
+            if (event.type == Event::MouseButtonPressed &&
+                event.mouseButton.button == Mouse::Left) {
+                // Check if the mouse click is inside the first text field
+
+                if (manage_payment.valuefield1.getGlobalBounds().contains(mousePos)) {
+                    activeDisplay = true;
+
+                }
+
+                // Check if the mouse click is inside the second text field
+
+                else if (manage_payment.valuefield2.getGlobalBounds().contains(mousePos)) {
+                    activeDisplay = false;
+                }
+            }
+
+            // Handle text input
+
+            if (event.type == Event::TextEntered && std::isprint(event.text.unicode)) {
+                if (activeDisplay) {
+                    // Append the entered character to the first text display
+
+                    if (display1.size() < 20) { // add new payment method
+                        display1 += static_cast<char>(event.text.unicode);
+
+                        displaytext1.setString(display1);
+                        window.draw(displaytext1);
+
+
+
+                    }
+
+                    if (manage_payment.confirm_button.getGlobalBounds().contains(mousePos)) {
+                        newMethode = display1;
+                       
+                        paymentMethods.push_back(newMethode);
+
+                    }
+
+                }
+
+                else {
+                    // Append the entered character to the second text display
+
+                    if (display2.size() < 20) { // delete existing payment
+                        display2 += static_cast<char>(event.text.unicode);
+
+
+
+
+                    }
+
+                    if (manage_payment.delete_button.getGlobalBounds().contains(mousePos)) {
+
+                        for (auto it = paymentMethods.begin(); it != paymentMethods.end(); ++it) {
+                            if (display2 == *it) {
+                                paymentMethods.erase(it);
+
+                            }
+                        }
+                    }
+                    // Debugging: Print the active display status
+
+                    cout << "Active display: " << (activeDisplay ? "display1" : "display2")
+                        << endl;
+                }
+                // Handle backspace key
+
+                if (event.type == Event::KeyPressed &&
+                    event.key.code == Keyboard::BackSpace) {
+                    if (activeDisplay) {
+                        // Delete the last character from the first text display
+
+                        if (!display1.empty()) {
+                            display1.pop_back();
+
+                            displaytext1.setString(display1);
+
+                            newMethode = display1;
+                            window.draw(displaytext1);
+                        }
+
+                        if (manage_payment.valuefield1.getGlobalBounds().contains(mousePos)) {
+                            newMethode = display1;
+                            paymentMethods.push_back(newMethode);
+
+                        }
+
+                    }
+
+                    else {
+                        // Delete the last character from the second text display
+
+                        if (!display2.empty()) {
+                            display2.pop_back();
+
+                            displaytext2.setString(display2);
+                            window.draw(displaytext2);
+                        }
+                        if (manage_payment.delete_button.getGlobalBounds().contains(mousePos)) {
+
+                            for (auto it = paymentMethods.begin(); it != paymentMethods.end(); ++it) {
+                                if (display2 == *it) {
+                                    paymentMethods.erase(it);
+
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            savePayMethodeLocally();
+        }
+
+    }
+}
 void set_manageMedicine(manageMedicine& manage_medicine) {
     manage_medicine.background.setTexture(backgroundManageUser);
 
@@ -3752,6 +3904,10 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         break;
     case 9:
         drawShowAllOrders(ShowAllOrders);
+        window.display();
+        break;
+    case 10:
+        ManagePayment_functional(manage_payment);
         window.display();
         break;
     }
