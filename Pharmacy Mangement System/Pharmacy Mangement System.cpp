@@ -45,6 +45,8 @@ Texture backgroundTex, secbackgroundTex, textboxTex, roleAdminbuttonTex,
 roleUserbuttonTex, buttonTex;
 string display1, display2;
 Text displaytext1, displaytext2;
+Text managetext1, managetext2;
+string managedisplay1, managedisplay2;
 string displayS1, displayS2, displayS3, displayS4, displayS5;
 Text displayStext1, displayStext2, displayStext3, displayStext4, displayStext5;
 Texture userButton, notuserButton, adminButton, notadminButton;
@@ -375,7 +377,7 @@ void draw_manageMedicine(manageMedicine manage_medicine);
 // manage payment
 void set_managePayment(managePayment& manage_payment);
 void Draw_managePayment(managePayment& manage_payment);
-void ManagePayment_functional(managePayment& manage_payment);
+
 
 void showOrderReceipt(order lastOrder, string current_time);
 void ShowReceiptFunctional(order lastOrder, bool& show_order_receipt,
@@ -457,7 +459,7 @@ int main() {
 
 
     TextureAFonts();
-
+    set_managePayment(manage_payment);
    // SetSignIn(signin);
 
 
@@ -2900,6 +2902,30 @@ void set_managePayment(managePayment& manage_payment) {
     manage_payment.button2.setPosition(860, 430);
 
     manage_payment.button2.setScale(0.7, 0.6);
+
+    // setting display1 :: adding payments
+
+    managetext1.setFont(Calibri);
+
+    managetext1.setScale(1, 1);
+
+    managetext1.setPosition(870, 258);
+
+    managetext1.setFillColor(Color::Black);
+
+    managetext1.setString(display1);
+
+    // settind display2 :: deleting payments
+
+    managetext2.setFont(Calibri);
+
+    managetext2.setScale(1, 1);
+
+    managetext2.setPosition(870, 460);
+
+    managetext2.setFillColor(Color::Black);
+
+    managetext2.setString(display2);
 }
 void Draw_managePayment(managePayment& manage_payment) {
     window.draw(manage_payment.background);
@@ -2918,15 +2944,7 @@ void Draw_managePayment(managePayment& manage_payment) {
 
     window.draw(manage_payment.button2);
 }
-void ManagePayment_functional(managePayment& manage_payment) {
-    Event event;
 
-    window.clear();
-    set_managePayment(manage_payment);
-    Draw_managePayment(manage_payment);
-    managePaymentMethodes();
-    window.display();
-}
 void showPaymentMehtode(vector<string> x) {
     int c = 1;
     float pos_x = 70, pos_y = 80;
@@ -2946,41 +2964,19 @@ void managePaymentMethodes()
 
     string newMethode;
 
-    // setting display1 :: adding payments
-
-    displaytext1.setFont(Calibri);
-
-    displaytext1.setScale(1, 1);
-
-    displaytext1.setPosition(940, 330);
-
-    displaytext1.setFillColor(Color::Black);
-
-    displaytext1.setString(display1);
-
-    // settind display2 :: deleting payments
-
-    displaytext2.setFont(Calibri);
-
-    displaytext2.setScale(1, 1);
-
-    displaytext2.setPosition(940, 540);
-
-    displaytext2.setFillColor(Color::Black);
-
-    displaytext2.setString(display2);
-
-  //  TextureAFonts();
     
-    window.draw(displaytext1);
-
-    window.draw(displaytext2);
-
-    window.display();
+  
     while (window.isOpen()) {
         Event event;
+        window.clear();
+      
+        Draw_managePayment(manage_payment);
+        window.draw(managetext1);
 
-        if (window.pollEvent(event)) {
+        window.draw(managetext2);
+
+        window.display();
+        while (window.pollEvent(event)) {
             // Handle mouse click
             Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
 
@@ -2988,7 +2984,7 @@ void managePaymentMethodes()
             {
                 window.close();
             }
-            showPaymentMehtode(paymentMethods);
+           // showPaymentMehtode(paymentMethods);
 
             if (event.type == Event::MouseButtonPressed &&
                 event.mouseButton.button == Mouse::Left) {
@@ -3012,19 +3008,20 @@ void managePaymentMethodes()
                 if (activeDisplay) {
                     // Append the entered character to the first text display
 
-                    if (display1.size() < 20) { // add new payment method
-                        display1 += static_cast<char>(event.text.unicode);
+                    if (managedisplay1.size() < 20) { // add new payment method
+                        managedisplay1 += static_cast<char>(event.text.unicode);
 
-                        displaytext1.setString(display1);
-                        window.draw(displaytext1);
+                        managetext1.setString(managedisplay1);
+                        window.draw(managetext1);
+                        window.display();
 
 
 
                     }
 
                     if (manage_payment.confirm_button.getGlobalBounds().contains(mousePos)) {
-                        newMethode = display1;
-                       
+                        newMethode = managedisplay1;
+
                         paymentMethods.push_back(newMethode);
 
                     }
@@ -3034,9 +3031,12 @@ void managePaymentMethodes()
                 else {
                     // Append the entered character to the second text display
 
-                    if (display2.size() < 20) { // delete existing payment
-                        display2 += static_cast<char>(event.text.unicode);
+                    if (managedisplay2.size() < 20) { // delete existing payment
+                        managedisplay2 += static_cast<char>(event.text.unicode);
 
+                        managetext2.setString(managedisplay2);
+                        window.draw(managetext2);
+                        window.display();
 
 
 
@@ -3045,7 +3045,7 @@ void managePaymentMethodes()
                     if (manage_payment.delete_button.getGlobalBounds().contains(mousePos)) {
 
                         for (auto it = paymentMethods.begin(); it != paymentMethods.end(); ++it) {
-                            if (display2 == *it) {
+                            if (managedisplay2 == *it) {
                                 paymentMethods.erase(it);
 
                             }
@@ -3053,9 +3053,10 @@ void managePaymentMethodes()
                     }
                     // Debugging: Print the active display status
 
-                    cout << "Active display: " << (activeDisplay ? "display1" : "display2")
+                    cout << "Active display: " << (activeDisplay ? "managedisplay1" : "managedisplay2")
                         << endl;
                 }
+            }
                 // Handle backspace key
 
                 if (event.type == Event::KeyPressed &&
@@ -3063,17 +3064,18 @@ void managePaymentMethodes()
                     if (activeDisplay) {
                         // Delete the last character from the first text display
 
-                        if (!display1.empty()) {
-                            display1.pop_back();
+                        if (!managedisplay1.empty()) {
+                            managedisplay1.pop_back();
 
-                            displaytext1.setString(display1);
+                            managetext1.setString(managedisplay1);
 
-                            newMethode = display1;
-                            window.draw(displaytext1);
+                            newMethode = managedisplay1;
+                            window.draw(managetext1);
+                            window.display();
                         }
 
-                        if (manage_payment.valuefield1.getGlobalBounds().contains(mousePos)) {
-                            newMethode = display1;
+                        if (manage_payment.confirm_button.getGlobalBounds().contains(mousePos)) {
+                            newMethode = managedisplay1;
                             paymentMethods.push_back(newMethode);
 
                         }
@@ -3083,23 +3085,24 @@ void managePaymentMethodes()
                     else {
                         // Delete the last character from the second text display
 
-                        if (!display2.empty()) {
-                            display2.pop_back();
+                        if (!managedisplay2.empty()) {
+                            managedisplay2.pop_back();
 
-                            displaytext2.setString(display2);
-                            window.draw(displaytext2);
+                            managetext2.setString(managedisplay2);
+                            window.draw(managetext2);
+                            window.display();
                         }
                         if (manage_payment.delete_button.getGlobalBounds().contains(mousePos)) {
 
                             for (auto it = paymentMethods.begin(); it != paymentMethods.end(); ++it) {
-                                if (display2 == *it) {
+                                if (managedisplay2 == *it) {
                                     paymentMethods.erase(it);
 
                                 }
                             }
                         }
                     }
-                }
+                
             }
 
             savePayMethodeLocally();
@@ -3907,7 +3910,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         window.display();
         break;
     case 10:
-        ManagePayment_functional(manage_payment);
+        managePaymentMethodes();
         window.display();
         break;
     }
