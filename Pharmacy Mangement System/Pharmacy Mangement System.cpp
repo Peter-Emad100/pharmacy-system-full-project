@@ -163,13 +163,13 @@ SignUp signup;
 
 struct Edit_Info {
     Texture edit_background, change_phone, change_address, make_admin_green,
-        make_user_green, make_user_red, make_admin_red;
+        make_user_green, make_user_red, make_admin_red, confirm_button;
 
     Sprite background, changePhone, changeAddress, log_out;
 
     Sprite valuefield1, valuefield2, valuefield3;
 
-    Sprite makeAdminGreen, makeUserGreen, makeAdminRed, makeUserRed;
+    Sprite makeAdminGreen, makeUserGreen, makeAdminRed, makeUserRed, confirm;
 
     Text input_id;
 };
@@ -536,7 +536,7 @@ int main() {
             }*/
             while (window.isOpen())
             {
-                page_num =10;
+                page_num =6;
                 page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
                     showreceipt, edit_info, "12:00", makeorder);
             }
@@ -1245,14 +1245,14 @@ void TextureAFonts() {
     // edit info images
     edit_info.edit_background.loadFromFile(
         "Assets/"
-        "pharmacy-with-nurse-in-counter-drugstore-cartoon-character-vector "
-        "(1).jpg");
+        "pharmacy3.jpg");
     edit_info.change_address.loadFromFile("Assets/change_add.png");
     edit_info.change_phone.loadFromFile("Assets/change_phone.png");
     edit_info.make_admin_green.loadFromFile("Assets/green_make_admin.png");
     edit_info.make_admin_red.loadFromFile("Assets/red_make_admin.png");
     edit_info.make_user_green.loadFromFile("Assets/green_make_user.png");
     edit_info.make_user_red.loadFromFile("Assets/red_make_user.png");
+    edit_info.confirm_button.loadFromFile("Assets/confirm.png");
 
     // adding new user
 
@@ -2314,10 +2314,10 @@ void Set_EditInfo_Admin(Edit_Info& edit_info) {
     edit_info.valuefield2.setScale(0.6, 0.4);
     edit_info.valuefield2.setPosition(150, 440);
 
-    // valuefield3 to input the username of the user that i want to edit
+    // valuefield3 to input the ID of the user that i want to edit
     edit_info.valuefield3.setTexture(textbox);
-    edit_info.valuefield3.setScale(0.6, 0.4);
-    edit_info.valuefield3.setPosition(400, 150);
+    edit_info.valuefield3.setScale(0.4, 0.4);
+    edit_info.valuefield3.setPosition(270, 150);
 
     // make user red and green buttons
     edit_info.makeUserGreen.setTexture(edit_info.make_user_green);
@@ -2337,56 +2337,79 @@ void Set_EditInfo_Admin(Edit_Info& edit_info) {
     edit_info.makeAdminRed.setScale(0.28, 0.24);
     edit_info.makeAdminRed.setPosition(500, 555);
 
+    // text for ID
     edit_info.input_id.setFont(Calibri);
-    edit_info.input_id.setString("Enter Username: ");
+    edit_info.input_id.setString("Enter ID: ");
     edit_info.input_id.setScale(1, 1);
     edit_info.input_id.setFillColor(Color::Black);
-    edit_info.input_id.setPosition(190, 155);
+    edit_info.input_id.setPosition(150, 160);
+
+    // confirm button for ID
+    edit_info.confirm.setTexture(edit_info.confirm_button);
+    edit_info.confirm.setScale(0.28, 0.24);
+    edit_info.confirm.setPosition(600, 160);
 }
 void Draw_EditInfo_Admin(Edit_Info& edit_info) {
-    window.draw(edit_info.background);
-    window.draw(edit_info.changeAddress);
-    window.draw(edit_info.changePhone);
-    window.draw(edit_info.valuefield1);
-    window.draw(edit_info.valuefield2);
-    window.draw(edit_info.valuefield3);
-    window.draw(edit_info.input_id);
-
+ //   window.draw(edit_info.background);
+   // window.draw(edit_info.changeAddress);
+    //window.draw(edit_info.changePhone);
+    //window.draw(edit_info.valuefield1);
+   // window.draw(edit_info.valuefield2);
+    //window.draw(edit_info.valuefield3);
+    //window.draw(edit_info.input_id);
+    //window.draw(edit_info.confirm);
     int userIndex = 0;
+    Event event;
+    while (window.isOpen()) {
+        window.clear();
+        window.draw(edit_info.background);
+        window.draw(edit_info.changeAddress);
+        window.draw(edit_info.changePhone);
+        window.draw(edit_info.valuefield1);
+        window.draw(edit_info.valuefield2);
+        window.draw(edit_info.valuefield3);
+        window.draw(edit_info.input_id);
+        window.draw(edit_info.confirm);
+        window.display();
+        while (window.pollEvent(event)) {
+            // Loop through the users until a user with userID = 0 is found,
+            // indicating that there are no more users in our database
+          //  while (users[userIndex].ID != 0) {
+            //    if (users[userIndex].username == currentUser.username) {
+              //      break;
+                //}
+                //userIndex++;
+            //}
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+            {
+                window.close();
+            }
+            // draws buttons with respect to the role of that user
 
-    // Loop through the users until a user with userID = 0 is found,
-    // indicating that there are no more users in our database
-    while (users[userIndex].ID != 0) {
-        if (users[userIndex].username == currentUser.username) {
-            break;
-        }
-        userIndex++;
-    }
+            if (currentUser.his_role == user::User) {
+                window.draw(edit_info.makeUserGreen);
+                window.draw(edit_info.makeAdminRed);
 
-    // draws buttons with respect to the role of that user
+                Vector2i mousePosition = Mouse::getPosition(window);
 
-    if (currentUser.his_role == user::User) {
-        window.draw(edit_info.makeUserGreen);
-        window.draw(edit_info.makeAdminRed);
+                if (edit_info.makeAdminRed.getGlobalBounds().contains(
+                    static_cast<Vector2f>(mousePosition))) {
+                    currentUser.his_role = user::Admin;
+                    users[userIndex].his_role = user::Admin;
+                }
+            }
+            if (currentUser.his_role == user::Admin) {
+                window.draw(edit_info.makeAdminGreen);
+                window.draw(edit_info.makeUserRed);
 
-        Vector2i mousePosition = Mouse::getPosition(window);
+                Vector2i mousePosition = Mouse::getPosition(window);
 
-        if (edit_info.makeAdminRed.getGlobalBounds().contains(
-            static_cast<Vector2f>(mousePosition))) {
-            currentUser.his_role = user::Admin;
-            users[userIndex].his_role = user::Admin;
-        }
-    }
-    if (currentUser.his_role == user::Admin) {
-        window.draw(edit_info.makeAdminGreen);
-        window.draw(edit_info.makeUserRed);
-
-        Vector2i mousePosition = Mouse::getPosition(window);
-
-        if (edit_info.makeUserRed.getGlobalBounds().contains(
-            static_cast<Vector2f>(mousePosition))) {
-            currentUser.his_role = user::User;
-            users[userIndex].his_role = user::User;
+                if (edit_info.makeUserRed.getGlobalBounds().contains(
+                    static_cast<Vector2f>(mousePosition))) {
+                    currentUser.his_role = user::User;
+                    users[userIndex].his_role = user::User;
+                }
+            }
         }
     }
 }
