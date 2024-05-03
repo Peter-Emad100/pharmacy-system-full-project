@@ -52,6 +52,11 @@ Text displayStext1, displayStext2, displayStext3, displayStext4, displayStext5;
 Texture userButton, notuserButton, adminButton, notadminButton;
 Texture backgroundMakeOrder, confrimOrder, semitransparent;
 
+// bool and texts for inout displays for edit info (Admin) page ..... don't use it anywhere else to avoid conflicts and glitches 
+bool editactive1, editactive2, editactive3;
+Text editAtext1, editAtext2, editAtext3;
+string editAdisplay1, editAdisplay2, editAdisplay3;
+
 struct medicine {
     int ID;
     string name;
@@ -163,15 +168,15 @@ SignUp signup;
 
 struct Edit_Info {
     Texture edit_background, change_phone, change_address, make_admin_green,
-        make_user_green, make_user_red, make_admin_red, confirm_button;
+        make_user_green, make_user_red, make_admin_red, confirm_button, change_user, change_password;
 
-    Sprite background, changePhone, changeAddress, log_out;
+    Sprite background, changePhone, changeAddress, log_out, changeUser, changePass;
 
     Sprite valuefield1, valuefield2, valuefield3;
 
     Sprite makeAdminGreen, makeUserGreen, makeAdminRed, makeUserRed, confirm;
 
-    Text input_id;
+    Text input_id, wrng_id;
 };
 Edit_Info edit_info;
 
@@ -414,9 +419,9 @@ int main() {
     saveAllDataToArr();
 
     TextureAFonts();
-   // sign_up = true;
+    // sign_up = true;
 
-    // background
+     // background
     Texture backgroundTexture;
     backgroundTexture.loadFromFile("Assets/pharmacy2.jpg");
     Sprite background;
@@ -443,7 +448,7 @@ int main() {
     setShowAllOrders(ShowAllOrders);
     // functioningSignUp();
     // window display
-   
+
     displaytext1.setFont(Calibri);
     displaytext1.setScale(1, 1);
     displaytext1.setPosition(810, 435);
@@ -460,89 +465,89 @@ int main() {
 
     TextureAFonts();
     set_managePayment(manage_payment);
-   // SetSignIn(signin);
+    // SetSignIn(signin);
 
 
 
-   
-        Event event;
-        while (window.pollEvent(event)) {
-            /*if (event.type == Event::Closed)
-            {
-                    window.close();
-            }*/
-            if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) {
+
+    Event event;
+    while (window.pollEvent(event)) {
+        /*if (event.type == Event::Closed)
+        {
                 window.close();
-            }
-            // createEditMedicineWindow(window);
-            /*if (event.type == Event::MouseButtonPressed) {
-                // Check if left mouse button is pressed
-                if (show_order_receipt) {
-                    if (event.mouseButton.button == Mouse::Left) {
-                        // Get the current mouse position
-                        Vector2i mousePosition = Mouse::getPosition(window);
-                        // Check if the mouse position intersects with confirm button
-                        if (showreceipt.confirm.getGlobalBounds().contains(
-                            static_cast<Vector2f>(mousePosition))) {
-                            // action performed to get to main menu
-                            show_order_receipt = 0;
-                            if (currentUser.his_role == user::User) {
-                                window.clear();
-                                page_num = 2;
-                            }
-                            else {
-                                window.clear();
-                                page_num = 3;
-                            }
-                        }
-                    }
-                }
-            }*/
-
-            /*if (event.type == Event::MouseButtonPressed) {
-                // Check if left mouse button is pressed
+        }*/
+        if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) {
+            window.close();
+        }
+        // createEditMedicineWindow(window);
+        /*if (event.type == Event::MouseButtonPressed) {
+            // Check if left mouse button is pressed
+            if (show_order_receipt) {
                 if (event.mouseButton.button == Mouse::Left) {
                     // Get the current mouse position
                     Vector2i mousePosition = Mouse::getPosition(window);
-                    // Check if the mouse position intersects with signup button
-                    if (sign_up) {
-                        if (signup.buttonin.getGlobalBounds().contains(
-                            static_cast<Vector2f>(mousePosition))) {
-                            // action performed for sign in
-                            sign_up = false;
+                    // Check if the mouse position intersects with confirm button
+                    if (showreceipt.confirm.getGlobalBounds().contains(
+                        static_cast<Vector2f>(mousePosition))) {
+                        // action performed to get to main menu
+                        show_order_receipt = 0;
+                        if (currentUser.his_role == user::User) {
+                            window.clear();
+                            page_num = 2;
                         }
-                    }
-                    else {
-                        if (signin.buttonup.getGlobalBounds().contains(
-                            static_cast<Vector2f>(mousePosition)) and
-                            !sign_up) {
-                            sign_up = true;
+                        else {
+                            window.clear();
+                            page_num = 3;
                         }
                     }
                 }
-            }*/
-
-            window.clear();
-            //ManagePayment_functional(manage_payment);
-            // DrawSignUp(signup);
-            window.display();
-            /*if (sign_up) {
-                    DrawSignUp(signup);
-                    window.draw(displaytext);
             }
-            else {
-                    DrawSignIn(signin);
+        }*/
 
-            }*/
-            while (window.isOpen())
-            {
-                page_num =6;
-                page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
-                    showreceipt, edit_info, "12:00", makeorder);
+        /*if (event.type == Event::MouseButtonPressed) {
+            // Check if left mouse button is pressed
+            if (event.mouseButton.button == Mouse::Left) {
+                // Get the current mouse position
+                Vector2i mousePosition = Mouse::getPosition(window);
+                // Check if the mouse position intersects with signup button
+                if (sign_up) {
+                    if (signup.buttonin.getGlobalBounds().contains(
+                        static_cast<Vector2f>(mousePosition))) {
+                        // action performed for sign in
+                        sign_up = false;
+                    }
+                }
+                else {
+                    if (signin.buttonup.getGlobalBounds().contains(
+                        static_cast<Vector2f>(mousePosition)) and
+                        !sign_up) {
+                        sign_up = true;
+                    }
+                }
             }
-              
+        }*/
+
+        window.clear();
+        //ManagePayment_functional(manage_payment);
+        // DrawSignUp(signup);
+        window.display();
+        /*if (sign_up) {
+                DrawSignUp(signup);
+                window.draw(displaytext);
         }
-   
+        else {
+                DrawSignIn(signin);
+
+        }*/
+        while (window.isOpen())
+        {
+            page_num = 6;
+            page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
+                showreceipt, edit_info, "12:00", makeorder);
+        }
+
+    }
+
 }
 //**********Functions***********//
 
@@ -625,9 +630,9 @@ void signUp(string user, string phonenumber, string location, string email,
     user_data++;  // Increment user_data to keep track of the total number of users
 
 
-    
-        page_num = 1;
-    
+
+    page_num = 1;
+
 
 }
 
@@ -1253,6 +1258,8 @@ void TextureAFonts() {
     edit_info.make_user_green.loadFromFile("Assets/green_make_user.png");
     edit_info.make_user_red.loadFromFile("Assets/red_make_user.png");
     edit_info.confirm_button.loadFromFile("Assets/confirm.png");
+    edit_info.change_user.loadFromFile("Assets/change_user.png");
+    edit_info.change_password.loadFromFile("Assets/change_pass.png");
 
     // adding new user
 
@@ -1474,19 +1481,19 @@ void functioningSignUp() {
     displayStext5.setFillColor(Color::Black);
     displayStext5.setString(displayS5);
 
-   
+
     SetSignUp(signup);
-     issignin = false;
+    issignin = false;
     while (window.isOpen())
     {
         if (issignin) {
             break;
         }
         //setting display1 :: username
-       
+
 
         //setting display1 :: phonenum
-       
+
 
         //Texture backgroundTexture;
         //backgroundTexture.loadFromFile("Assets/pharmacy2.jpg");
@@ -1571,7 +1578,7 @@ void functioningSignUp() {
                 if (signup.buttonin.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 1;
-                    
+
                     //page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
                       //  showreceipt, edit_info, "12:00", makeorder);
                     issignin = true;
@@ -1786,12 +1793,12 @@ void SetSignIn(SignIn& signin) {
     signin.buttonin.setPosition(890, 630);
 }
 void functioningSignIn() {
-    
+
     while (window.isOpen()) {
 
         //setting display1 :: username
 
-      
+
 
 
         window.clear();
@@ -2296,20 +2303,20 @@ void Set_EditInfo_Admin(Edit_Info& edit_info) {
     edit_info.background.setTexture(edit_info.edit_background);
     edit_info.background.setScale(0.276, 0.218);
 
-    edit_info.changeAddress.setTexture(edit_info.change_address);
-    edit_info.changeAddress.setScale(0.28, 0.24);
-    edit_info.changeAddress.setPosition(600, 300);
+    edit_info.changeUser.setTexture(edit_info.change_user);
+    edit_info.changeUser.setScale(0.28, 0.24);
+    edit_info.changeUser.setPosition(600, 300);
 
-    edit_info.changePhone.setTexture(edit_info.change_phone);
-    edit_info.changePhone.setScale(0.28, 0.24);
-    edit_info.changePhone.setPosition(600, 450);
+    edit_info.changePass.setTexture(edit_info.change_password);
+    edit_info.changePass.setScale(0.28, 0.24);
+    edit_info.changePass.setPosition(600, 450);
 
-    // valuefield1 for change adddress input
+    // valuefield1 for change username input
     edit_info.valuefield1.setTexture(textbox);
     edit_info.valuefield1.setScale(0.6, 0.4);
     edit_info.valuefield1.setPosition(150, 290);
 
-    // valuefield2 for change phone number input
+    // valuefield2 for change password input
     edit_info.valuefield2.setTexture(textbox);
     edit_info.valuefield2.setScale(0.6, 0.4);
     edit_info.valuefield2.setPosition(150, 440);
@@ -2348,47 +2355,74 @@ void Set_EditInfo_Admin(Edit_Info& edit_info) {
     edit_info.confirm.setTexture(edit_info.confirm_button);
     edit_info.confirm.setScale(0.28, 0.24);
     edit_info.confirm.setPosition(600, 160);
+
+    //set text for changing username field
+    editAtext1.setFont(Calibri);
+    editAtext1.setScale(1, 1);
+    editAtext1.setPosition(180, 300);
+    editAtext1.setFillColor(Color::Black);
+    editAtext1.setString(editAdisplay1);
+
+    // set text for changing password field
+    editAtext2.setFont(Calibri);
+    editAtext2.setScale(1, 1);
+    editAtext2.setPosition(180, 453);
+    editAtext2.setFillColor(Color::Black);
+    editAtext2.setString(editAdisplay2);
+
+    // set text for id input
+    editAtext3.setFont(Calibri);
+    editAtext3.setScale(1, 1);
+    editAtext3.setPosition(320, 160);
+    editAtext3.setFillColor(Color::Black);
+    editAtext3.setString(editAdisplay3);
+
+    //text when wrong Id is entered
+    edit_info.wrng_id.setFont(Calibri);
+    edit_info.wrng_id.setString("ID not found, please try again ");
+    edit_info.wrng_id.setScale(0.7,0.7);
+    edit_info.wrng_id.setFillColor(Color::Black);
+    edit_info.wrng_id.setPosition(280, 205);
 }
 void Draw_EditInfo_Admin(Edit_Info& edit_info) {
- //   window.draw(edit_info.background);
-   // window.draw(edit_info.changeAddress);
-    //window.draw(edit_info.changePhone);
-    //window.draw(edit_info.valuefield1);
-   // window.draw(edit_info.valuefield2);
-    //window.draw(edit_info.valuefield3);
-    //window.draw(edit_info.input_id);
-    //window.draw(edit_info.confirm);
+
     int userIndex = 0;
     Event event;
+    // must be removed later on
+    currentUser.his_role = user::Admin;
+
     while (window.isOpen()) {
         window.clear();
         window.draw(edit_info.background);
-        window.draw(edit_info.changeAddress);
-        window.draw(edit_info.changePhone);
+        window.draw(edit_info.changeUser);
+        window.draw(edit_info.changePass);
         window.draw(edit_info.valuefield1);
         window.draw(edit_info.valuefield2);
         window.draw(edit_info.valuefield3);
         window.draw(edit_info.input_id);
         window.draw(edit_info.confirm);
+        window.draw(editAtext1);
+        window.draw(editAtext2);
+        window.draw(editAtext3);
+        window.draw(edit_info.wrng_id);
         window.display();
+      
         while (window.pollEvent(event)) {
-            // Loop through the users until a user with userID = 0 is found,
-            // indicating that there are no more users in our database
-          //  while (users[userIndex].ID != 0) {
-            //    if (users[userIndex].username == currentUser.username) {
-              //      break;
-                //}
-                //userIndex++;
-            //}
+
+            if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
+            {
+                window.close();
+            }
+           
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
             {
                 window.close();
             }
             // draws buttons with respect to the role of that user
-
             if (currentUser.his_role == user::User) {
                 window.draw(edit_info.makeUserGreen);
                 window.draw(edit_info.makeAdminRed);
+                window.display();
 
                 Vector2i mousePosition = Mouse::getPosition(window);
 
@@ -2401,6 +2435,7 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
             if (currentUser.his_role == user::Admin) {
                 window.draw(edit_info.makeAdminGreen);
                 window.draw(edit_info.makeUserRed);
+                window.display();
 
                 Vector2i mousePosition = Mouse::getPosition(window);
 
@@ -2408,11 +2443,127 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
                     static_cast<Vector2f>(mousePosition))) {
                     currentUser.his_role = user::User;
                     users[userIndex].his_role = user::User;
+
                 }
+            }
+
+
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+                // Check if the mouse click is inside the first text field
+
+                if (edit_info.valuefield1.getGlobalBounds().contains(mousePos)) {
+
+                    editactive1 = true;
+                    editactive2 = false;
+                    editactive3 = false;
+
+                }
+                else if (edit_info.valuefield2.getGlobalBounds().contains(mousePos)) {
+                    editactive1 = false;
+                    editactive2 = true;
+                    editactive3 = false;
+
+                }
+                else if (edit_info.valuefield3.getGlobalBounds().contains(mousePos)) {
+                    editactive1 = false;
+                    editactive2 = false;
+                    editactive3 = true;
+                }
+
+            }
+            if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
+                if (editactive1)
+                {
+                    if (editAdisplay1.size() < 20) {
+
+                        editAdisplay1 += static_cast<char>(event.text.unicode);
+                        editAtext1.setString(editAdisplay1);
+                        window.draw(editAtext1);
+                        window.display();
+
+                    }
+                }
+                else if (editactive2)
+                {
+                    if (editAdisplay2.size() < 20) {
+
+
+                        editAdisplay2 += static_cast<char>(event.text.unicode);
+                        editAtext2.setString(editAdisplay2);
+                        window.draw(editAtext2);
+                        window.display();
+
+
+                    }
+                }
+                else if (editactive3)
+                {
+                    if (editAdisplay3.size() < 11) {
+                        if (event.text.unicode >= 48 && event.text.unicode <= 57)
+                        {
+                            editAdisplay3 += static_cast<char>(event.text.unicode);
+                            editAtext3.setString(editAdisplay3);
+                            window.draw(editAtext3);
+                            window.display();
+                        }
+                    }
+                }
+            }
+            // deleting characters -> backspace
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace) {
+                if (editactive1) {
+                    // Delete the last character from the first text display
+                    if (!editAdisplay1.empty()) {
+                        editAdisplay1.pop_back();
+                        editAtext1.setString(editAdisplay1);
+                        window.draw(editAtext1);
+                        window.display();
+                    }
+                }
+                else if (editactive2)
+                {
+                    if (!editAdisplay2.empty()) {
+                        editAdisplay2.pop_back();
+                        editAtext2.setString(editAdisplay2);
+                        window.draw(editAtext2);
+                        window.display();
+                    }
+                }
+                else if (editactive3)
+                {
+                    if (!editAdisplay3.empty()) {
+                        editAdisplay3.pop_back();
+                        editAtext3.setString(editAdisplay3);
+                        window.draw(editAtext3);
+                        window.display();
+                    }
+                }
+            }
+            Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+            if (edit_info.confirm.getGlobalBounds().contains((mousePos))) {
+                // Loop through the users until a user with userID = 0 is found,
+           // indicating that there are no more users in our database
+                bool found = false;
+              while (users[userIndex].ID != 0) {
+                 if (users[userIndex].username == currentUser.username) {
+                     found = true;
+                     break;
+               }
+               userIndex++;
+           }
+              if (!found) {
+
+              }
             }
         }
     }
+
 }
+
 
 void setAddMedicine(AddMedicine& addmedicine)
 
@@ -2987,12 +3138,12 @@ void managePaymentMethodes()
 
     string newMethode;
 
-    
-  
+
+
     while (window.isOpen()) {
         Event event;
         window.clear();
-      
+
         Draw_managePayment(manage_payment);
         window.draw(managetext1);
 
@@ -3007,7 +3158,7 @@ void managePaymentMethodes()
             {
                 window.close();
             }
-           // showPaymentMehtode(paymentMethods);
+            // showPaymentMehtode(paymentMethods);
 
             if (event.type == Event::MouseButtonPressed &&
                 event.mouseButton.button == Mouse::Left) {
@@ -3080,52 +3231,52 @@ void managePaymentMethodes()
                         << endl;
                 }
             }
-                // Handle backspace key
+            // Handle backspace key
 
-                if (event.type == Event::KeyPressed &&
-                    event.key.code == Keyboard::BackSpace) {
-                    if (activeDisplay) {
-                        // Delete the last character from the first text display
+            if (event.type == Event::KeyPressed &&
+                event.key.code == Keyboard::BackSpace) {
+                if (activeDisplay) {
+                    // Delete the last character from the first text display
 
-                        if (!managedisplay1.empty()) {
-                            managedisplay1.pop_back();
+                    if (!managedisplay1.empty()) {
+                        managedisplay1.pop_back();
 
-                            managetext1.setString(managedisplay1);
+                        managetext1.setString(managedisplay1);
 
-                            newMethode = managedisplay1;
-                            window.draw(managetext1);
-                            window.display();
-                        }
+                        newMethode = managedisplay1;
+                        window.draw(managetext1);
+                        window.display();
+                    }
 
-                        if (manage_payment.confirm_button.getGlobalBounds().contains(mousePos)) {
-                            newMethode = managedisplay1;
-                            paymentMethods.push_back(newMethode);
-
-                        }
+                    if (manage_payment.confirm_button.getGlobalBounds().contains(mousePos)) {
+                        newMethode = managedisplay1;
+                        paymentMethods.push_back(newMethode);
 
                     }
 
-                    else {
-                        // Delete the last character from the second text display
+                }
 
-                        if (!managedisplay2.empty()) {
-                            managedisplay2.pop_back();
+                else {
+                    // Delete the last character from the second text display
 
-                            managetext2.setString(managedisplay2);
-                            window.draw(managetext2);
-                            window.display();
-                        }
-                        if (manage_payment.delete_button.getGlobalBounds().contains(mousePos)) {
+                    if (!managedisplay2.empty()) {
+                        managedisplay2.pop_back();
 
-                            for (auto it = paymentMethods.begin(); it != paymentMethods.end(); ++it) {
-                                if (managedisplay2 == *it) {
-                                    paymentMethods.erase(it);
+                        managetext2.setString(managedisplay2);
+                        window.draw(managetext2);
+                        window.display();
+                    }
+                    if (manage_payment.delete_button.getGlobalBounds().contains(mousePos)) {
 
-                                }
+                        for (auto it = paymentMethods.begin(); it != paymentMethods.end(); ++it) {
+                            if (managedisplay2 == *it) {
+                                paymentMethods.erase(it);
+
                             }
                         }
                     }
-                
+                }
+
             }
 
             savePayMethodeLocally();
