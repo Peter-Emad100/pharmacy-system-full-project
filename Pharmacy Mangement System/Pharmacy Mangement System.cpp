@@ -51,6 +51,9 @@ string displayS1, displayS2, displayS3, displayS4, displayS5;
 Text displayStext1, displayStext2, displayStext3, displayStext4, displayStext5;
 Texture userButton, notuserButton, adminButton, notadminButton;
 Texture backgroundMakeOrder, confrimOrder, semitransparent;
+string inputUserID, inputMedicineID;
+Text inputUserIDText, inputMedicineIDText;
+
 
 // bool and texts for inout displays for edit info (Admin) page ..... don't use it anywhere else to avoid conflicts and glitches
 bool editactive1, editactive2, editactive3;
@@ -316,7 +319,8 @@ void makeRequest(string _username, string _medicineName, int _amountReq);
 void showAllPreviousOrders();
 void addUser();
 void updateUser();
-void removeUser();
+bool removeUser(int userID);
+bool removeMedicine(int medID);
 void logOut();
 void managePaymentMethodes();
 void showPaymentMehtode(vector<string> x);
@@ -375,10 +379,11 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo medicineinfo);
 
 void set_manageUser(manageUser& manage_user);
 void draw_manageUser(manageUser manage_user);
+void functioning_manageUser();
 // Manage Medicine
 void set_manageMedicine(manageMedicine& manage_medicine);
 void draw_manageMedicine(manageMedicine manage_medicine);
-
+void functioning_manageMedicine();
 // manage payment
 void set_managePayment(managePayment& manage_payment);
 void Draw_managePayment(managePayment& manage_payment);
@@ -412,7 +417,7 @@ void DrawEditOrderInfo(EditOrderInfo edit);
 
 bool sign_up;
 bool show_order_receipt = 0;
-int page_num = 5;
+int page_num = 11;
 bool medicineEdit = 0;
 int main() {
     dataForTestPurposes();
@@ -1095,36 +1100,61 @@ void updateUser() {
     saveOneUserDataLocally();
 }
 
-void removeUser() {
-    int userID;
-    bool userFound = false;
+bool removeUser(int userID) {
+    if (userID <= 0) {
 
-    while (!userFound) {
-        cout << "Enter the ID of the user you are willing to remove: ";
-        cin >> userID;
+        return false;
+    }
 
-        if (userID <= 0) {
-            cout << "Invalid ID.\n";
-            continue;
-        }
+    bool found = false;
+    for (int i = 0; i < user_data; ++i) {
+        if (users[i].ID == userID) {
+            users[i].ID = -1;
 
-        int i = 0;
-        while (users[i].ID != 0) {
-            if (users[i].ID == userID) {
-                userFound = true;
-                users[i].ID = -1;
-                cout << "User with ID: " << userID << " has been removed.\n";
-                saveUserDataLocally();
-                break;
-            }
-            ++i;
-        }
-
-        if (!userFound) {
-            cout << "User not found.\n";
+            found = true;
+            saveUserDataLocally();
+            return true;
         }
     }
+
+    if (!found) {
+
+        return false;
+    }
+
+    return true;
 }
+
+bool removeMedicine(int medID) {
+    if (medID <= 0) {
+
+        return false;
+    }
+
+    bool found = false;
+    for (int i = 0; i < medicine_data; ++i) {
+
+        if (medicines[i].ID == -1) {
+
+            return false;
+        }
+        if (medicines[i].ID == medID) {
+            medicines[i].ID = -1;
+            found = true;
+            saveMedicineDataLocally();
+            return true;
+        }
+    }
+
+    if (!found) {
+
+        return false;
+    }
+
+
+    return true;
+}
+
 
 void trackorder(order orders[]) {
     bool orderfound = false;
@@ -3013,6 +3043,8 @@ void set_manageUser(manageUser& manage_user) {
 
     manage_user.Title.setFont(Calibri);
 
+
+
     manage_user.Title.setString("Manage User");
 
     manage_user.Title.setPosition(250, 70);
@@ -3024,6 +3056,8 @@ void set_manageUser(manageUser& manage_user) {
     manage_user.userID.setFont(Calibri);
 
     manage_user.userID.setString("User ID");
+
+
 
     manage_user.userID.setPosition(24, 190);
 
@@ -3052,7 +3086,15 @@ void set_manageUser(manageUser& manage_user) {
     manage_user.addUser.setScale(0.6, 0.48);
 
     manage_user.addUser.setPosition(400, 290);
+
+    inputUserIDText.setFont(Calibri);
+    inputUserIDText.setScale(1, 1);
+    inputUserIDText.setPosition(170, 190);
+    inputUserIDText.setFillColor(Color::Black);
+    inputUserIDText.setString(inputUserID);
+    inputUserIDText.setCharacterSize(40);
 }
+
 void draw_manageUser(manageUser manage_user) {
     window.draw(manage_user.background);
 
@@ -3069,7 +3111,94 @@ void draw_manageUser(manageUser manage_user) {
     window.draw(manage_user.editUser);
 
     window.draw(manage_user.addUser);
+    window.draw(inputUserIDText);
+
+
 }
+
+
+
+void functioning_manageUser()
+{
+
+
+
+
+    window.clear();
+    while (window.isOpen())
+    {
+
+
+        draw_manageUser(manage_user);
+        window.display();
+        Event event;
+        while (window.pollEvent(event))
+        {
+
+            if (event.type == Event::TextEntered && isprint(event.text.unicode) && inputUserID.size() < 17)
+            {
+
+
+                inputUserID += static_cast<char>(event.text.unicode);
+                inputUserIDText.setString(inputUserID);
+
+
+            }
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace)
+            {
+                if (!inputUserID.empty())
+                {
+                    inputUserID.pop_back();
+                    inputUserIDText.setString(inputUserID);
+                }
+            }
+
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+            {
+                Vector2f mousepos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+                if (manage_user.removeUser.getGlobalBounds().contains(mousepos))
+                {
+
+
+                    if (removeUser(stoi(inputUserID)) == false)
+                    {
+                        RenderWindow window2(sf::VideoMode(400, 200), "Warning!");
+                        while (window2.isOpen())
+                        {
+                            sf::Event event2;
+                            while (window2.pollEvent(event2))
+                            {
+                                if (event2.type == sf::Event::Closed)
+                                {
+                                    window2.close();
+                                }
+
+                            }
+
+                            window2.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("Invalid ID!");
+                            text.setScale(0.5, 0.5);
+                            window2.draw(text);
+                            window2.display();
+                        }
+                    }
+                    else
+                        removeUser(stoi(inputUserID));
+                }
+
+            }
+
+        }
+
+
+        //if (event.type == Event::KeyReleased && event.key.code == Keyboard::BackSpace && inputUserID.size() > 0)
+
+    }
+}
+
 
 void set_managePayment(managePayment& manage_payment) {
     manage_payment.background.setTexture(manage_payment.managepayment_background);
@@ -3399,7 +3528,18 @@ void set_manageMedicine(manageMedicine& manage_medicine) {
     manage_medicine.addMedicine.setScale(0.6, 0.48);
 
     manage_medicine.addMedicine.setPosition(400, 290);
+
+    inputMedicineIDText.setFont(Calibri);
+    inputMedicineIDText.setScale(1, 1);
+    inputMedicineIDText.setPosition(170, 190);
+    inputMedicineIDText.setFillColor(Color::Black);
+    inputMedicineIDText.setString(inputMedicineID);
+    inputMedicineIDText.setCharacterSize(40);
 }
+
+
+
+
 void draw_manageMedicine(manageMedicine manage_medicine)
 
 {
@@ -3418,8 +3558,72 @@ void draw_manageMedicine(manageMedicine manage_medicine)
     window.draw(manage_medicine.editMedicine);
 
     window.draw(manage_medicine.addMedicine);
+
+    window.draw(inputMedicineIDText);
 }
 
+void functioning_manageMedicine()
+{
+    window.clear();
+    while (window.isOpen())
+    {
+        draw_manageMedicine(manage_medicine);
+        window.display();
+        Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::TextEntered && isprint(event.text.unicode) && inputMedicineID.size() < 17)
+            {
+
+                inputMedicineID += static_cast<char>(event.text.unicode);
+                inputMedicineIDText.setString(inputMedicineID);
+
+            }
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace)
+            {
+                if (!inputMedicineID.empty())
+                {
+                    inputMedicineID.pop_back();
+                    inputMedicineIDText.setString(inputMedicineID);
+                }
+            }
+
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
+            {
+                Vector2f mousepos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+                if (manage_medicine.removeMedicine.getGlobalBounds().contains(mousepos))
+                {
+                    if (removeMedicine(stoi(inputMedicineID)) == false)
+                    {
+                        RenderWindow window2(sf::VideoMode(400, 200), "Warning!");
+                        while (window2.isOpen())
+                        {
+                            sf::Event event2;
+                            while (window2.pollEvent(event2))
+                            {
+                                if (event2.type == sf::Event::Closed)
+                                {
+                                    window2.close();
+                                }
+
+                            }
+
+                            window2.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("Invalid ID!");
+                            text.setScale(0.5, 0.5);
+                            window2.draw(text);
+                            window2.display();
+                        }
+                    }
+                    else
+                        removeMedicine(stoi(inputMedicineID));
+                }
+            }
+        }
+    }
+}
 void editUserCredentials(int index)
 
 {
@@ -4145,13 +4349,11 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         window.display();
         break;
     case 11:
-        window.clear();
-        draw_manageMedicine(manage_medicine);
+        functioning_manageUser();
         window.display();
         break;
     case 12:
-        window.clear();
-        draw_manageUser(manage_user);
+        functioning_manageMedicine();
         window.display();
         break;
     case 13:
