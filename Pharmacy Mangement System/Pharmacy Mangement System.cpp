@@ -53,8 +53,14 @@ Texture userButton, notuserButton, adminButton, notadminButton;
 Texture backgroundMakeOrder, confrimOrder, semitransparent;
 string inputUserID, inputMedicineID;
 Text inputUserIDText, inputMedicineIDText;
-
-
+Texture makereq;
+Sprite makerequ;
+///dont't use this because it will break makeorder if used 
+Text Tsearchentered;
+string stringsearch;
+Text searchID[10], searchName[10], searchQuantity[10], searchCategory[10], searchPrice[10];
+Text intitialvalue;
+bool searchmakeRequest = false;
 // bool and texts for inout displays for edit info (Admin) page ..... don't use it anywhere else to avoid conflicts and glitches
 bool editactive1, editactive2, editactive3;
 Text editAtext1, editAtext2, editAtext3;
@@ -310,8 +316,8 @@ void logInInterface();
 void userPermissions();
 void adminPermissions();
 void editUserCredentials(int index);
-bool searchForMedicineByName();
-void searchForMedicineByCategory();
+bool searchForMedicineByName(string name);
+void searchForMedicineByCategory(string category);
 void makeOrder(string medicineIDS, string quantity, string payment_method);
 void makeOrderFunctional(StmakeOrder& makeorder);
 void showOrderReceipt(order lastOrder, string current_time);
@@ -344,6 +350,7 @@ void functioningAdminMenu();
 
 void DrawSearch(searchMedicine searchmedicine);
 void SetSearch(searchMedicine& searchmedicine);
+void functioningsearch();
 
 void DrawMakeOrder(StmakeOrder& makeorder);
 void SetMakeOrder(StmakeOrder& makeorder);
@@ -417,11 +424,11 @@ void DrawEditOrderInfo(EditOrderInfo edit);
 
 bool sign_up;
 bool show_order_receipt = 0;
-int page_num = 11;
+int page_num = 4;
 bool medicineEdit = 0;
 int main() {
-    dataForTestPurposes();
     saveAllDataToArr();
+    dataForTestPurposes();
     TextureAFonts();
     // sign_up = true;
 
@@ -602,7 +609,7 @@ int main() {
         }
 
     }
-
+    saveUserDataLocally();
 }
 //**********Functions***********//
 
@@ -618,7 +625,7 @@ void dataForTestPurposes() {
         "20 mg", true, "Gastrointestinal", 7.25, 80);
     medicines[3].initialize(4, "Atorvastatin",
         "Lowers high cholesterol and triglycerides", "20 mg",
-        true, "Lipid-lowering agent", 15.75, 30);
+        true, "Lipid-lowering", 15.75, 30);
     medicines[4].initialize(5, "Metformin", "Treats type 2 diabetes", "500 mg",
         true, "Antidiabetic", 8.99, 60);
     medicines[5].initialize(6, "Amoxicillin",
@@ -747,71 +754,118 @@ void adminPermissions() {
     cout << "14- View all previous orders\n";
 }
 
-bool searchForMedicineByName() {
-    string name;
-    cout << "Enter the medicine name\n";
-    cin >> name;
+bool searchForMedicineByName(string name) {
+    searchmakeRequest = false;
     int x = name.size();
     if (name[0] >= 'a' && name[0] <= 'z') {
         name[0] -= 32;
     }
     int i = 0;
     bool found = 0;
-    bool instock = 1;
+    float y = 300;
+    int emptytextarr = 0;
+    while (emptytextarr != 10) {
+        searchID[emptytextarr].setString("");
+        searchQuantity[emptytextarr].setString("");
+        searchPrice[emptytextarr].setString("");
+        searchName[emptytextarr].setString("");
+        searchCategory[emptytextarr].setString("");
+        emptytextarr++;
+    }
+    int textarrindex = 0;
     while (medicines[i].ID != 0) {
         string_view sv(medicines[i].name.c_str(), x);
         if (name == sv) {
-            cout << medicines[i].ID << " -- " << medicines[i].name << " -- "
-                << medicines[i].availability << " -- " << medicines[i].category
-                << " -- " << medicines[i].price << " -- "
-                << medicines[i].quantity_in_stock << '\n';
-            if (medicines[i].quantity_in_stock <= 0) {
-                instock = 0;
-            }
+            DrawSearch(searchmedicine);
+            float x = 20;
+            searchID[textarrindex].setFont(Calibri);
+            searchID[textarrindex].setString(to_string(medicines[i].ID));
+            searchID[textarrindex].setPosition(x, y);
+            x += 40;
+            searchName[textarrindex].setFont(Calibri);
+            searchName[textarrindex].setString(medicines[i].name);
+            searchName[textarrindex].setPosition(x, y);
+            x += 160;
+            searchCategory[textarrindex].setFont(Calibri);
+            searchCategory[textarrindex].setString(medicines[i].category);
+            searchCategory[textarrindex].setPosition(x, y);
+            x += 200;
+            searchPrice[textarrindex].setFont(Calibri);
+            searchPrice[textarrindex].setString(to_string(medicines[i].price));
+            searchPrice[textarrindex].setPosition(x, y);
+            x += 160;
+            searchQuantity[textarrindex].setFont(Calibri);
+            searchQuantity[textarrindex].setString(to_string(medicines[i].quantity_in_stock));
+            searchQuantity[textarrindex].setPosition(x, y);
+            x += 80;
+            y += 40;
+            textarrindex++;
             found = 1;
         }
         i++;
     }
-    if (instock && found) {
+    if (found) {
         return 1;
     }
     else {
-        int amountrequested;
-        cout << "Enter the amount you need:\n";
-        cin >> amountrequested;
-        makeRequest(currentUser.username, name, amountrequested);
+        //int amountrequested;
+        searchmakeRequest = true;
+        return 0;
     }
 }
 
-void searchForMedicineByCategory() {
-    string category;
-    cin >> category;
+void searchForMedicineByCategory(string category) {
+    searchmakeRequest = false;
+    float y = 300;
+    int emptytextarr = 0;
+    while (emptytextarr != 10) {
+        searchID[emptytextarr].setString("");
+        searchQuantity[emptytextarr].setString("");
+        searchPrice[emptytextarr].setString("");
+        searchName[emptytextarr].setString("");
+        searchCategory[emptytextarr].setString("");
+        emptytextarr++;
+    }
+    int textarrindex = 0;
     bool found = false;
+    if (category[0] >= 'a' && category[0] <= 'z') {
+        category[0] -= 32;
+    }
     for (int i = 0; i < Size; i++) {
         if (category == medicines[i].category) {
-            cout << medicines[i].name << " -- " << medicines[i].ID << " -- "
-                << medicines[i].category << '\n';
+            DrawSearch(searchmedicine);
+            float x = 20;
+            searchID[textarrindex].setFont(Calibri);
+            searchID[textarrindex].setString(to_string(medicines[i].ID));
+            searchID[textarrindex].setPosition(x, y);
+            x += 40;
+            searchName[textarrindex].setFont(Calibri);
+            searchName[textarrindex].setString(medicines[i].name);
+            searchName[textarrindex].setPosition(x, y);
+            x += 160;
+            searchCategory[textarrindex].setFont(Calibri);
+            searchCategory[textarrindex].setString(medicines[i].category);
+            searchCategory[textarrindex].setPosition(x, y);
+            x += 200;
+            searchPrice[textarrindex].setFont(Calibri);
+            searchPrice[textarrindex].setString(to_string(medicines[i].price));
+            searchPrice[textarrindex].setPosition(x, y);
+            x += 160;
+            searchQuantity[textarrindex].setFont(Calibri);
+            searchQuantity[textarrindex].setString(to_string(medicines[i].quantity_in_stock));
+            searchQuantity[textarrindex].setPosition(x, y);
+            x += 80;
+            y += 40;
+            textarrindex++;
             found = true;
         }
     }
     if (found == false) {
-        cout << "there is no medicine meet this category\n";
-        int ifwant;
-        string medicineName;
-        int amountrequested;
-        cout << "Want to make a request?choose(any number for yes/ 0 for no)"
-            << endl;
-        cin >> ifwant;
-        if (ifwant != 0) {
-            cout << "Enter medicine name:\n";
-            cin >> medicineName;
-            cout << "Enter the amount you need:\n";
-            cin >> amountrequested;
-            makeRequest(currentUser.username, medicineName, amountrequested);
-        }
+        //int amountrequested;
+        searchmakeRequest = true;
     }
-}
 
+}
 // Convert date string to integers
 void parseDateString(const std::string& dateString, int& year, int& month,
     int& day) {
@@ -1323,6 +1377,7 @@ void TextureAFonts() {
     semitransparent.loadFromFile("Assets/receipt_back.png");
     price.loadFromFile("Assets/edit_price.png");
     quantity.loadFromFile("Assets/edit_quantity.png");
+    makereq.loadFromFile("Assets/request.png");
     // edit info images
     edit_info.edit_background.loadFromFile(
         "Assets/"
@@ -2351,7 +2406,153 @@ void SetSearch(searchMedicine& searchmedicine) {
     searchmedicine.resultTable.setScale(0.71, 0.49);
     searchmedicine.resultTable.setPosition(0, 254);
 }
+void functioningsearch()
+{
+    //setting stringsearch :: username
+    Tsearchentered.setFont(Calibri);
+    Tsearchentered.setScale(1.5, 1.5);
+    Tsearchentered.setFillColor(Color::Black);
+    Tsearchentered.setPosition(486.4, 185.5);
+    makerequ.setTexture(makereq);
+    makerequ.setScale(0.4, 0.4);
+    makerequ.setPosition(367, 590);
+    Text notfound;
+    notfound.setFont(Calibri);
+    notfound.setPosition(20, 300);
+    notfound.setString("NOT FOUND");
+    bool breaked = false;
+    while (window.isOpen()) {
 
+        window.clear();
+        DrawSearch(searchmedicine);
+        window.draw(Tsearchentered);
+        float x = 20, y = 260;
+        Text text;
+        text.setFont(Calibri);
+        text.setString("ID");
+        text.setPosition(x, y);
+        window.draw(text);
+        //40,160,200,160,80
+        x += 40;
+        text.setString("Name");
+        text.setPosition(x, y);
+        window.draw(text);
+        x += 160;
+        text.setString("Category");
+        text.setPosition(x, y);
+        window.draw(text);
+        x += 200;
+        text.setString("Price");
+        text.setPosition(x, y);
+        window.draw(text);
+        x += 160;
+        text.setString("Quantity");
+        text.setPosition(x, y);
+        window.draw(text);
+        x += 80;
+        int textindex = 0;
+        while (textindex != 10) {
+            window.draw(searchID[textindex]);
+            window.draw(searchName[textindex]);
+            window.draw(searchCategory[textindex]);
+            window.draw(searchQuantity[textindex]);
+            window.draw(searchPrice[textindex]);
+            textindex++;
+        }
+        if (searchmakeRequest) {
+            window.draw(makerequ);
+            window.draw(notfound);
+        }
+        window.display();
+
+        Event event;
+
+        while (window.pollEvent(event))
+        {
+            if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
+            {
+                window.close();
+            }
+            // Handle text input
+            if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
+
+                // Append the entered character to the first text display
+                if (stringsearch.size() < 20) {
+                    stringsearch += static_cast<char>(event.text.unicode);
+                    Tsearchentered.setString(stringsearch);
+                    window.draw(Tsearchentered);
+                    window.display();
+                }
+            }
+
+            // Handle backspace key
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace) {
+
+                // Delete the last character from the first text display
+                if (!stringsearch.empty()) {
+                    stringsearch.pop_back();
+                    Tsearchentered.setString(stringsearch);
+                    window.draw(Tsearchentered);
+                    window.display();
+                }
+            }
+
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+            {
+                window.close();
+            }
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+                // Check if the mouse click is inside the first text field
+
+                if (searchmedicine.byCategory.getGlobalBounds().contains(mousePos)) {
+                    searchForMedicineByCategory(stringsearch);
+                }
+
+            }
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+                // Check if the mouse click is inside the first text field
+
+                if (searchmedicine.byName.getGlobalBounds().contains(mousePos)) {
+                    searchForMedicineByName(stringsearch);
+                }
+
+            }
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+                // Check if the mouse click is inside the first text field
+
+                if (searchmedicine.byCategory.getGlobalBounds().contains(mousePos)) {
+                    searchForMedicineByCategory(stringsearch);
+                }
+
+            }
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+                // Check if the mouse click is inside the first text field
+
+                if (makerequ.getGlobalBounds().contains(mousePos)) {
+                    page_num = 2;
+                    breaked = true;
+                    break;
+                }
+            }
+        }
+        if (breaked) {
+            break;
+
+        }
+    }
+}
 void SetShowReceipt(showReceipt& showreceipt) {
     // setting showtable
     showreceipt.showTable.setTexture(showTable);
@@ -4319,7 +4520,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         break;
     case 4:
 
-        DrawSearch(searchmedicine);
+        functioningsearch();
         window.display();
 
         break;
