@@ -431,8 +431,10 @@ void SetEditOrderInfo(EditOrderInfo& edit);
 void DrawEditOrderInfo(EditOrderInfo edit);
 
 bool sign_up;
+
+int page_num  =  0;
 bool show_order_receipt = 0;
-int page_num = 0;
+
 bool medicineEdit = 0;
 int main() {
     saveAllDataToArr();
@@ -949,7 +951,7 @@ void showAllPreviousOrders(RenderWindow& window) {
     bool found_orders = false;  // to check if there were no orders regesitered for this user
 
 
-
+    //checking
     for (int i = 0; i < Size; i++) {
         if (orders[i].userID == currentUser.ID) {
             found_orders = true;
@@ -4632,7 +4634,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
     // this is a page switcher to decide which page should be displayed right now
     // don't forgot to put your function draw or you new full functional page
     // function here events such as buttons click should change page_num so the
-    // page shown would be changed
+    // page shown would be changed ;
     Event event;
     order lastorder = orders[1];  // this shoud be returned from makeorder when fully functional
 
