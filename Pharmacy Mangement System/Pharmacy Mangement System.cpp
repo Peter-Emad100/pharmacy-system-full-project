@@ -432,7 +432,7 @@ void DrawEditOrderInfo(EditOrderInfo edit);
 
 bool sign_up;
 bool show_order_receipt = 0;
-int page_num = 9;
+int page_num = 0;
 bool medicineEdit = 0;
 int main() {
     saveAllDataToArr();
