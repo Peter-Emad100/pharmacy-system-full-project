@@ -419,6 +419,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
 void Set_EditInfo_User(Edit_Info& edit_info);
 void Draw_EditInfo_User(Edit_Info& edit_info);
 void EditInfo_User_Functional(Edit_Info& edit_info);
+String trackorder(order orders[], int orderid);
 
 
 
@@ -431,7 +432,7 @@ void DrawEditOrderInfo(EditOrderInfo edit);
 
 bool sign_up;
 bool show_order_receipt = 0;
-int page_num = 0;
+int page_num = 9;
 bool medicineEdit = 0;
 int main() {
     saveAllDataToArr();
@@ -671,13 +672,13 @@ void dataForTestPurposes() {
 
     //--------------------------------------------------------------------------------------------------------------------------------------------------------
     int medicine1[] = { 1, 2, 3, 0 };
-    orders[0].initialize(1, "2024-03-27", medicine1, 500.0, "2024-03-27", 1,
+    orders[0].initialize(0, "2024-03-27", medicine1, 500.0, "2024-03-27", 1,
         false);
     int medicine2[] = { 4, 5, 0 };
-    orders[1].initialize(2, "2024-03-28", medicine2, 300.0, "2024-03-28", 2,
+    orders[1].initialize(1, "2024-03-28", medicine2, 300.0, "2024-03-28", 2,
         true);
     int medicine3[] = { 9, 4, 5, 7, 0 };
-    orders[2].initialize(3, "2024-03-29", medicine3, 3000.0, "2024-03-29", 3,
+    orders[2].initialize(2, "2024-03-29", medicine3, 3000.0, "2024-03-29", 3,
         true);
 }
 
@@ -923,7 +924,9 @@ void makeRequest(string _username, string _medicineName, int _amountReq) {
     }
 }
 
-void showAllPreviousOrders() {
+void showAllPreviousOrders(RenderWindow& window) {
+
+    drawShowAllOrders(ShowAllOrders);
     for (int i = 0; i < Size; i++) {  // checking for the current user ID to be
         // able to get his/her orders using ID
         if (currentUser.username == users[i].username) {
@@ -931,20 +934,38 @@ void showAllPreviousOrders() {
             break;
         }
     }
+    String medicine = "";
 
     cout << "Your previous orders: \n";
     cout << "---------------------\n";
     int num_order = 1;  // to display list of numbered orders
-    bool found_orders =
-        false;  // to check if there were no orders regesitered for this user
+
+    string ordersText;
+    ordersText += "Your previous orders:\n";
+    String conc = "", name = "";
+
+    String delivered = "";
+
+    bool found_orders = false;  // to check if there were no orders regesitered for this user
+
+
+
     for (int i = 0; i < Size; i++) {
         if (orders[i].userID == currentUser.ID) {
             found_orders = true;
             cout << "Order number (" << num_order << ") : \n";
+
             cout << "-------------------\n";
             cout << "Date of order: " << orders[i].orderDate << "\n";
             cout << "Ship date: " << orders[i].shipDate << "\n";
 
+
+
+            if (orders[i].orderID != 0) {
+                ordersText += "Order number: " + to_string(orders[i].orderID) + "\n";
+                ordersText += "Date of order     ship date         total price \n";
+
+            }
             // printing out medicine id
 
             cout << "Medicine ID: ";
@@ -963,13 +984,38 @@ void showAllPreviousOrders() {
             for (int i = 0; i < Size; i++) {
                 if (medicines[i].ID == currentID) {
                     cout << "Name of the medicine: " << medicines[i].name << "\n";
-                    cout << "concentraion of the medicine" << medicines[i].concentration
-                        << "\n";
+
+
+                    cout << "concentraion of the medicine" << medicines[i].concentration << "\n";
+
                     break;
                 }
             }
 
+
+            for (int k = 0; k < 3; k++) {
+                if (orders[i].orderID != 0) {
+                    name += (medicines[orders[i].medicine_ID[k]].name) + "    " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
+                }
+                if (k == 2) {
+                    ordersText += "\n";
+                }
+            }
+
+
+
             cout << "Total price: " << orders[i].totalPrice << "\n";
+
+            if (orders[i].orderID != 0) {
+
+
+                ordersText += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n\n";
+                ordersText += "Name                Conc\n";
+                ordersText += name + "\n";
+                delivered = trackorder(orders, orders[i].orderID);
+
+            }
+
             num_order++;
         }
     }
@@ -977,6 +1023,33 @@ void showAllPreviousOrders() {
         cout << "You have no previous orders \n";
     }
     cout << "------------------------------------------ \n ";
+    // Example of rendering text in SF
+
+    Font font = Calibri;
+    Text text, text2;
+    text.setFont(font);
+    text.setCharacterSize(24);
+    text.setFillColor(sf::Color::White);
+
+    // Position the text
+    text.setPosition(70, 210);
+
+    text2.setFont(font);
+    text2.setCharacterSize(28);
+    text2.setFillColor(sf::Color::White);
+
+
+    text2.setPosition(600, 400);
+
+
+
+
+
+    text.setString(ordersText);
+    text2.setString(delivered);
+    window.draw(text2);
+    // Draw text to window
+    window.draw(text);
 }
 
 
@@ -1217,28 +1290,39 @@ bool removeMedicine(int medID) {
 }
 
 
-void trackorder(order orders[]) {
+String trackorder(order orders[], int orderid) {
     bool orderfound = false;
-    int orderid = -1;
-    cout << "enter id : ";
-    cin >> orderid;
-    for (size_t i = 0; i < 3; i++) {
-        if (orderid == orders[i].orderID) {
-            if (orders[i].orderState == 0) {
-                cout << "OrderNotDelivered" << endl;
 
+
+    cout << "enter id : ";
+    String orderstate = "";
+    for (size_t i = 0; i < 3; i++) {
+        cout << orders[i].orderID;
+        if (orderid == orders[i].orderID) {
+            cout << orders[i].orderID;
+            if (orders[i].orderState == 0) {
+
+                cout << "OrderNotDelivered" << endl;
+                orderstate = "OrderNotDelivered";
             }
             else {
                 cout << "OrderDelivered" << endl;
+                orderstate = "OrderDelivered";
             }
             orderfound = true;
+            break;
         }
     }
     if (orderfound != true) {
         cout << "order not found enter another id " << endl;
-        trackorder(orders);
+        trackorder(orders, orderid);
     }
+    return orderstate;
 }
+
+
+
+
 
 void manage_orders(order orders[Size]) {
     int ID, indx;
@@ -4589,7 +4673,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         makeOrderFunctional(makeorder);
         break;
     case 9:
-        drawShowAllOrders(ShowAllOrders);
+        showAllPreviousOrders(window);
         window.display();
         break;
     case 10:
