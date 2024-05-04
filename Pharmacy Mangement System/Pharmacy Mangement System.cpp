@@ -10,7 +10,7 @@
 #include <string>
 #include <string_view>
 #include <vector>
-
+#include <SFML/System/Clock.hpp>
 #include "SaveData.h"
 using namespace std;
 using namespace sf;
@@ -65,6 +65,13 @@ bool searchmakeRequest = false;
 bool editactive1, editactive2, editactive3;
 Text editAtext1, editAtext2, editAtext3;
 string editAdisplay1, editAdisplay2, editAdisplay3;
+
+bool editUactive;
+Text editUtext1, editUtext2;
+string editUdisplay1, editUdisplay2;
+
+const Time displayDuration = milliseconds(5000);
+
 
 struct medicine {
     int ID;
@@ -424,7 +431,7 @@ void DrawEditOrderInfo(EditOrderInfo edit);
 
 bool sign_up;
 bool show_order_receipt = 0;
-int page_num = 4;
+int page_num = 0;
 bool medicineEdit = 0;
 int main() {
     saveAllDataToArr();
@@ -2601,6 +2608,31 @@ void Set_EditInfo_User(Edit_Info& edit_info) {
     edit_info.valuefield2.setTexture(textbox);
     edit_info.valuefield2.setScale(0.6, 0.4);
     edit_info.valuefield2.setPosition(150, 440);
+
+    // setting display1 :: addresse
+
+    editUtext1.setFont(Calibri);
+
+    editUtext1.setScale(1, 1);
+
+    editUtext1.setPosition(200, 300);
+
+    editUtext1.setFillColor(Color::Black);
+
+    editUtext1.setString(editUdisplay1);
+
+    // settind display2 :: phone num
+
+    editUtext2.setFont(Calibri);
+
+    editUtext2.setScale(1, 1);
+
+    editUtext2.setPosition(200, 450);
+
+    editUtext2.setFillColor(Color::Black);
+
+    editUtext2.setString(editUdisplay2);
+
 }
 void Draw_EditInfo_User(Edit_Info& edit_info) {
     window.draw(edit_info.background);
@@ -2698,17 +2730,10 @@ void Set_EditInfo_Admin(Edit_Info& edit_info) {
     edit_info.wrng_id.setPosition(280, 205);
 }
 void Draw_EditInfo_Admin(Edit_Info& edit_info) {
-    //   window.draw(edit_info.background);
-      // window.draw(edit_info.changeAddress);
-       //window.draw(edit_info.changePhone);
-       //window.draw(edit_info.valuefield1);
-      // window.draw(edit_info.valuefield2);
-       //window.draw(edit_info.valuefield3);
-       //window.draw(edit_info.input_id);
-       //window.draw(edit_info.confirm);
+
     int userIndex = 0;
-    // must be removed later on
-    currentUser.his_role = user::Admin;
+
+
     Event event;
     while (window.isOpen()) {
         window.clear();
@@ -2723,137 +2748,170 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
         window.draw(editAtext1);
         window.draw(editAtext2);
         window.draw(editAtext3);
-        window.draw(edit_info.wrng_id);
+
         window.display();
         while (window.pollEvent(event)) {
-         
+
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
             {
                 window.close();
             }
-            // draws buttons with respect to the role of that user
 
-            if (currentUser.his_role == user::User) {
-                window.draw(edit_info.makeUserGreen);
-                window.draw(edit_info.makeAdminRed);
-                window.display();
 
-                Vector2i mousePosition = Mouse::getPosition(window);
+            Vector2i mousePosition = Mouse::getPosition(window);
 
-                if (edit_info.makeAdminRed.getGlobalBounds().contains(
-                    static_cast<Vector2f>(mousePosition))) {
-                    currentUser.his_role = user::Admin;
-                    users[userIndex].his_role = user::Admin;
+
+
+
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+                // Check if the mouse click is inside the first text field
+                if (edit_info.valuefield1.getGlobalBounds().contains(mousePos)) {
+                    editactive1 = true;
+                    editactive2 = false;
+                    editactive3 = false;
+                }
+                else if (edit_info.valuefield2.getGlobalBounds().contains(mousePos)) {
+                    editactive1 = false;
+                    editactive2 = true;
+                    editactive3 = false;
+                }
+                else if (edit_info.valuefield3.getGlobalBounds().contains(mousePos)) {
+                    editactive1 = false;
+                    editactive2 = false;
+                    editactive3 = true;
                 }
             }
-            if (currentUser.his_role == user::Admin) {
-                window.draw(edit_info.makeAdminGreen);
-                window.draw(edit_info.makeUserRed);
-                window.display();
-
-                Vector2i mousePosition = Mouse::getPosition(window);
-
-                if (edit_info.makeUserRed.getGlobalBounds().contains(
-                    static_cast<Vector2f>(mousePosition))) {
-                    currentUser.his_role = user::User;
-                    users[userIndex].his_role = user::User;
+            if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
+                if (editactive1)
+                {
+                    if (editAdisplay1.size() < 20) {
+                        editAdisplay1 += static_cast<char>(event.text.unicode);
+                        editAtext1.setString(editAdisplay1);
+                        window.draw(editAtext1);
+                        window.display();
+                    }
+                }
+                else if (editactive2)
+                {
+                    if (editAdisplay2.size() < 20) {
+                        editAdisplay2 += static_cast<char>(event.text.unicode);
+                        editAtext2.setString(editAdisplay2);
+                        window.draw(editAtext2);
+                        window.display();
+                    }
+                }
+                else if (editactive3)
+                {
+                    if (editAdisplay3.size() < 11) {
+                        if (event.text.unicode >= 48 && event.text.unicode <= 57)
+                        {
+                            editAdisplay3 += static_cast<char>(event.text.unicode);
+                            editAtext3.setString(editAdisplay3);
+                            window.draw(editAtext3);
+                            window.display();
+                        }
+                    }
                 }
             }
-        }
-        if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-            Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
-            // Check if the mouse click is inside the first text field
-            if (edit_info.valuefield1.getGlobalBounds().contains(mousePos)) {
-                editactive1 = true;
-                editactive2 = false;
-                editactive3 = false;
-            }
-            else if (edit_info.valuefield2.getGlobalBounds().contains(mousePos)) {
-                editactive1 = false;
-                editactive2 = true;
-                editactive3 = false;
-            }
-            else if (edit_info.valuefield3.getGlobalBounds().contains(mousePos)) {
-                editactive1 = false;
-                editactive2 = false;
-                editactive3 = true;
-            }
-        }
-        if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
-            if (editactive1)
-            {
-                if (editAdisplay1.size() < 20) {
-                    editAdisplay1 += static_cast<char>(event.text.unicode);
-                    editAtext1.setString(editAdisplay1);
-                    window.draw(editAtext1);
-                    window.display();
+            // deleting characters -> backspace
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace) {
+                if (editactive1) {
+                    // Delete the last character from the first text display
+                    if (!editAdisplay1.empty()) {
+                        editAdisplay1.pop_back();
+                        editAtext1.setString(editAdisplay1);
+                        window.draw(editAtext1);
+                        window.display();
+                    }
                 }
-            }
-            else if (editactive2)
-            {
-                if (editAdisplay2.size() < 20) {
-                    editAdisplay2 += static_cast<char>(event.text.unicode);
-                    editAtext2.setString(editAdisplay2);
-                    window.draw(editAtext2);
-                    window.display();
+                else if (editactive2)
+                {
+                    if (!editAdisplay2.empty()) {
+                        editAdisplay2.pop_back();
+                        editAtext2.setString(editAdisplay2);
+                        window.draw(editAtext2);
+                        window.display();
+                    }
                 }
-            }
-            else if (editactive3)
-            {
-                if (editAdisplay3.size() < 11) {
-                    if (event.text.unicode >= 48 && event.text.unicode <= 57)
-                    {
-                        editAdisplay3 += static_cast<char>(event.text.unicode);
+                else if (editactive3)
+                {
+                    if (!editAdisplay3.empty()) {
+                        editAdisplay3.pop_back();
                         editAtext3.setString(editAdisplay3);
                         window.draw(editAtext3);
                         window.display();
                     }
                 }
             }
-        }
-        // deleting characters -> backspace
-        if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace) {
-            if (editactive1) {
-                // Delete the last character from the first text display
-                if (!editAdisplay1.empty()) {
-                    editAdisplay1.pop_back();
-                    editAtext1.setString(editAdisplay1);
-                    window.draw(editAtext1);
-                    window.display();
+            Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+            if (edit_info.confirm.getGlobalBounds().contains((mousePos))) {
+                // Loop through the users until a user with userID = 0 is found,
+           // indicating that there are no more users in our database
+                bool found=false;
+                while (users[userIndex].ID != 0) {
+                    found = false;
+                    if (users[userIndex].username == editAdisplay3) {
+                        found = true;
+                        break;
+                    }
+                    userIndex++;
                 }
-            }
-            else if (editactive2)
-            {
-                if (!editAdisplay2.empty()) {
-                    editAdisplay2.pop_back();
-                    editAtext2.setString(editAdisplay2);
-                    window.draw(editAtext2);
-                    window.display();
+               
+                Clock clock;
+                if (!found) {
+                    
+                    clock.restart();
+                    Time elapsedTime = clock.getElapsedTime();
+                    while (elapsedTime < displayDuration) {
+                        window.draw(edit_info.wrng_id);
+                        elapsedTime = clock.getElapsedTime();
+                    }
+                 
+                    
                 }
-            }
-            else if (editactive3)
-            {
-                if (!editAdisplay3.empty()) {
-                    editAdisplay3.pop_back();
-                    editAtext3.setString(editAdisplay3);
-                    window.draw(editAtext3);
-                    window.display();
+                if (found) {
+                    // draws buttons with respect to the role of that user
+
+                    Vector2i mousePosition = Mouse::getPosition(window);
+
+                    if (edit_info.changeUser.getGlobalBounds().contains(
+                        static_cast<Vector2f>(mousePosition))) {
+                        users[userIndex].username = editAdisplay1;
+                    }
+                    if (edit_info.changePass.getGlobalBounds().contains(
+                        static_cast<Vector2f>(mousePosition))) {
+                        users[userIndex].password = editAdisplay2;
+                    }
+
+
+                    while (users[userIndex].his_role == user::User) {
+
+                        window.draw(edit_info.makeUserGreen);
+                        window.draw(edit_info.makeAdminRed);
+                        window.display();
+
+                        // change user to admin
+                        if (edit_info.makeAdminRed.getGlobalBounds().contains(
+                            static_cast<Vector2f>(mousePosition))) {
+                            users[userIndex].his_role = user::Admin;
+
+                        }
+                    }
+
+                    while (users[userIndex].his_role == user::Admin) {
+                        window.draw(edit_info.makeAdminGreen);
+                        window.draw(edit_info.makeUserRed);
+                        window.display();
+
+                        // change admin to user
+                        if (edit_info.makeUserRed.getGlobalBounds().contains(
+                            static_cast<Vector2f>(mousePosition))) {
+                            users[userIndex].his_role = user::User;
+
+                        }
+                    }
                 }
-            }
-        }
-        Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
-        if (edit_info.confirm.getGlobalBounds().contains((mousePos))) {
-            // Loop through the users until a user with userID = 0 is found,
-       // indicating that there are no more users in our database
-            bool found = false;
-            while (users[userIndex].ID != 0) {
-                if (users[userIndex].username == currentUser.username) {
-                    found = true;
-                    break;
-                }
-                userIndex++;
-            }
-            if (!found) {
             }
         }
     }
@@ -3828,146 +3886,135 @@ void functioning_manageMedicine()
 void editUserCredentials(int index)
 
 {
-    // setting display1 :: addresse
+    while (window.isOpen()) {
 
-    displaytext1.setFont(Calibri);
+        window.clear();
 
-    displaytext1.setScale(1, 1);
+        Draw_EditInfo_User(edit_info);
 
-    displaytext1.setPosition(200, 300);
+        window.draw(editUtext1);
+        window.draw(editUtext2);
+        window.display();
 
-    displaytext1.setFillColor(Color::Black);
+        Event event;
 
-    displaytext1.setString(display1);
+        while (window.pollEvent(event)) {
+            // Handle mouse click
 
-    // settind display2 :: phone num
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+            {
+                window.close();
+            }
+            Vector2f mousePos =
+                window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
 
-    displaytext2.setFont(Calibri);
+            if (event.type == Event::MouseButtonPressed &&
+                event.mouseButton.button == Mouse::Left) {
+                // Check if the mouse click is inside the first text field
 
-    displaytext2.setScale(1, 1);
+                if (edit_info.valuefield1.getGlobalBounds().contains(mousePos)) {
+                    editUactive = true;
 
-    displaytext2.setPosition(200, 450);
+                }
 
-    displaytext2.setFillColor(Color::Black);
+                // Check if the mouse click is inside the second text field
 
-    displaytext2.setString(display2);
-
-    TextureAFonts();
-
-    window.draw(displaytext1);
-
-    window.draw(displaytext2);
-
-    window.display();
-
-    Event event;
-
-    if (window.pollEvent(event)) {
-        // Handle mouse click
-
-        Vector2f mousePos =
-            window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
-
-        if (event.type == Event::MouseButtonPressed &&
-            event.mouseButton.button == Mouse::Left) {
-            // Check if the mouse click is inside the first text field
-
-            if (edit_info.valuefield1.getGlobalBounds().contains(mousePos)) {
-                activeDisplay = true;
-
+                else if (edit_info.valuefield2.getGlobalBounds().contains(mousePos)) {
+                    editUactive = false;
+                }
             }
 
-            // Check if the mouse click is inside the second text field
+            // Handle text input
 
-            else if (edit_info.valuefield2.getGlobalBounds().contains(mousePos)) {
-                activeDisplay = false;
+
+
+            if (event.type == Event::TextEntered && std::isprint(event.text.unicode)) {
+                if (editUactive) {
+                    // Append the entered character to the first text display
+
+                    if (editUdisplay1.size() < 20) {
+                        editUdisplay1 += static_cast<char>(event.text.unicode);
+                        editUtext1.setString(editUdisplay1);
+
+
+                    }
+
+                    if (edit_info.changeAddress.getGlobalBounds().contains(mousePos)) {
+                        users[index].address = editUdisplay1;
+                    }
+                    window.draw(editUtext1);
+                    window.display();
+                }
+
+                else {
+                    // Append the entered character to the second text display
+
+                    if (editUdisplay2.size() < 20) {
+                        editUdisplay2 += static_cast<char>(event.text.unicode);
+
+                        editUtext2.setString(editUdisplay2);
+
+                        window.draw(editUtext2);
+                        window.display();
+
+                    }
+
+                    if (edit_info.changePhone.getGlobalBounds().contains(mousePos)) {
+                        users[index].phone = editUdisplay2;
+                    }
+                }
+                // Debugging: Print the active display status
+
+                cout << "Active display: " << (editUactive ? "display1" : "display2")
+                    << endl;
             }
-        }
+            // Handle backspace key
 
-        // Handle text input
+            if (event.type == Event::KeyPressed &&
+                event.key.code == Keyboard::BackSpace) {
+                if (editUactive) {
+                    // Delete the last character from the first text display
 
-        // Handle text input
+                    if (!editUdisplay1.empty()) {
+                        editUdisplay1.pop_back();
 
-        if (event.type == Event::TextEntered && std::isprint(event.text.unicode)) {
-            if (activeDisplay) {
-                // Append the entered character to the first text display
+                        editUtext1.setString(editUdisplay1);
 
-                if (display1.size() < 20) {
-                    display1 += static_cast<char>(event.text.unicode);
+                        window.draw(editUtext1);
+                        window.display();
 
-                    displaytext1.setString(display1);
+                    }
 
-                    users[index].address = display1;
+                    if (edit_info.changeAddress.getGlobalBounds().contains(mousePos)) {
+                        users[index].address = editUdisplay1;
+                    }
+
                 }
 
-                if (edit_info.changeAddress.getGlobalBounds().contains(mousePos)) {
-                    users[index].address = display1;
-                }
+                else {
+                    // Delete the last character from the second text display
 
-            }
+                    if (!editUdisplay2.empty()) {
+                        editUdisplay2.pop_back();
 
-            else {
-                // Append the entered character to the second text display
+                        editUtext2.setString(editUdisplay2);
 
-                if (display2.size() < 20) {
-                    display2 += static_cast<char>(event.text.unicode);
+                        window.draw(editUtext2);
+                        window.display();
 
-                    displaytext2.setString(display2);
+                    }
 
-                    users[index].phone = display2;
-                }
-
-                if (edit_info.changePhone.getGlobalBounds().contains(mousePos)) {
-                    users[index].phone = display2;
-                }
-            }
-            // Debugging: Print the active display status
-
-            cout << "Active display: " << (activeDisplay ? "display1" : "display2")
-                << endl;
-        }
-        // Handle backspace key
-
-        if (event.type == Event::KeyPressed &&
-            event.key.code == Keyboard::BackSpace) {
-            if (activeDisplay) {
-                // Delete the last character from the first text display
-
-                if (!display1.empty()) {
-                    display1.pop_back();
-
-                    displaytext1.setString(display1);
-
-                    users[index].address = display1;
-                }
-
-                if (edit_info.changeAddress.getGlobalBounds().contains(mousePos)) {
-                    users[index].address = display1;
-                }
-
-            }
-
-            else {
-                // Delete the last character from the second text display
-
-                if (!display2.empty()) {
-                    display2.pop_back();
-
-                    displaytext2.setString(display2);
-
-                    users[index].phone = display2;
-                }
-
-                if (edit_info.changePhone.getGlobalBounds().contains(mousePos)) {
-                    users[index].phone = display2;
+                    if (edit_info.changePhone.getGlobalBounds().contains(mousePos)) {
+                        users[index].phone = editUdisplay2;
+                    }
                 }
             }
         }
+
+
+        saveUserDataLocally();
+
     }
-
-    //   remove comments for save data function later on
-    // saveUserDataLocally();
-    // page_num = 2;
 }
 
 void SetMedicineEdit(MedicineInfo& medicineinfo)
@@ -4534,7 +4581,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         break;
     case 7:
 
-        Draw_EditInfo_User(edit_info);
+        editUserCredentials(currentUser_Index);
         window.display();
 
         break;
