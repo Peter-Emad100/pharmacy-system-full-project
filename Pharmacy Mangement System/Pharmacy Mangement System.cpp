@@ -1141,20 +1141,23 @@ void addUser(string username, string address, string email, string password, str
 }
 void addNewMedicine(string name, string concentraiton, string catagory, string description, string price, string quantity)
 {
+    medicine newMedicine;
     int id = medicine_data + 1;
 
-    medicines[id].name = name;
-    medicines[id].price = stof(price);
-    medicines[id].category = catagory;
-    medicines[id].quantity_in_stock = stoi(quantity);
-    medicines[id].concentration = medConcSt;
-    medicines[id].description = description;
+    newMedicine.name = name;
+    newMedicine.price = stof(price);
+    newMedicine.category = catagory;
+    newMedicine.quantity_in_stock = stoi(quantity);
+    newMedicine.concentration = medConcSt;
+    newMedicine.description = description;
+    newMedicine.availability = true;
+    newMedicine.ID = id;
 
+    medicines[id-1] = newMedicine;
 
-    medicines[id].ID = medicine_data + 1;
     medicine_data++;
 
-    saveAllDataLocally();
+    saveMedicineDataLocally();
 }
 
 
