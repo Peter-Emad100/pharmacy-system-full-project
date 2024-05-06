@@ -68,7 +68,7 @@ void saveMedicineDataLocally() {
 	{
 		file << "sep=|\n";
 		file << "ID" << '|' << "Name" << '|' << "Category" << '|' << "Description" << '|' << "Concentration" << '|' << "Quantity in stock" << '|' << "Availabilty" << '|' << "Price\n";
-		for (int i = 0; i < 10; i++)
+		for (int i = 0; i < medicine_data; i++)
 		{
 			file << medicines[i].ID << '|';
 			file << medicines[i].name << '|';
