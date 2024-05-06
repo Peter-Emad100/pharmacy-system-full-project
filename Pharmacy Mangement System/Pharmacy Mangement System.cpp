@@ -27,7 +27,9 @@ bool activeS1 = true, activeS2 = false, activeS3 = false, activesS4 = false,
 activeS5 = false;
 bool IsHeAUser = true;
 bool issignin = false; //check if i need to switch to sign in page
-RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Fullscreen);
+bool doneAdding = false;//to add
+
+RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Resize|Style::Titlebar);
 Font Calibri;
 Texture BackgroundSign;
 Texture ButtonTexture, TextTexture, darkbox, textbox, headerbox, Signbox,
@@ -71,6 +73,15 @@ Text editUtext1, editUtext2;
 string editUdisplay1, editUdisplay2;
 
 const Time displayDuration = milliseconds(5000);
+
+
+bool  usernameSc, addressSc, emailSc, phoneSc, passwordSc;
+string usernameSt, addressSt, emailSt, phoneSt, passwordSt;
+Text usernameDis, addressDis, emailDis, phoneDis, passwordDis;
+
+bool medNameSc, medCataSc, medConcSc, medPriceSc, medQuantitySc;
+string medNameSt, medCataSt, medConcSt, medPriceSt, medQuantitySt;
+Text medNameDis, medCataDis, medConcDis, medPriceDis, medQuantityDis;
 
 
 struct medicine {
@@ -371,9 +382,11 @@ void functioningSignUp();
 
 void setAddMedicine(AddMedicine& addmedicine);
 void drawAddMedicine(AddMedicine& addmedicine);
+void functioningAddMedicine();
 
 void setAddusers(AddUsers& adduser);
 void drawAddusers(AddUsers& adduser);
+void functioningAddUser();
 
 void SetMedicineEdit(MedicineInfo& medicineinfo);
 void MedicineEditShow();
@@ -3014,6 +3027,39 @@ void setAddMedicine(AddMedicine& addmedicine)
 
     addmedicine.optionsbutton.setPosition(590, 630);
 
+    //texts
+
+    medNameDis.setFont(Calibri);
+    medNameDis.setScale(0.6, 0.6);
+    medNameDis.setPosition(460, 180);
+    medNameDis.setFillColor(Color::Black);
+    medNameDis.setCharacterSize(55);
+
+    medCataDis.setFont(Calibri);
+    medCataDis.setScale(0.6, 0.6);
+    medCataDis.setPosition(460, 270);
+    medCataDis.setFillColor(Color::Black);
+    medCataDis.setCharacterSize(55);
+
+
+    medConcDis.setFont(Calibri);
+    medConcDis.setScale(0.6, 0.6);
+    medConcDis.setPosition(460, 360);
+    medConcDis.setFillColor(Color::Black);
+    medConcDis.setCharacterSize(55);
+
+    medPriceDis.setFont(Calibri);
+    medPriceDis.setScale(0.6, 0.6);
+    medPriceDis.setPosition(460, 450);
+    medPriceDis.setFillColor(Color::Black);
+    medPriceDis.setCharacterSize(55);
+
+    medQuantityDis.setFont(Calibri);
+    medQuantityDis.setScale(0.6, 0.6);
+    medQuantityDis.setPosition(460, 540);
+    medQuantityDis.setFillColor(Color::Black);
+    medQuantityDis.setCharacterSize(55);
+
     // textboxes
 
     addmedicine.medNametextbox.setTexture(textboxTex);
@@ -3165,6 +3211,220 @@ void drawAddMedicine(AddMedicine& addmedicine)
 
     window.draw(addmedicine.optionsbutton);
 }
+void functioningAddMedicine()
+{
+    AddMedicine addmed;
+    bool brokenwindow = false;
+    setAddMedicine(addmedicine);
+    int id = medicine_data + 1;
+
+    while (window.isOpen())
+    {
+        if (brokenwindow)
+        {
+            break;
+        }
+       
+        drawAddMedicine(addmedicine);
+        window.draw(medNameDis);
+        window.draw(medCataDis);
+        window.draw(medPriceDis);
+        window.draw(medQuantityDis);
+        window.draw(medConcDis);
+
+        window.display();
+
+        Event evnt;
+        while (window.pollEvent(evnt))
+        {
+
+            if (evnt.type == evnt.Closed)
+            {
+                window.close();
+            }
+            if (evnt.type == Event::MouseButtonPressed && evnt.mouseButton.button == Mouse::Left) {
+
+                Vector2f MousePosition = window.mapPixelToCoords({ evnt.mouseButton.x, evnt.mouseButton.y });
+
+                if (addmedicine.medNametextbox.getGlobalBounds().contains(MousePosition))
+                {
+
+                    medNameSc = true;
+                    medPriceSc = false;
+                    medCataSc = false;
+                    medConcSc = false;
+                    medQuantitySc = false;
+
+                }
+                if (addmedicine.medPricetextbox.getGlobalBounds().contains(MousePosition))
+                {
+
+                    medNameSc = false;
+                    medPriceSc = true;
+                    medCataSc = false;
+                    medConcSc = false;
+                    medQuantitySc = false;
+
+                }
+                if (addmedicine.medCatagorytextbox.getGlobalBounds().contains(MousePosition))
+                {
+
+                    medNameSc = false;
+                    medPriceSc = false;
+                    medCataSc = true;
+                    medConcSc = false;
+                    medQuantitySc = false;
+
+                }
+                if (addmedicine.medConcentrationtextbox.getGlobalBounds().contains(MousePosition))
+                {
+
+                    medNameSc = false;
+                    medPriceSc = false;
+                    medCataSc = false;
+                    medConcSc = true;
+                    medQuantitySc = false;
+
+                }
+                if (addmedicine.medQuantitytextbox.getGlobalBounds().contains(MousePosition))
+                {
+
+                    medNameSc = false;
+                    medPriceSc = false;
+                    medCataSc = false;
+                    medConcSc = false;
+                    medQuantitySc = true;
+
+                }
+
+                if (addmedicine.optionsbutton.getGlobalBounds().contains(MousePosition))
+                {
+                    //make input registere
+                    medicines[id].name = medNameSt;
+                    medicines[id].price = stoi(medPriceSt);
+                    medicines[id].category = medCataSt;
+                    medicines[id].quantity_in_stock = stoi(medQuantitySt);
+                    medicines[id].concentration = medConcSt;
+                    medicines[id].ID = medicine_data + 1;
+                    medicine_data++;
+                    brokenwindow = true;
+                    page_num = 3;
+
+                }
+            }
+            if (evnt.type == Event::TextEntered && isprint(evnt.text.unicode)) {
+                if (medNameSc)
+                {
+                    if (medNameSt.size() < 20) {
+                        medNameSt += static_cast<char>(evnt.text.unicode);
+                        medNameDis.setString(medNameSt);
+                        window.draw(medNameDis);
+                        window.display();
+                    }
+                }
+                else if (medConcSc)
+                {
+                    if (medConcSt.size() < 11) {
+                        if (evnt.text.unicode >= 48 && evnt.text.unicode <= 57) {
+                            medConcSt += static_cast<char>(evnt.text.unicode);
+                            medConcDis.setString(medConcSt);
+                            window.draw(medConcDis);
+                            window.display();
+                        }
+
+                    }
+                }
+                else if (medCataSc)
+                {
+                    if (medCataSt.size() < 25) {
+                        medCataSt += static_cast<char>(evnt.text.unicode);
+                        medCataDis.setString(medCataSt);
+                        window.draw(medCataDis);
+                        window.display();
+                    }
+                }
+                else if (medPriceSc)
+                {
+                    if (medPriceSt.size() < 10) {
+                        medPriceSt += static_cast<char>(evnt.text.unicode);
+                        medPriceDis.setString(medPriceSt);
+                        window.draw(medPriceDis);
+                        window.display();
+                    }
+                }
+                else if (medQuantitySc)
+                {
+                    if (medQuantitySt.size() < 10) {
+                        if (evnt.text.unicode >= 48 && evnt.text.unicode <= 57) {
+                            medQuantitySt += static_cast<char>(evnt.text.unicode);
+                            medQuantityDis.setString(medQuantitySt);
+                            window.draw(medQuantityDis);
+                            window.display();
+                        }
+
+                    }
+                }
+            }
+
+
+            if (evnt.type == Event::KeyPressed && evnt.key.code == Keyboard::BackSpace) {
+                if (medNameSc) {
+                    // Delete the last character from the first text display
+                    if (!medNameSt.empty()) {
+                        medNameSt.pop_back();
+                        medNameDis.setString(medNameSt);
+                        window.draw(medNameDis);
+                        window.display();
+                    }
+                }
+                else if (medPriceSc)
+                {
+                    if (!medPriceSt.empty()) {
+                        medPriceSt.pop_back();
+                        medPriceDis.setString(medPriceSt);
+                        window.draw(medPriceDis);
+                        window.display();
+                    }
+                }
+                else if (medCataSc)
+                {
+                    if (!medCataSt.empty()) {
+                        medCataSt.pop_back();
+                        medCataDis.setString(medCataSt);
+                        window.draw(medCataDis);
+                        window.display();
+                    }
+                }
+                else if (medQuantitySc)
+                {
+                    if (!medQuantitySt.empty()) {
+                        medQuantitySt.pop_back();
+                        medQuantityDis.setString(medQuantitySt);
+                        window.draw(medQuantityDis);
+                        window.display();
+                    }
+                }
+                else if (medConcSc)
+                {
+                    if (!medConcSt.empty()) {
+                        medConcSt.pop_back();
+                        medConcDis.setString(medConcSt);
+                        window.draw(medConcDis);
+                        window.display();
+                    }
+                }
+
+            }
+
+
+        }
+        if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
+        {
+            window.close();
+        }
+
+    }
+}
 
 void setAddusers(AddUsers& adduser)
 
@@ -3222,6 +3482,35 @@ void setAddusers(AddUsers& adduser)
     adduser.phonetextbox.setPosition(450, 480);
 
     // texts for later
+    usernameDis.setFont(Calibri);
+    usernameDis.setScale(0.6, 0.6);
+    usernameDis.setPosition(460, 180);
+    usernameDis.setFillColor(Color::Black);
+    usernameDis.setCharacterSize(55);
+
+    addressDis.setFont(Calibri);
+    addressDis.setScale(0.6, 0.6);
+    addressDis.setPosition(460, 270);
+    addressDis.setFillColor(Color::Black);
+    addressDis.setCharacterSize(55);
+
+    emailDis.setFont(Calibri);
+    emailDis.setScale(0.6, 0.6);
+    emailDis.setPosition(460, 360);
+    emailDis.setFillColor(Color::Black);
+    emailDis.setCharacterSize(55);
+
+    passwordDis.setFont(Calibri);
+    passwordDis.setScale(0.6, 0.6);
+    passwordDis.setPosition(460, 450);
+    passwordDis.setFillColor(Color::Black);
+    passwordDis.setCharacterSize(55);
+
+    phoneDis.setFont(Calibri);
+    phoneDis.setScale(0.6, 0.6);
+    phoneDis.setPosition(460, 540);
+    phoneDis.setFillColor(Color::Black);
+    phoneDis.setCharacterSize(55);
 
     // username
 
@@ -3360,6 +3649,229 @@ void drawAddusers(AddUsers& adduser)
 
     window.draw(adduser.confirmationtext);
 }
+void functioningAddUser()
+{
+    AddUsers adduser;
+    setAddusers(adduser);
+    bool brokenwindow = false;
+    newUser.ID = user_data + 1;
+
+	while (window.isOpen())
+	{
+        if (brokenwindow)
+        {
+            break;
+        }
+     
+        drawAddusers(adduser);
+        window.draw(usernameDis);
+        window.draw(passwordDis);
+        window.draw(addressDis);
+        window.draw(phoneDis);
+        window.draw(emailDis);
+
+        window.display();
+
+		Event evnt;
+		while (window.pollEvent(evnt))
+		{
+            
+			if (evnt.type == evnt.Closed)
+			{
+				window.close();
+			}
+            if (evnt.type == Event::MouseButtonPressed && evnt.mouseButton.button == Mouse::Left) {
+
+                Vector2f MousePosition = window.mapPixelToCoords({ evnt.mouseButton.x, evnt.mouseButton.y });
+
+                if (adduser.usernametextbox.getGlobalBounds().contains(MousePosition))
+                {
+
+                    usernameSc = true;
+                    addressSc = false;
+                    emailSc = false;
+                    phoneSc = false;
+                    passwordSc = false;
+
+                }
+                if (adduser.addresstextbox.getGlobalBounds().contains(MousePosition))
+                {
+
+                    usernameSc = false;
+                    addressSc = true;
+                    emailSc = false;
+                    phoneSc = false;
+                    passwordSc = false;
+
+                }
+                if (adduser.emailtextbox.getGlobalBounds().contains(MousePosition))
+                {
+
+                    usernameSc = false;
+                    addressSc = false;
+                    emailSc = true;
+                    phoneSc = false;
+                    passwordSc = false;
+
+                }
+                if (adduser.phonetextbox.getGlobalBounds().contains(MousePosition))
+                {
+
+                    usernameSc = false;
+                    addressSc = false;
+                    emailSc = false;
+                    phoneSc = true;
+                    passwordSc = false;
+
+                }
+                if (adduser.passwordtextbox.getGlobalBounds().contains(MousePosition))
+                {
+
+                    usernameSc = false;
+                    addressSc = false;
+                    emailSc = false;
+                    phoneSc = false;
+                    passwordSc = true;
+
+                }
+                if (adduser.roleAdminbutton.getGlobalBounds().contains(MousePosition))
+                {
+                   // make rule of new user admin.
+                    newUser.his_role = user::Admin;
+                   
+                }
+                if (adduser.roleUserbutton.getGlobalBounds().contains(MousePosition))
+                {
+                    // make rule of new user a User.
+                    newUser.his_role = user::User;
+                }
+                if (adduser.optionsbutton.getGlobalBounds().contains(MousePosition))
+                {
+                    //make input registere
+                    newUser.username = usernameSt;
+                    newUser.address = addressSt;
+                    newUser.email = emailSt;
+                    newUser.password = passwordSt;
+                    newUser.phone = phoneSt;
+                    users[user_data+1].ID = newUser.ID;
+                    user_data++;
+                    brokenwindow = true;
+                    page_num = 3;
+
+                }
+            }
+            if (evnt.type == Event::TextEntered && isprint(evnt.text.unicode)) {
+                if (usernameSc)
+                {
+                    if (usernameSt.size() < 20) {
+                        usernameSt += static_cast<char>(evnt.text.unicode);
+                        usernameDis.setString(usernameSt);
+                        window.draw(usernameDis);
+                        window.display();
+                    }
+                }
+                else if (phoneSc)
+                {
+                    if (phoneSt.size() < 11) {
+                        if (evnt.text.unicode >= 48 && evnt.text.unicode <= 57)
+                        {
+                            phoneSt += static_cast<char>(evnt.text.unicode);
+                            phoneDis.setString(phoneSt);
+                            window.draw(phoneDis);
+                            window.display();
+                        }
+
+                    }
+                }
+                else if (emailSc)
+                {
+                    if (emailSt.size() < 20) {
+                        emailSt += static_cast<char>(evnt.text.unicode);
+                        emailDis.setString(emailSt);
+                        window.draw(emailDis);
+                        window.display();
+                    }
+                }
+                else if (addressSc)
+                {
+                    if (addressSt.size() < 100) {
+                        addressSt += static_cast<char>(evnt.text.unicode);
+                        addressDis.setString(addressSt);
+                        window.draw(addressDis);
+                        window.display();
+                    }
+                }
+                else if (passwordSc)
+                {
+                    if (passwordSt.size() < 20) {
+                        passwordSt += static_cast<char>(evnt.text.unicode);
+                        passwordDis.setString(passwordSt);
+                        window.draw(passwordDis);
+                        window.display();
+    
+                    }
+                }
+            }
+
+
+            if (evnt.type == Event::KeyPressed && evnt.key.code == Keyboard::BackSpace) {
+            if (usernameSc) {
+                // Delete the last character from the first text display
+                if (!usernameSt.empty()) {
+                    usernameSt.pop_back();
+                    usernameDis.setString(usernameSt);
+                    window.draw(usernameDis);
+                    window.display();
+                }
+            }
+            else if (addressSc)
+            {
+                if (!addressSt.empty()) {
+                    addressSt.pop_back();
+                    addressDis.setString(addressSt);
+                    window.draw(addressDis);
+                    window.display();
+                }
+            }
+            else if (emailSc)
+            {
+                if (!emailSt.empty()) {
+                    emailSt.pop_back();
+                    emailDis.setString(emailSt);
+                    window.draw(emailDis);
+                    window.display();
+                }
+            }
+            else if (passwordSc)
+            {
+                if (!passwordSt.empty()) {
+                    passwordSt.pop_back();
+                    passwordDis.setString(passwordSt);
+                    window.draw(passwordDis);
+                    window.display();
+                }
+            }
+            else if (phoneSc)
+            {
+                if (!phoneSt.empty()) {
+                    phoneSt.pop_back();
+                    phoneDis.setString(phoneSt);
+                    window.draw(phoneDis);
+                    window.display();
+                }
+            }
+
+            }
+           
+
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
+		{
+			window.close();
+		}
+
+	}
+}
 
 void EditInfo_User_Functional(Edit_Info& edit_info) {
     Event event;
@@ -3439,7 +3951,6 @@ void set_manageUser(manageUser& manage_user) {
     inputUserIDText.setString(inputUserID);
     inputUserIDText.setCharacterSize(40);
 }
-
 void draw_manageUser(manageUser manage_user) {
     window.draw(manage_user.background);
 
@@ -3460,9 +3971,6 @@ void draw_manageUser(manageUser manage_user) {
 
 
 }
-
-
-
 void functioning_manageUser()
 {
 
@@ -3881,8 +4389,6 @@ void set_manageMedicine(manageMedicine& manage_medicine) {
     inputMedicineIDText.setString(inputMedicineID);
     inputMedicineIDText.setCharacterSize(40);
 }
-
-
 
 
 void draw_manageMedicine(manageMedicine manage_medicine)
@@ -4695,6 +5201,15 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         DrawEditOrderInfo(editOrder);
         window.display();
         break;
+    case 14:
+        window.clear();
+        functioningAddUser();
+        window.display();
+        break;
+    case 15:
+        window.clear();
+        functioningAddMedicine();
+        window.display();
 
     }
 }
