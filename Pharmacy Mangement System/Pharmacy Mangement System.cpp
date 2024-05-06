@@ -75,6 +75,14 @@ bool editUactive;
 Text editUtext1, editUtext2;
 string editUdisplay1, editUdisplay2;
 
+// for edit order only
+string medn, medc, ordd, ords, priceee;
+
+// manage order
+bool order_display;
+Text orderId_text, orderPrice_text;
+string orderdisplay_Id, orderdisplay_Price;
+
 const Time displayDuration = milliseconds(5000);
 
 
@@ -323,6 +331,9 @@ struct EditOrderInfo {
     Text OrderID, OrderDetails, MedicineNme, MedicineConcentration, OrderDate,
         OrderState, TotalPrice;
     Text WantChange, OrderState2, TotalPrice2;
+    Texture confirm_button;
+    Sprite confirm;
+    Text medname, medconc, ordDate, ordstate, price;
 };
 EditOrderInfo editOrder;
 
@@ -447,6 +458,8 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info);
 void SetEditOrderInfo(EditOrderInfo& edit);
 void DrawEditOrderInfo(EditOrderInfo edit);
 
+
+
 bool sign_up;
 
 int page_num = 0;
@@ -486,6 +499,7 @@ int main() {
     set_managePayment(manage_payment);
     set_manageMedicine(manage_medicine);
     MedicineEditShow();
+    SetEditOrderInfo(editOrder);
     // functioningSignUp();
     // window display
 
@@ -1575,6 +1589,9 @@ void TextureAFonts() {
     manage_payment.confirm.loadFromFile("Assets/confirm.png");
 
     manage_payment.Delete.loadFromFile("Assets/delete.png");
+
+    //edit order page
+    editOrder.confirm_button.loadFromFile("Assets/confirm.png");
 }
 
 void DrawHeader(Header header) {
@@ -5033,13 +5050,13 @@ void SetEditOrderInfo(EditOrderInfo& edit) {
 
     // OrderId Text
     edit.OrderID.setFont(Calibri);
-    edit.OrderID.setPosition(660, 180);
+    edit.OrderID.setPosition(640, 180);
     edit.OrderID.setString("Order ID:");
 
     // OrderID TextBox
     edit.textboxID.setTexture(textbox);
     edit.textboxID.setScale(0.5, 0.4);
-    edit.textboxID.setPosition(790, 170);
+    edit.textboxID.setPosition(750, 170);
 
     // 1st WhiteBox
     edit.WhiteBox1.setTexture(WhiteBox);
@@ -5119,6 +5136,66 @@ void SetEditOrderInfo(EditOrderInfo& edit) {
     edit.changeButton2.setTexture(changeButton);
     edit.changeButton2.setScale(0.25, 0.25);
     edit.changeButton2.setPosition(990, 615);
+
+    //set text for ID
+    orderId_text.setFont(Calibri);
+    orderId_text.setScale(1, 1);
+    orderId_text.setPosition(180, 300);
+    orderId_text.setFillColor(Color::Black);
+    orderId_text.setString(orderdisplay_Id);
+    orderId_text.setPosition(800, 180);
+
+    //set text for changing price
+    orderPrice_text.setFont(Calibri);
+    orderPrice_text.setScale(1, 1);
+    orderPrice_text.setFillColor(Color::Black);
+    orderPrice_text.setString(orderdisplay_Price);
+    orderPrice_text.setPosition(850, 630);
+
+    // confirm button
+    edit.confirm.setTexture(edit.confirm_button);
+    edit.confirm.setScale(0.25, 0.24);
+    edit.confirm.setPosition(1120, 180);
+
+    //set text for medicine name
+    editOrder.medname.setFont(Calibri);
+    editOrder.medname.setScale(1, 1);
+    editOrder.medname.setPosition(950, 285);
+    editOrder.medname.setFillColor(Color::Black);
+
+
+
+    //set text for medicine conc
+    editOrder.medconc.setFont(Calibri);
+    editOrder.medconc.setScale(1, 1);
+    editOrder.medconc.setPosition(950, 325);
+    editOrder.medconc.setFillColor(Color::Black);
+    //editOrder.medconc.setString(orderdisplay);
+
+
+    //set text for order date
+    editOrder.ordDate.setFont(Calibri);
+    editOrder.ordDate.setScale(1, 1);
+    editOrder.ordDate.setPosition(950, 365);
+    editOrder.ordDate.setFillColor(Color::Black);
+    // editOrder.ordDate.setString(orderdisplay);
+
+
+     //set text for order state
+    editOrder.ordstate.setFont(Calibri);
+    editOrder.ordstate.setScale(1, 1);
+    editOrder.ordstate.setPosition(950, 405);
+    editOrder.ordstate.setFillColor(Color::Black);
+
+
+
+    //set text for total price
+    editOrder.price.setFont(Calibri);
+    editOrder.price.setScale(1, 1);
+    editOrder.price.setPosition(950, 445);
+    editOrder.price.setFillColor(Color::Black);
+    // editOrder.price.setString(orderdisplay);
+
 }
 void DrawEditOrderInfo(EditOrderInfo edit) {
     window.draw(edit.Background);
@@ -5139,7 +5216,9 @@ void DrawEditOrderInfo(EditOrderInfo edit) {
     window.draw(edit.TotalPrice);
     window.draw(edit.TotalPrice2);
     window.draw(edit.WantChange);
+    window.draw(edit.confirm);
 }
+
 
 void logInInterface(string username, string password) {
 
@@ -5416,7 +5495,219 @@ void makeOrder(string medicineIDS, string quantity, string payment_method) {
         showOrderReceipt(lastyorder, current_time);
     }
 }
+void manageOrder_functional() {
 
+    Event event;
+    bool found = false;
+    int index = 0;
+    while (window.isOpen()) {
+
+        window.clear();
+        DrawEditOrderInfo(editOrder);
+        window.draw(orderId_text);
+        window.draw(orderPrice_text);
+        window.draw(editOrder.medname);
+        window.draw(editOrder.medconc);
+        window.draw(editOrder.ordDate);
+        window.draw(editOrder.ordstate);
+        window.draw(editOrder.price);
+        window.display();
+
+        while (window.pollEvent(event)) {
+            // Handle mouse click
+
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+            {
+                window.close();
+            }
+
+
+
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+
+                // Check if the mouse click is inside the first text field
+
+                if (editOrder.textboxID.getGlobalBounds().contains(mousePos)) {
+
+                    order_display = true;
+                }
+
+                // Check if the mouse click is inside the second text field
+
+                if (editOrder.textBoxPrice.getGlobalBounds().contains(mousePos)) {
+
+                    order_display = false;
+                }
+
+                if (editOrder.confirm.getGlobalBounds().contains(mousePos)) {
+                    found = false;
+                    index = 0;
+
+
+                    while (index < Size) {
+                        //  found = false;
+                        if (to_string(orders[index].orderID) == orderdisplay_Id) {
+                            found = true;
+                            cout << "FOUND" << endl;
+                            break;
+                        }
+                        index++;
+                    }
+                }
+                if (found) {
+
+                    // getting order's data
+
+                    //cout << "here" << endl;
+                    for (int i = 0; i < Size; i++) {// med name , conc
+
+                        if (orders[index].medicine_ID[0] == medicines[i].ID) {
+                            medn = medicines[i].name;
+                            editOrder.medname.setString(medn);
+                            medc = medicines[i].concentration;
+                            editOrder.medconc.setString(medc);
+                            break;
+                        }
+
+                    }
+
+                    ordd = orders[index].orderDate;
+                    editOrder.ordDate.setString(ordd);
+
+                    if (orders[index].orderState) {
+                        editOrder.ordstate.setString("Delivered");
+                    }
+                    else {
+                        editOrder.ordstate.setString("Not Delivered Yet ");
+                    }
+
+                    priceee = to_string(orders[index].totalPrice);
+                    editOrder.price.setString(priceee);
+
+                    window.draw(editOrder.medname);
+                    window.draw(editOrder.medconc);
+                    window.draw(editOrder.ordDate);
+                    window.draw(editOrder.ordstate);
+                    window.draw(editOrder.price);
+                    window.display();
+
+
+                    if (editOrder.changeButton.getGlobalBounds().contains(mousePos)) {
+                        cout << "change1" << endl;
+
+                        if (orders[index].orderState) {
+                            orders[index].orderState = false;
+                            editOrder.ordstate.setString("");
+                            editOrder.ordstate.setString("Not Delivered Yet ");
+
+                        }
+                        else {
+                            orders[index].orderState = true;
+                            editOrder.ordstate.setString("");
+                            editOrder.ordstate.setString(" Delivered ");
+
+                        }
+
+                    }
+
+
+
+
+                    //editing total price
+
+                    if (editOrder.changeButton2.getGlobalBounds().contains(mousePos)) {
+                        cout << "change2" << endl;
+                        orders[index].totalPrice = stof(orderdisplay_Price);
+                        priceee = to_string(orders[index].totalPrice);
+                        editOrder.price.setString(priceee);
+
+                        window.draw(editOrder.price);
+                        window.display();
+
+                    }
+
+
+
+                }
+
+
+                // editing order's data:
+                   //-----------------------
+
+                    // editing order's state
+
+
+            }
+
+
+
+            // Handle text input
+            if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
+                if (order_display) {
+                    // Append the entered character to the first text display
+                    if (orderdisplay_Id.size() < 11) {
+                        if (event.text.unicode >= 48 && event.text.unicode <= 57)
+                        {
+                            orderdisplay_Id += static_cast<char>(event.text.unicode);
+                            orderId_text.setString(orderdisplay_Id);
+                            window.draw(orderId_text);
+                            window.display();
+                        }
+
+                    }
+                }
+
+                else {
+                    // Append the entered character to the second text display
+                    if (orderdisplay_Price.size() < 20) {
+                        if (event.text.unicode >= 48 && event.text.unicode <= 57)
+                        {
+                            orderdisplay_Price += static_cast<char>(event.text.unicode);
+                            orderPrice_text.setString(orderdisplay_Price);
+                            window.draw(orderPrice_text);
+                            window.display();
+                        }
+                    }
+                }
+
+                // Debugging: Print the active display status
+                cout << "Active display: " << (order_display ? "displayID" : "displayPrice") << endl;
+
+            }
+
+            // Handle backspace key
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace) {
+                if (order_display) {
+                    // Delete the last character from the first text display
+                    if (!orderdisplay_Id.empty()) {
+                        orderdisplay_Id.pop_back();
+                        orderId_text.setString(orderdisplay_Id);
+                        window.draw(orderId_text);
+                        window.display();
+
+                    }
+                }
+                else {
+                    // Delete the last character from the second text display
+                    if (!orderdisplay_Price.empty()) {
+                        orderdisplay_Price.pop_back();
+                        orderPrice_text.setString(orderdisplay_Price);
+                        window.draw(orderPrice_text);
+                        window.display();
+
+                    }
+                }
+            }
+
+
+
+        }
+    }
+
+
+}
 
 void page_switcher(Header& header, SignUp& signup, SignIn& signin,
     userMenu& usermenu, adminMenu& adminmenu,
@@ -5484,7 +5775,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         break;
     case 13:
         window.clear();
-        DrawEditOrderInfo(editOrder);
+        manageOrder_functional();
         window.display();
         break;
     case 14:
