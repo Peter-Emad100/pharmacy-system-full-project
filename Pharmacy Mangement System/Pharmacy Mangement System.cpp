@@ -28,6 +28,7 @@ activeS5 = false;
 bool IsHeAUser = true;
 bool issignin = false; //check if i need to switch to sign in page
 bool doneAdding = false;//to add
+bool active_1 = false, active_2 = false, active_3 = false; // switches between input fields in Medicine Edit page
 
 RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Resize|Style::Titlebar);
 Font Calibri;
@@ -67,6 +68,8 @@ bool searchmakeRequest = false;
 bool editactive1, editactive2, editactive3;
 Text editAtext1, editAtext2, editAtext3;
 string editAdisplay1, editAdisplay2, editAdisplay3;
+string inputMedicineID2, inputQuantity, inputPrice;
+Text  inputMedicineID2Text, inputQuantityText, inputPriceText;
 
 bool editUactive;
 Text editUtext1, editUtext2;
@@ -390,7 +393,7 @@ void functioningAddUser();
 
 void SetMedicineEdit(MedicineInfo& medicineinfo);
 void MedicineEditShow();
-void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo medicineinfo);
+
 
 void DrawSignIn(SignIn signin);
 void SetSignIn(SignIn& signin);
@@ -400,7 +403,7 @@ void functioningSignIn();
 void SetMedicineEdit(MedicineInfo& medicineinfo);
 
 void MedicineEditShow();
-void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo medicineinfo);
+void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo);
 
 // Manage User
 
@@ -481,6 +484,7 @@ int main() {
     setShowAllOrders(ShowAllOrders);
     set_managePayment(manage_payment);
     set_manageMedicine(manage_medicine);
+    MedicineEditShow();
     // functioningSignUp();
     // window display
 
@@ -625,6 +629,7 @@ int main() {
                 DrawSignIn(signin);
 
         }*/
+       
         while (window.isOpen())
         {
             page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
@@ -2437,7 +2442,7 @@ void functioningAdminMenu() {
                 }
                 if (adminmenu.buttonManageMedicine.getGlobalBounds().contains(mousePos))
                 {
-                    page_num = 11;
+                    page_num = 12;
                     breaked = true;
                     break;
                 }
@@ -4415,6 +4420,7 @@ void draw_manageMedicine(manageMedicine manage_medicine)
 
 void functioning_manageMedicine()
 {
+    bool brokenWindow = false;
     window.clear();
     while (window.isOpen())
     {
@@ -4425,10 +4431,8 @@ void functioning_manageMedicine()
         {
             if (event.type == Event::TextEntered && isprint(event.text.unicode) && inputMedicineID.size() < 17)
             {
-
                 inputMedicineID += static_cast<char>(event.text.unicode);
                 inputMedicineIDText.setString(inputMedicineID);
-
             }
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace)
             {
@@ -4471,10 +4475,21 @@ void functioning_manageMedicine()
                     else
                         removeMedicine(stoi(inputMedicineID));
                 }
+                else if (manage_medicine.editMedicine.getGlobalBounds().contains(mousepos))
+                {
+                    page_num = 16;
+                    brokenWindow = true;
+                    break;
+
+                }
             }
         }
+        if (brokenWindow)
+            break;
     }
 }
+
+
 void editUserCredentials(int index)
 
 {
@@ -4634,24 +4649,50 @@ void SetMedicineEdit(MedicineInfo& medicineinfo)
 
     medicineinfo.price.setPosition(580, 447);
 
-    medicineinfo.valuefield3.setTexture(textbox);
-
-    medicineinfo.valuefield3.setScale(0.5, 0.35);
-
-    medicineinfo.valuefield3.setPosition(200, 210);
-
     medicineinfo.valuefield1.setTexture(textbox);
 
     medicineinfo.valuefield1.setScale(0.5, 0.35);
 
-    medicineinfo.valuefield1.setPosition(200, 325);
+    medicineinfo.valuefield1.setPosition(200, 210);
 
     medicineinfo.valuefield2.setTexture(textbox);
 
     medicineinfo.valuefield2.setScale(0.5, 0.35);
 
-    medicineinfo.valuefield2.setPosition(200, 445);
+    medicineinfo.valuefield2.setPosition(200, 325);
+
+    medicineinfo.valuefield3.setTexture(textbox);
+
+    medicineinfo.valuefield3.setScale(0.5, 0.35);
+
+    medicineinfo.valuefield3.setPosition(200, 445);
+
+    //medicine ID field 
+    inputMedicineID2Text.setFont(Calibri);
+    inputMedicineID2Text.setScale(1, 1);
+    inputMedicineID2Text.setPosition(220, 210);
+    inputMedicineID2Text.setFillColor(Color::Black);
+    inputMedicineID2Text.setString(inputMedicineID2);
+    inputMedicineID2Text.setCharacterSize(40);
+
+    //Quantity field 
+    inputQuantityText.setFont(Calibri);
+    inputQuantityText.setScale(1, 1);
+    inputQuantityText.setPosition(220, 325);
+    inputQuantityText.setFillColor(Color::Black);
+    inputQuantityText.setString(inputQuantity);
+    inputQuantityText.setCharacterSize(40);
+
+    //Price Field
+    inputPriceText.setFont(Calibri);
+    inputPriceText.setScale(1, 1);
+    inputPriceText.setPosition(220, 445);
+    inputPriceText.setFillColor(Color::Black);
+    inputPriceText.setString(inputPrice);
+    inputPriceText.setCharacterSize(40);
+
 }
+
 void DrawMedicineEdit(MedicineInfo medicineinfo) {
     window.draw(medicineinfo.backgroundy);
 
@@ -4665,26 +4706,182 @@ void DrawMedicineEdit(MedicineInfo medicineinfo) {
 
     window.draw(medicineinfo.confirm);
 
-    window.draw(medicineinfo.price);
+    //window.draw(medicineinfo.price);
 
-    window.draw(medicineinfo.quantity);
+   // window.draw(medicineinfo.quantity);
 
     window.draw(medicineinfo.valuefield1);
 
     window.draw(medicineinfo.valuefield2);
 
     window.draw(medicineinfo.valuefield3);
+
+
 }
-void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo medicineinfo) {
-    Event event;
 
-    medicineEdit = 1;
+void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) {
+    medicineEdit = true;
 
-    DrawMedicineEdit(medicineinfo);
+    window.clear();
+    while (window.isOpen()) {
 
-    MedicineEditShow();
 
-    window.display();
+        DrawMedicineEdit(medicineinfo);
+        MedicineEditShow();
+
+        // Display input fields for Medicine ID, Quantity, and Price
+        window.draw(inputMedicineID2Text);
+        window.draw(inputQuantityText);
+        window.draw(inputPriceText);
+
+        window.display();
+
+        Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+            {
+                window.close();
+            }
+
+
+
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+                if (medicineinfo.valuefield1.getGlobalBounds().contains(mousePos))
+                {
+                    active_1 = true;
+                    active_2 = false;
+                    active_3 = false;
+                }
+
+
+                else if (medicineinfo.valuefield2.getGlobalBounds().contains(mousePos)) {
+                    active_1 = false;
+                    active_2 = true;
+                    active_3 = false;
+                }
+                else if (medicineinfo.valuefield3.getGlobalBounds().contains(mousePos))
+                {
+                    active_1 = false;
+                    active_2 = false;
+                    active_3 = true;
+                }
+
+
+            }
+            if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
+                // Handle Text Input
+                if (active_1 && inputMedicineID2.size() < 17) {
+                    inputMedicineID2 += static_cast<char>(event.text.unicode);
+                    inputMedicineID2Text.setString(inputMedicineID2);
+                    window.draw(inputMedicineID2Text);
+                    window.display();
+                }
+                else if (active_2 && inputQuantity.size() < 17) {
+                    inputQuantity += static_cast<char>(event.text.unicode);
+                    inputQuantityText.setString(inputQuantity);
+                    window.draw(inputQuantityText);
+                    window.display();
+                }
+                else if (active_3 && inputPrice.size() < 17) {
+                    inputPrice += static_cast<char>(event.text.unicode);
+                    inputPriceText.setString(inputPrice);
+                    window.draw(inputPriceText);
+                    window.display();
+                }
+            }
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace) {
+                // Handle Backspace key
+                if (active_1 && !inputMedicineID2.empty()) {
+                    inputMedicineID2.pop_back();
+                    inputMedicineID2Text.setString(inputMedicineID2);
+                    window.draw(inputMedicineID2Text);
+                    window.display();
+                }
+                else if (active_2 && !inputQuantity.empty()) {
+                    inputQuantity.pop_back();
+                    inputQuantityText.setString(inputQuantity);
+                    window.draw(inputQuantityText);
+                    window.display();
+                }
+                else if (active_3 && !inputPrice.empty()) {
+                    inputPrice.pop_back();
+                    inputPriceText.setString(inputPrice);
+                    window.draw(inputPriceText);
+                    window.display();
+                }
+            }
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+
+
+                if (medicineinfo.confirm.getGlobalBounds().contains((mousePos)))
+                {
+                    int id = stoi(inputMedicineID2);
+
+
+
+                    bool found = false;
+
+                    for (int i = 0; i < medicine_data; ++i) {
+                        if (medicines[i].ID == id && medicines[i].ID != -1) {
+
+                            found = true;
+                            cout << "Found\n"; // Testing
+
+                            if (!inputPrice.empty()) {
+                                float price = stof(inputPrice);
+                                medicines[i].price = price;
+                                //cout << "Price updated: " << medicines[i].price << endl; //Testing
+                            }
+
+                            if (!inputQuantity.empty()) {
+                                int quantity = stoi(inputQuantity);
+                                medicines[i].quantity_in_stock = quantity;
+                                //cout << "Quantity updated: " << medicines[i].quantity_in_stock << endl; //Testing
+                            }
+
+
+
+                            saveMedicineDataLocally();
+
+                            break;
+
+                        }
+                    }
+                    if (!found)
+                    {
+                        RenderWindow invalidIDWindow(VideoMode(300, 100), "Error", Style::Default);
+                        
+
+                        
+
+                        while (invalidIDWindow.isOpen()) {
+                            Event event;
+                            while (invalidIDWindow.pollEvent(event)) {
+                                if (event.type == Event::Closed)
+                                    invalidIDWindow.close();
+                            }
+
+                            invalidIDWindow.clear();
+                            Text text;
+                            text.setString("Invalid ID");
+                            text.setCharacterSize(24);
+                            text.setFillColor(Color::Red);
+                            text.setPosition(50, 30);
+                            invalidIDWindow.draw(text);
+                            invalidIDWindow.display();
+                        }
+                    }
+                }
+            }
+
+        }
+    }
 }
 // positions
 void MedicineEditShow() {
@@ -4893,31 +5090,28 @@ void logInInterface(string username, string password) {
 
 }
 
-bool validateUser(string username, string password, user& currentUser) {
-    int userIndex = 0;
+    bool validateUser(string username, string password, user& currentUser) {
+        bool userFound = false; // Initialize the flag to false
 
-    // Loop through the users until a user with userID = 0 is found,
-    // indicating that there are no more users in our database
-
-    while (users[userIndex].ID != 0) {
-        if (users[userIndex].ID == -1) {
-            userIndex++;
-            continue;
+        for (int userIndex = 0; userIndex < user_data; userIndex++) {
+            // Skip users with ID = -1
+            if (users[userIndex].ID == -1) {
+                
+                continue;
+            }
+            // Check if the user's username and password match
+            if (users[userIndex].username == username &&
+                users[userIndex].password == password) {
+                currentUser = users[userIndex];
+                userFound = true; // Set the flag to true if user is found
+                break; // No need to continue loop once user is found
+            }
         }
+        
 
-        if (users[userIndex].username == username &&
-            users[userIndex].password == password) {
-            currentUser = users[userIndex];  // Avoiding any kind of problem when
-            // showing permissions based on the role
-            currentUser.ID = users[userIndex].ID;
-            currentUser_Index == userIndex;
-            return true;
-        }
-
-        userIndex++;
+        // Return true if user is found, otherwise return false
+        return userFound;
     }
-    return false;
-}
 
 bool isUsernameTaken(string username) {
     int i = 0;
@@ -5210,6 +5404,11 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         window.clear();
         functioningAddMedicine();
         window.display();
+    case 16: 
+        window.clear();
+        MedicineEditShowFunctional(medicineEdit, medicineinfo);
+        window.display();
+        break;
 
     }
 }
