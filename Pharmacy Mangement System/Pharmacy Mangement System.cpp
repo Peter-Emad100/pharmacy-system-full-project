@@ -20,6 +20,7 @@ const int Size = 100;
 int medicine_data = 0;
 int user_data = 0;
 int requestcounter = 0;
+int orderCounter = 0;
 int chosenOption;  // variable to choose with which order you want to go through
 // after log in
 bool activeDisplay = true;  // Initialize active display to display1

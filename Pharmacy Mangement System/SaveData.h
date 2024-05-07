@@ -2,9 +2,11 @@
 void saveMedicineDataLocally();
 void saveUserDataLocally();
 void saveRequestsDataLocally();
+void saveOrderDataLocally();
 void saveAllDataLocally();
 void saveMedicineDataToArr();
 void saveUserDataToArr();
+void saveOrderDataToArr();
 void saveAllDataToArr();
 void saveOneUserDataLocally();
 void savePayMethodeLocally();
