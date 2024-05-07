@@ -757,8 +757,17 @@ void signUp(string user, string phonenumber, string location, string email,
 
     saveOneUserDataLocally();
     user_data++;  // Increment user_data to keep track of the total number of users
+    displayS1.resize(0);
+    displayS2.resize(0);
+    displayS3.resize(0);
+    displayS4.resize(0);
+    displayS5.resize(0);
+    displayStext1.setString(displayS1);
+    displayStext2.setString(displayS2);
+    displayStext3.setString(displayS3);
+    displayStext4.setString(displayS4);
+    displayStext5.setString(displayS5);
 
-    page_num = 1;
 
 }
 
@@ -1879,9 +1888,10 @@ void functioningSignUp() {
                     {
                         activeS1 = true;
                         displayS1.resize(0);
+                        displayStext1.setString(displayS1);
                         window.display();
 
-                        sf::RenderWindow window2(sf::VideoMode(400, 200), "Warning!");
+                        RenderWindow window2(VideoMode(400, 200), "Warning!");
                         // Main loop for the second window
                         while (window2.isOpen())
                         {
@@ -1907,6 +1917,10 @@ void functioningSignUp() {
                     }
                     else {
                         signUp(displayS1, displayS2, displayS3, displayS4, displayS5);
+                        page_num = 1;
+                        brokenwindow = true;
+                        break;
+
                     }
                 }
             }
@@ -2122,8 +2136,6 @@ void functioningSignIn() {
                 if (signin.buttonin.getGlobalBounds().contains(mousePos))
                 {
                     logInInterface(display1, display2);
-                    display1.resize(0);
-                    display2.resize(0);
                     brokenwindow = true;
                     break;
                 }
@@ -2133,7 +2145,7 @@ void functioningSignIn() {
                     page_num = 0;
                     brokenwindow = true;
                     break;
-                    // page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine, showreceipt, edit_info, "12:00", makeorder);
+                    
                 }
             }
 
@@ -5978,6 +5990,10 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         functioningSignUp();
         break;
     case 1:
+        display1.resize(0);
+        display2.resize(0);
+        displaytext1.setString(display1);
+        displaytext2.setString(display2);
         window.clear();
         functioningSignIn();
         break;
