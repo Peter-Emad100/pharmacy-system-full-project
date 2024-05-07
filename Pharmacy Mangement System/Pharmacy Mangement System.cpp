@@ -30,7 +30,7 @@ bool issignin = false; //check if i need to switch to sign in page
 bool doneAdding = false;//to add
 bool active_1 = false, active_2 = false, active_3 = false; // switches between input fields in Medicine Edit page
 
-RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Resize | Style::Titlebar);
+RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Fullscreen);
 Font Calibri;
 Texture BackgroundSign;
 Texture ButtonTexture, TextTexture, darkbox, textbox, headerbox, Signbox,
@@ -57,6 +57,7 @@ Texture backgroundMakeOrder, confrimOrder, semitransparent;
 string inputUserID, inputMedicineID;
 Text inputUserIDText, inputMedicineIDText;
 Texture makereq;
+Texture mainmenuButton;
 Sprite makerequ;
 ///dont't use this because it will break makeorder if used 
 Text Tsearchentered;
@@ -188,7 +189,7 @@ request requests[15];
 struct StmakeOrder {
     Sprite background;
     Sprite semiTransparent_1, semiTransparent_2, textbox_1, textbox_2, textbox_3,
-        confrimOrder;
+        confrimOrder, mainbutton;
 };
 StmakeOrder makeorder;
 
@@ -206,7 +207,7 @@ struct SignUp {
     Sprite valuefield1, valuefield2, valuefield3, valuefield4,
         valuefield5;  // username, phone num, location, role, new password
     Text user, location, number, role, forgot, password;
-    Sprite Background;
+    Sprite Background, mainbutton;
     Sprite userButton1, adminButton1, userButton2, adminButton2;
     Text UsernameTaken;
 };
@@ -218,7 +219,7 @@ struct Edit_Info {
 
     Sprite background, changePhone, changeAddress, log_out, changeUser, changePass;
 
-    Sprite valuefield1, valuefield2, valuefield3;
+    Sprite valuefield1, valuefield2, valuefield3, mainbutton;
 
     Sprite makeAdminGreen, makeUserGreen, makeAdminRed, makeUserRed, confirm;
 
@@ -227,7 +228,7 @@ struct Edit_Info {
 Edit_Info edit_info;
 
 struct strShowAllOrders {
-    Sprite background;
+    Sprite background, mainbutton;
     Sprite trans_back;
     Sprite button1;
 };
@@ -238,7 +239,7 @@ struct AddUsers
 {
     Sprite background, secbackground, usernametextbox, addresstextbox,
         emailtextbox, phonetextbox, passwordtextbox, optionsbutton,
-        roleAdminbutton, roleUserbutton;
+        roleAdminbutton, roleUserbutton, mainbutton;
 
     Text headerText, usernametext, addresstext, emailtext, phonetext,
         passwordtext, roletext, confirmationtext;
@@ -250,7 +251,7 @@ struct AddMedicine
 {
     Sprite background, secbackground, medNametextbox, medCatagorytextbox,
         medConcentrationtextbox, medPricetextbox, medQuantitytextbox,
-        optionsbutton, medDesctextbox;
+        optionsbutton, medDesctextbox, mainbutton;
 
     Text medNametext, medCatagorytext, medConcentrationtext, medPricetext,
         medQuantitytext, medConfirmationtext, medDescriptiontext;
@@ -258,7 +259,7 @@ struct AddMedicine
 AddMedicine addmedicine;
 
 struct manageUser {
-    Sprite background, semiTransparent, idTextBox, addUser, removeUser, editUser;
+    Sprite background, semiTransparent, idTextBox, addUser, removeUser, editUser, mainbutton;
 
     Text Title, userID;
 };
@@ -266,7 +267,7 @@ manageUser manage_user;
 
 struct manageMedicine {
     Sprite background, semiTransparent, idTextBox, addMedicine, removeMedicine,
-        editMedicine;
+        editMedicine, mainbutton;
 
     Text Title, medicineID;
 };
@@ -277,26 +278,26 @@ struct MedicineInfo {
 
     Sprite confirm, quantity, price;
 
-    Sprite valuefield1, valuefield2, valuefield3;
+    Sprite valuefield1, valuefield2, valuefield3, mainbutton;
 };
 MedicineInfo medicineinfo;
 
 struct searchMedicine {
     Sprite backgroundx;
 
-    Sprite byName, byCategory, searchBar, resultTable;
+    Sprite byName, byCategory, searchBar, resultTable, mainbutton;
 };
 searchMedicine searchmedicine;
 
 struct showReceipt {
     Sprite backgroundy;
 
-    Sprite showTable, confirm;
+    Sprite showTable, confirm, mainbutton;
 };
 showReceipt showreceipt;
 
 struct managePayment {
-    Sprite background, confirm_button, delete_button, backgroundview;
+    Sprite background, confirm_button, delete_button, backgroundview, mainbutton;
 
     Texture managepayment_background, confirm, Delete;
 
@@ -334,7 +335,7 @@ adminMenu adminmenu;
 
 struct EditOrderInfo {
     Sprite textboxID, textBoxPrice, semiTransparentBack, changeButton,
-        changeButton2, WhiteBox1, WhiteBox2;
+        changeButton2, WhiteBox1, WhiteBox2, mainbutton;
     Sprite Background;
     Text OrderID, OrderDetails, MedicineNme, MedicineConcentration, OrderDate,
         OrderState, TotalPrice;
@@ -507,7 +508,7 @@ int main() {
     set_managePayment(manage_payment);
     set_manageMedicine(manage_medicine);
     MedicineEditShow();
-    SetEditOrderInfo(editOrder);
+   
     // functioningSignUp();
     // window display
 
@@ -1538,6 +1539,7 @@ void TextureAFonts() {
     price.loadFromFile("Assets/edit_price.png");
     quantity.loadFromFile("Assets/edit_quantity.png");
     makereq.loadFromFile("Assets/request.png");
+    mainmenuButton.loadFromFile("Assets/menuButton2.png");
     // edit info images
     edit_info.edit_background.loadFromFile(
         "Assets/"
@@ -2063,10 +2065,6 @@ void functioningSignIn() {
 
         while (window.pollEvent(event))
         {
-            if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
-            {
-                window.close();
-            }
 
             // Handle mouse click
 
@@ -2091,6 +2089,8 @@ void functioningSignIn() {
                 if (signin.buttonin.getGlobalBounds().contains(mousePos))
                 {
                     logInInterface(display1, display2);
+                    display1.resize(0);
+                    display2.resize(0);
                     brokenwindow = true;
                     break;
                 }
@@ -2162,6 +2162,11 @@ void SetMakeOrder(StmakeOrder& makeorder) {
     // setting background
     makeorder.background.setTexture(backgroundMakeOrder);
     makeorder.background.setScale(0.276, 0.24);
+
+    makeorder.mainbutton.setTexture(mainmenuButton);
+    makeorder.mainbutton.setPosition(90, 25);
+    makeorder.mainbutton.setScale(0.08, 0.08);
+
     // setting confirmOrder
     makeorder.confrimOrder.setTexture(confrimOrder);
     makeorder.confrimOrder.setScale(0.4, 0.4);
@@ -2196,6 +2201,7 @@ void DrawMakeOrder(StmakeOrder& makeorder) {
     window.draw(makeorder.textbox_1);
     window.draw(makeorder.textbox_2);
     window.draw(makeorder.textbox_3);
+    window.draw(makeorder.mainbutton);
     // medicine id text
     Text text;
     text.setFont(Calibri);
@@ -2676,11 +2682,17 @@ void DrawSearch(searchMedicine searchmedicine) {
     window.draw(searchmedicine.resultTable);
     window.draw(searchmedicine.byCategory);
     window.draw(searchmedicine.byName);
+    window.draw(searchmedicine.mainbutton);
 }
 void SetSearch(searchMedicine& searchmedicine) {
     // setting background
     searchmedicine.backgroundx.setTexture(backgroundsearch);
     searchmedicine.backgroundx.setScale(0.276, 0.24);
+
+    searchmedicine.mainbutton.setTexture(mainmenuButton);
+    searchmedicine.mainbutton.setPosition(90, 15);
+    searchmedicine.mainbutton.setScale(0.08, 0.08);
+
     // setting byname
     searchmedicine.byName.setTexture(byName);
     searchmedicine.byName.setScale(0.332, 0.42);
@@ -2803,41 +2815,33 @@ void functioningsearch()
                     searchForMedicineByCategory(stringsearch);
                 }
 
-            }
-            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-
-                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
-
-                // Check if the mouse click is inside the first text field
-
                 if (searchmedicine.byName.getGlobalBounds().contains(mousePos)) {
                     searchForMedicineByName(stringsearch);
                 }
-
-            }
-            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-
-                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
-
-                // Check if the mouse click is inside the first text field
-
-                if (searchmedicine.byCategory.getGlobalBounds().contains(mousePos)) {
-                    searchForMedicineByCategory(stringsearch);
-                }
-
-            }
-            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-
-                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
-
-                // Check if the mouse click is inside the first text field
 
                 if (makerequ.getGlobalBounds().contains(mousePos)) {
                     page_num = 2;
                     breaked = true;
                     break;
                 }
+
+                if (searchmedicine.mainbutton.getGlobalBounds().contains(mousePos))
+                {
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        breaked = true;
+                        break;
+                    }
+                    else if (currentUser.his_role == user::Admin)
+                    {
+                        page_num = 3;
+                        breaked = true;
+                        break;
+                    }
+                }
             }
+           
         }
         if (breaked) {
             break;
@@ -2850,6 +2854,11 @@ void SetShowReceipt(showReceipt& showreceipt) {
     showreceipt.showTable.setTexture(showTable);
     showreceipt.showTable.setScale(1.28, 0.8);
     showreceipt.showTable.setPosition(12, 90);
+
+    showreceipt.mainbutton.setTexture(mainmenuButton);
+    showreceipt.mainbutton.setPosition(90, 15);
+    showreceipt.mainbutton.setScale(0.08, 0.08);
+
     // setting background
     showreceipt.backgroundy.setTexture(backgroundShowReceipt);
     showreceipt.backgroundy.setScale(0.276, 0.24);
@@ -2862,6 +2871,7 @@ void DrawShowReceipt(showReceipt showreceipt) {
     window.draw(showreceipt.backgroundy);
     window.draw(showreceipt.showTable);
     window.draw(showreceipt.confirm);
+    window.draw(showreceipt.mainbutton);
 }
 void ShowReceiptFunctional( bool& show_order_receipt,
     showReceipt showreceipt) {
@@ -2874,7 +2884,11 @@ void ShowReceiptFunctional( bool& show_order_receipt,
 
 void Set_EditInfo_User(Edit_Info& edit_info) {
     edit_info.background.setTexture(edit_info.edit_background);
-    edit_info.background.setScale(0.276, 0.218);
+    edit_info.background.setScale(0.276, 0.255);
+
+    edit_info.mainbutton.setTexture(mainmenuButton);
+    edit_info.mainbutton.setPosition(100, 25);
+    edit_info.mainbutton.setScale(0.08, 0.08);
 
     edit_info.changeAddress.setTexture(edit_info.change_address);
     edit_info.changeAddress.setScale(0.28, 0.24);
@@ -2925,6 +2939,7 @@ void Draw_EditInfo_User(Edit_Info& edit_info) {
     window.draw(edit_info.changePhone);
     window.draw(edit_info.valuefield1);
     window.draw(edit_info.valuefield2);
+    window.draw(edit_info.mainbutton);
 }
 
 void EditInfo_Admin_functional(Edit_Info& edit_info) {
@@ -2934,7 +2949,11 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
 
 void Set_EditInfo_Admin(Edit_Info& edit_info) {
     edit_info.background.setTexture(edit_info.edit_background);
-    edit_info.background.setScale(0.276, 0.218);
+    edit_info.background.setScale(0.276, 0.255);
+
+    edit_info.mainbutton.setTexture(mainmenuButton);
+    edit_info.mainbutton.setPosition(60, 25);
+    edit_info.mainbutton.setScale(0.08, 0.08);
 
     edit_info.changeUser.setTexture(edit_info.change_user);
     edit_info.changeUser.setScale(0.28, 0.24);
@@ -3033,6 +3052,7 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
         window.draw(editAtext1);
         window.draw(editAtext2);
         window.draw(editAtext3);
+        window.draw(edit_info.mainbutton);
 
         window.display();
         while (window.pollEvent(event)) {
@@ -3212,6 +3232,10 @@ void setAddMedicine(AddMedicine& addmedicine)
     addmedicine.optionsbutton.setScale(0.39, 0.39);
 
     addmedicine.optionsbutton.setPosition(580, 690);
+
+    addmedicine.mainbutton.setTexture(mainmenuButton);
+    addmedicine.mainbutton.setPosition(90, 35);
+    addmedicine.mainbutton.setScale(0.08, 0.08);
 
     //texts
 
@@ -3424,6 +3448,7 @@ void drawAddMedicine(AddMedicine& addmedicine)
     window.draw(addmedicine.medDescriptiontext);
 
     window.draw(addmedicine.medDesctextbox);
+    window.draw(addmedicine.mainbutton);
 }
 void functioningAddMedicine()
 {
@@ -3675,6 +3700,11 @@ void setAddusers(AddUsers& adduser)
 {
     // buttons
 
+    adduser.mainbutton.setTexture(mainmenuButton);
+    adduser.mainbutton.setPosition(90, 35);
+    adduser.mainbutton.setScale(0.08, 0.08);
+
+
     adduser.optionsbutton.setTexture(buttonTex);
 
     adduser.optionsbutton.setScale(0.39, 0.39);
@@ -3859,6 +3889,7 @@ void setAddusers(AddUsers& adduser)
 void drawAddusers(AddUsers& adduser)
 
 {
+
     window.draw(adduser.background);
 
     window.draw(adduser.secbackground);
@@ -3892,6 +3923,7 @@ void drawAddusers(AddUsers& adduser)
     window.draw(adduser.roletext);
 
     window.draw(adduser.confirmationtext);
+    window.draw(adduser.mainbutton);
 }
 void functioningAddUser()
 {
@@ -4129,6 +4161,10 @@ void set_manageUser(manageUser& manage_user) {
 
     manage_user.background.setScale(0.27, 0.22);
 
+    manage_user.mainbutton.setTexture(mainmenuButton);
+    manage_user.mainbutton.setPosition(50, 65);
+    manage_user.mainbutton.setScale(0.08, 0.08);
+
     manage_user.semiTransparent.setTexture(showTable);
 
     manage_user.semiTransparent.setScale(2.95, 0.6);
@@ -4205,7 +4241,7 @@ void draw_manageUser(manageUser manage_user) {
 
     window.draw(manage_user.addUser);
     window.draw(inputUserIDText);
-
+    window.draw(manage_user.mainbutton);
 
 }
 void functioning_manageUser()
@@ -4302,6 +4338,10 @@ void set_managePayment(managePayment& manage_payment) {
     manage_payment.background.setTexture(manage_payment.managepayment_background);
 
     manage_payment.background.setScale(0.27, 0.22);
+
+    manage_payment.mainbutton.setTexture(mainmenuButton);
+    manage_payment.mainbutton.setPosition(80, 45);
+    manage_payment.mainbutton.setScale(0.08, 0.08);
 
     // valuefield1 -> add new payment methode
 
@@ -4407,6 +4447,7 @@ void Draw_managePayment(managePayment& manage_payment) {
     window.draw(manage_payment.button1);
 
     window.draw(manage_payment.button2);
+    window.draw(manage_payment.mainbutton);
 }
 
 void showPaymentMehtode(vector<string> x) {
@@ -4579,6 +4620,10 @@ void set_manageMedicine(manageMedicine& manage_medicine) {
 
     manage_medicine.background.setScale(0.27, 0.22);
 
+    manage_medicine.mainbutton.setTexture(mainmenuButton);
+    manage_medicine.mainbutton.setPosition(50, 65);
+    manage_medicine.mainbutton.setScale(0.08, 0.08);
+
     manage_medicine.semiTransparent.setTexture(showTable);
 
     manage_medicine.semiTransparent.setScale(2.95, 0.6);
@@ -4656,6 +4701,7 @@ void draw_manageMedicine(manageMedicine manage_medicine)
     window.draw(manage_medicine.addMedicine);
 
     window.draw(inputMedicineIDText);
+    window.draw(manage_medicine.mainbutton);
 }
 
 void functioning_manageMedicine()
@@ -4877,6 +4923,10 @@ void SetMedicineEdit(MedicineInfo& medicineinfo)
 
     medicineinfo.backgroundy.setScale(0.276, 0.24);
 
+    medicineinfo.mainbutton.setTexture(mainmenuButton);
+    medicineinfo.mainbutton.setPosition(90, 15);
+    medicineinfo.mainbutton.setScale(0.08, 0.08);
+
     medicineinfo.confirm.setTexture(confirm);
 
     medicineinfo.confirm.setScale(0.25, 0.25);
@@ -4961,6 +5011,7 @@ void DrawMedicineEdit(MedicineInfo medicineinfo) {
     window.draw(medicineinfo.valuefield2);
 
     window.draw(medicineinfo.valuefield3);
+    window.draw(medicineinfo.mainbutton);
 
 
 }
@@ -5158,7 +5209,11 @@ void MedicineEditShow() {
 void setShowAllOrders(strShowAllOrders& ShowAllOrders) {
     ShowAllOrders.background.setTexture(backgroundTex);
     ShowAllOrders.background.setPosition(0, 0);
-    ShowAllOrders.background.scale(0.3, 0.29);
+    ShowAllOrders.background.scale(0.276, 0.255);
+
+    ShowAllOrders.mainbutton.setTexture(mainmenuButton);
+    ShowAllOrders.mainbutton.setPosition(90, 35);
+    ShowAllOrders.mainbutton.setScale(0.08, 0.08);
 
     ShowAllOrders.trans_back.setTexture(showTable);
     ShowAllOrders.trans_back.setOrigin(128.5, 314.5);
@@ -5173,12 +5228,17 @@ void drawShowAllOrders(strShowAllOrders ShowAllOrders) {
     window.draw(ShowAllOrders.background);
     window.draw(ShowAllOrders.trans_back);
     window.draw(ShowAllOrders.button1);
+    window.draw(ShowAllOrders.mainbutton);
 }
 
 void SetEditOrderInfo(EditOrderInfo& edit) {
     // Background
     edit.Background.setTexture(BackgroundSign);
     edit.Background.setScale(0.276, 0.218);
+
+    edit.mainbutton.setTexture(mainmenuButton);
+    edit.mainbutton.setPosition(80, 25);
+    edit.mainbutton.setScale(0.08, 0.08);
 
     // SemitransparentBackground
     edit.semiTransparentBack.setTexture(Signbox);
@@ -5354,6 +5414,7 @@ void DrawEditOrderInfo(EditOrderInfo edit) {
     window.draw(edit.TotalPrice2);
     window.draw(edit.WantChange);
     window.draw(edit.confirm);
+    window.draw(edit.mainbutton);
 }
 
 
@@ -5876,6 +5937,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         functioningSignUp();
         break;
     case 1:
+        window.clear();
         functioningSignIn();
         break;
     case 2:
