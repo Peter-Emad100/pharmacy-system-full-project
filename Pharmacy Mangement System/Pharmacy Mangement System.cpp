@@ -237,6 +237,7 @@ struct Edit_Info {
     Sprite makeAdminGreen, makeUserGreen, makeAdminRed, makeUserRed, confirm;
 
     Text input_id, wrng_id;
+    Text address, phonenum;
 };
 Edit_Info edit_info;
 
@@ -2821,10 +2822,7 @@ void functioningsearch()
 
         while (window.pollEvent(event))
         {
-            if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
-            {
-                window.close();
-            }
+            
             // Handle text input
             if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
 
@@ -2925,10 +2923,62 @@ void DrawShowReceipt(showReceipt showreceipt) {
 void ShowReceiptFunctional( bool& show_order_receipt,
     showReceipt showreceipt) {
     Event event;
-    show_order_receipt = 1;
-    DrawShowReceipt(showreceipt);
-    showOrderReceipt(lastyorder, current_time);
-    window.display();
+    bool breaked = false;
+    while (window.isOpen()) {
+        show_order_receipt = 1;
+        DrawShowReceipt(showreceipt);
+        showOrderReceipt(lastyorder, current_time);
+        window.display();
+        while (window.pollEvent(event)) {
+
+       
+
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+            {
+                saveAllDataLocally();
+                window.close();
+            }
+
+            Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+            if (showreceipt.mainbutton.getGlobalBounds().contains(mousePos))
+            {
+                if (currentUser.his_role == user::User)
+                {
+                    page_num = 2;
+                    breaked = true;
+                    break;
+                }
+                else if (currentUser.his_role == user::Admin)
+                {
+                    page_num = 3;
+                    breaked = true;
+                    break;
+                }
+            }
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+                // Check if the mouse click is inside the first text field
+                if (showreceipt.confirm.getGlobalBounds().contains(mousePos)) {
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        breaked = true;
+                        break;
+                    }
+                    else if (currentUser.his_role == user::Admin)
+                    {
+                        page_num = 3;
+                        breaked = true;
+                        break;
+                    }
+                }
+            }
+        }
+        if (breaked) {
+            break;
+
+        }
+    }
 }
 
 void Set_EditInfo_User(Edit_Info& edit_info) {
@@ -2981,6 +3031,20 @@ void Set_EditInfo_User(Edit_Info& edit_info) {
 
     editUtext2.setString(editUdisplay2);
 
+    // setting text for changing address
+    edit_info.address.setFont(Calibri);
+    edit_info.address.setString("Enter new address: ");
+    edit_info.address.setScale(1, 1);
+    edit_info.address.setFillColor(Color::Black);
+    edit_info.address.setPosition(155, 260);
+
+    //setting text for changing phone num
+    edit_info.phonenum.setFont(Calibri);
+    edit_info.phonenum.setString("Enter new phone number: ");
+    edit_info.phonenum.setScale(1, 1);
+    edit_info.phonenum.setFillColor(Color::Black);
+    edit_info.phonenum.setPosition(155, 410);
+
 }
 void Draw_EditInfo_User(Edit_Info& edit_info) {
     window.draw(edit_info.background);
@@ -2989,6 +3053,8 @@ void Draw_EditInfo_User(Edit_Info& edit_info) {
     window.draw(edit_info.valuefield1);
     window.draw(edit_info.valuefield2);
     window.draw(edit_info.mainbutton);
+    window.draw(edit_info.address);
+    window.draw(edit_info.phonenum);
 }
 
 void EditInfo_Admin_functional(Edit_Info& edit_info) {
@@ -3086,7 +3152,7 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
 
     int userIndex = 0;
 
-
+    bool breaked = false;
     Event event;
     while (window.isOpen()) {
         window.clear();
@@ -3113,13 +3179,27 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
             }
 
 
-            Vector2i mousePosition = Mouse::getPosition(window);
+            Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
 
-
+            if (edit_info.mainbutton.getGlobalBounds().contains(mousePos))
+            {
+                if (currentUser.his_role == user::User)
+                {
+                    page_num = 2;
+                    breaked = true;
+                    break;
+                }
+                else if (currentUser.his_role == user::Admin)
+                {
+                    page_num = 3;
+                    breaked = true;
+                    break;
+                }
+            }
 
 
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+               // Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
                 // Check if the mouse click is inside the first text field
                 if (edit_info.valuefield1.getGlobalBounds().contains(mousePos)) {
                     editactive1 = true;
@@ -3199,7 +3279,7 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
                     }
                 }
             }
-            Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+         //   Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
             if (edit_info.confirm.getGlobalBounds().contains((mousePos))) {
                 // Loop through the users until a user with userID = 0 is found,
            // indicating that there are no more users in our database
@@ -3268,6 +3348,9 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
                     }
                 }
             }
+        }
+        if (breaked) {
+            break;
         }
     }
 }
@@ -4836,6 +4919,7 @@ void functioning_manageMedicine()
 void editUserCredentials(int index)
 
 {
+    bool breaked=false;
     while (window.isOpen()) {
 
         window.clear();
@@ -4858,6 +4942,22 @@ void editUserCredentials(int index)
             }
             Vector2f mousePos =
                 window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+            if (edit_info.mainbutton.getGlobalBounds().contains(mousePos))
+            {
+                if (currentUser.his_role == user::User)
+                {
+                    page_num = 2;
+                    breaked = true;
+                    break;
+                }
+                else if (currentUser.his_role == user::Admin)
+                {
+                    page_num = 3;
+                    breaked = true;
+                    break;
+                }
+            }
 
             if (event.type == Event::MouseButtonPressed &&
                 event.mouseButton.button == Mouse::Left) {
@@ -4901,13 +5001,15 @@ void editUserCredentials(int index)
                     // Append the entered character to the second text display
 
                     if (editUdisplay2.size() < 20) {
-                        editUdisplay2 += static_cast<char>(event.text.unicode);
+                        if (event.text.unicode >= 48 && event.text.unicode <= 57) {
+                            editUdisplay2 += static_cast<char>(event.text.unicode);
 
-                        editUtext2.setString(editUdisplay2);
+                            editUtext2.setString(editUdisplay2);
 
-                        window.draw(editUtext2);
-                        window.display();
+                            window.draw(editUtext2);
+                            window.display();
 
+                        }
                     }
 
                     if (edit_info.changePhone.getGlobalBounds().contains(mousePos)) {
@@ -4964,6 +5066,10 @@ void editUserCredentials(int index)
 
 
         saveUserDataLocally();
+
+        if (breaked) {
+            break;
+        }
 
     }
 }
@@ -5765,6 +5871,7 @@ void manageOrder_functional() {
     Event event;
     bool found = false;
     int index = 0;
+    bool breaked = false;
     while (window.isOpen()) {
 
         window.clear();
@@ -5786,7 +5893,22 @@ void manageOrder_functional() {
                 saveAllDataLocally();
                 window.close();
             }
-
+            Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+            if (edit_info.mainbutton.getGlobalBounds().contains(mousePos))
+            {
+                if (currentUser.his_role == user::User)
+                {
+                    page_num = 2;
+                    breaked = true;
+                    break;
+                }
+                else if (currentUser.his_role == user::Admin)
+                {
+                    page_num = 3;
+                    breaked = true;
+                    break;
+                }
+            }
 
 
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
@@ -5969,6 +6091,9 @@ void manageOrder_functional() {
 
 
 
+        }
+        if (breaked) {
+            break;
         }
     }
 
