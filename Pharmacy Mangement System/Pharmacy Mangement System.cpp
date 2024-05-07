@@ -969,131 +969,153 @@ void makeRequest(string _username, string _medicineName, int _amountReq) {
 }
 
 void showAllPreviousOrders(RenderWindow& window) {
+        drawShowAllOrders(ShowAllOrders);
+      
 
-    drawShowAllOrders(ShowAllOrders);
-    for (int i = 0; i < Size; i++) {  // checking for the current user ID to be
-        // able to get his/her orders using ID
-        if (currentUser.username == users[i].username) {
-            currentUser.ID == users[i].ID;
-            break;
-        }
-    }
-    String medicine = "";
-
-    cout << "Your previous orders: \n";
-    cout << "---------------------\n";
-    int num_order = 1;  // to display list of numbered orders
-
-    string ordersText;
-    ordersText += "Your previous orders:\n";
-    String conc = "", name = "";
-
-    String delivered = "";
-
-    bool found_orders = false;  // to check if there were no orders regesitered for this user
-
-
-    //checking
-    for (int i = 0; i < Size; i++) {
-        if (orders[i].userID == currentUser.ID) {
-            found_orders = true;
-            cout << "Order number (" << num_order << ") : \n";
-
-            cout << "-------------------\n";
-            cout << "Date of order: " << orders[i].orderDate << "\n";
-            cout << "Ship date: " << orders[i].shipDate << "\n";
-
-
-
-            if (orders[i].orderID != 0) {
-                ordersText += "Order number: " + to_string(orders[i].orderID) + "\n";
-                ordersText += "Date of order     ship date         total price \n";
-
-            }
-            // printing out medicine id
-
-            cout << "Medicine ID: ";
-            int j = 0;
-            int currentID = 0;
-
-            while (orders[i].medicine_ID[j] != 0) {
-                currentID *= 10;
-                cout << orders[i].medicine_ID[j];
-                j++;
-                currentID += orders[i].medicine_ID[j];
-            }
-            cout << "\n";
-
-            // getting medicine name from medicine ID
-            for (int i = 0; i < Size; i++) {
-                if (medicines[i].ID == currentID) {
-                    cout << "Name of the medicine: " << medicines[i].name << "\n";
-
-
-                    cout << "concentraion of the medicine" << medicines[i].concentration << "\n";
-
+            for (int i = 0; i < Size; i++) {  // checking for the current user ID to be
+                // able to get his/her orders using ID
+                if (currentUser.username == users[i].username) {
+                    currentUser.ID == users[i].ID;
                     break;
                 }
             }
+            String medicine = "";
+
+            cout << "Your previous orders: \n";
+            cout << "---------------------\n";
+            int num_order = 1;  // to display list of numbered orders
+
+            string ordersText;
+            ordersText += "Your previous orders:\n";
+            String conc = "", name = "";
+
+            String delivered = "";
+
+            bool found_orders = false;  // to check if there were no orders regesitered for this user
 
 
-            for (int k = 0; k < 3; k++) {
-                if (orders[i].orderID != 0) {
-                    name += (medicines[orders[i].medicine_ID[k]].name) + "    " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
-                }
-                if (k == 2) {
-                    ordersText += "\n";
+            //checking
+            for (int i = 0; i < Size; i++) {
+                if (orders[i].userID == currentUser.ID) {
+                    found_orders = true;
+                    cout << "Order number (" << num_order << ") : \n";
+
+                    cout << "-------------------\n";
+                    cout << "Date of order: " << orders[i].orderDate << "\n";
+                    cout << "Ship date: " << orders[i].shipDate << "\n";
+
+
+
+                    if (orders[i].orderID != 0) {
+                        ordersText += "Order number: " + to_string(orders[i].orderID) + "\n";
+                        ordersText += "Date of order     ship date         total price \n";
+
+                    }
+                    // printing out medicine id
+
+                    cout << "Medicine ID: ";
+                    int j = 0;
+                    int currentID = 0;
+
+                    while (orders[i].medicine_ID[j] != 0) {
+                        currentID *= 10;
+                        cout << orders[i].medicine_ID[j];
+                        j++;
+                        currentID += orders[i].medicine_ID[j];
+                    }
+                    cout << "\n";
+                    for (int i = 0; i < Size; i++) {
+                        if (medicines[i].ID == currentID) {
+                            cout << "Name of the medicine: " << medicines[i].name << "\n";
+
+
+                            cout << "concentraion of the medicine" << medicines[i].concentration << "\n";
+
+                            break;
+                        }
+                    }
+
+
+                    for (int k = 0; k < 3; k++) {
+                        if (orders[i].orderID != 0) {
+                            name += (medicines[orders[i].medicine_ID[k]].name) + "    " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
+                        }
+                        if (k == 2) {
+                            ordersText += "\n";
+                        }
+                    }
+
+
+
+                    cout << "Total price: " << orders[i].totalPrice << "\n";
+
+                    if (orders[i].orderID != 0) {
+
+
+                        ordersText += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n\n";
+                        ordersText += "Name                Conc\n";
+                        ordersText += name + "\n";
+                        delivered = trackorder(orders, orders[i].orderID);
+
+                    }
+
+                    num_order++;
                 }
             }
-
-
-
-            cout << "Total price: " << orders[i].totalPrice << "\n";
-
-            if (orders[i].orderID != 0) {
-
-
-                ordersText += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n\n";
-                ordersText += "Name                Conc\n";
-                ordersText += name + "\n";
-                delivered = trackorder(orders, orders[i].orderID);
-
+            if (!found_orders) {
+                cout << "You have no previous orders \n";
             }
+            cout << "------------------------------------------ \n ";
 
-            num_order++;
-        }
-    }
-    if (!found_orders) {
-        cout << "You have no previous orders \n";
-    }
-    cout << "------------------------------------------ \n ";
-    // Example of rendering text in SF
+            Font font = Calibri;
+            Text text, text2;
+            text.setFont(font);
+            text.setCharacterSize(24);
+            text.setFillColor(sf::Color::White);
+            text.setPosition(70, 210);
 
-    Font font = Calibri;
-    Text text, text2;
-    text.setFont(font);
-    text.setCharacterSize(24);
-    text.setFillColor(sf::Color::White);
-
-    // Position the text
-    text.setPosition(70, 210);
-
-    text2.setFont(font);
-    text2.setCharacterSize(28);
-    text2.setFillColor(sf::Color::White);
+            text2.setFont(font);
+            text2.setCharacterSize(28);
+            text2.setFillColor(sf::Color::White);
 
 
-    text2.setPosition(600, 400);
+            text2.setPosition(600, 400);
 
 
 
 
 
-    text.setString(ordersText);
-    text2.setString(delivered);
-    window.draw(text2);
-    // Draw text to window
-    window.draw(text);
+            text.setString(ordersText);
+            text2.setString(delivered);
+            window.draw(text2);
+            window.draw(text);
+            Event event;
+            bool breaked = false;
+            while (window.pollEvent(event)) {
+                if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) {
+                    window.close(); 
+                }
+                if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                    Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+                    if (ShowAllOrders.mainbutton.getGlobalBounds().contains(mousePos))
+                    {
+                        if (currentUser.his_role == user::User)
+                        {
+                            page_num = 2;
+                            breaked = true;
+                            break;
+                        }
+                        else if (currentUser.his_role == user::Admin)
+                        {
+                            page_num = 3;
+                            breaked = true;
+                            break;
+                        }
+                    }
+                }
+            }
 }
 
 
