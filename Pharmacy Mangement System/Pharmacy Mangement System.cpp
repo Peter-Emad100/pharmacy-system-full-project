@@ -30,7 +30,7 @@ bool issignin = false; //check if i need to switch to sign in page
 bool doneAdding = false;//to add
 bool active_1 = false, active_2 = false, active_3 = false; // switches between input fields in Medicine Edit page
 
-RenderWindow window(VideoMode(1366, 768), "Your pharmacy");
+RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Fullscreen);
 Font Calibri;
 Texture BackgroundSign;
 Texture ButtonTexture, TextTexture, darkbox, textbox, headerbox, Signbox,
