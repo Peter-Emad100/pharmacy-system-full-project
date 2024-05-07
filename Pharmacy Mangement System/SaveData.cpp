@@ -145,7 +145,6 @@ void saveRequestsDataLocally()
 	file.open("RequestsData.txt", ios::app);
 	if (file.is_open())
 	{
-		file << "User ID" << " | " << "Medicine Name" << " | " << "Amount Requested\n";
 		for (int i = 0; i < requestcounter; i++)
 		{
 			file << requests[i].userID << "       |";
