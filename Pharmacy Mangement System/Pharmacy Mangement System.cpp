@@ -64,6 +64,14 @@ string stringsearch;
 Text searchID[10], searchName[10], searchQuantity[10], searchCategory[10], searchPrice[10];
 Text intitialvalue;
 bool searchmakeRequest = false;
+
+//don't use this because make order will get broken
+bool makeorderactive1 = true, makeorderactive2 = false, makeorderactive3 = false;
+Text makeordertext1, makeordertext2, makeordertext3;
+string stmakeorder1, stmakeorder2, stmakeorder3;
+string current_time;
+Text error_text;;
+
 // bool and texts for inout displays for edit info (Admin) page ..... don't use it anywhere else to avoid conflicts and glitches
 bool editactive1, editactive2, editactive3;
 Text editAtext1, editAtext2, editAtext3;
@@ -167,7 +175,7 @@ struct order {
     }
 };
 order orders[Size] = {};
-
+order lastyorder = {};
 struct request {
     int userID;
     string medicineName;
@@ -432,13 +440,13 @@ void Draw_managePayment(managePayment& manage_payment);
 void ManagePayment_functional(managePayment& manage_payment);
 
 void showOrderReceipt(order lastOrder, string current_time);
-void ShowReceiptFunctional(order lastOrder, bool& show_order_receipt,
-    showReceipt showreceipt, string current_time, manageMedicine manage_medicine);
+void ShowReceiptFunctional( bool& show_order_receipt,
+    showReceipt showreceipt);
 
 void page_switcher(Header& header, SignUp& signup, SignIn& signin,
     userMenu& usermenu, adminMenu& adminmenu,
     searchMedicine& searchmedicine, showReceipt& showreceipt,
-    Edit_Info& edit_info, string current_time,
+    Edit_Info& edit_info,
     StmakeOrder makeorder, manageMedicine manage_medicine);
 
 //edit info pages:-
@@ -602,7 +610,7 @@ int main() {
                         }
                         else {
                             window.clear();
-                            page_num = 3;
+                            page_num = 3;F
                         }
                     }
                 }
@@ -648,7 +656,7 @@ int main() {
         while (window.isOpen())
         {
             page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
-                showreceipt, edit_info, "12:00", makeorder, manage_medicine);
+                showreceipt, edit_info, makeorder, manage_medicine);
         }
 
     }
@@ -2289,8 +2297,137 @@ void DrawMakeOrder(StmakeOrder& makeorder) {
     }
 }
 void makeOrderFunctional(StmakeOrder& makeorder) {
-    DrawMakeOrder(makeorder);
-    window.display();
+    makeordertext1.setFont(Calibri);
+    makeordertext2.setFont(Calibri);
+    makeordertext3.setFont(Calibri);
+    makeordertext1.setPosition(100, 207);
+    makeordertext2.setPosition(100, 326);
+    makeordertext3.setPosition(100, 585);
+    makeordertext1.setFillColor(sf::Color::Black);
+    makeordertext2.setFillColor(sf::Color::Black);
+    makeordertext3.setFillColor(sf::Color::Black);
+    bool breaked = false;
+    while (window.isOpen()) {
+        DrawMakeOrder(makeorder);
+        window.draw(makeordertext1);
+        window.draw(makeordertext2);
+        window.draw(makeordertext3);
+        window.display();
+        Event event;
+
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+                // Check if the mouse click is inside the first text field
+
+                if (makeorder.textbox_1.getGlobalBounds().contains(mousePos)) {
+
+                    makeorderactive1 = true;
+                    makeorderactive2 = false;
+                    makeorderactive3 = false;
+
+                }
+                else if (makeorder.textbox_2.getGlobalBounds().contains(mousePos)) {
+
+                    makeorderactive1 = false;
+                    makeorderactive2 = true;
+                    makeorderactive3 = false;
+                }
+                else if (makeorder.textbox_3.getGlobalBounds().contains(mousePos)) {
+                    makeorderactive1 = false;
+                    makeorderactive2 = false;
+                    makeorderactive3 = true;
+                }
+                if (makeorder.confrimOrder.getGlobalBounds().contains(mousePos))
+                {
+                    makeOrder(stmakeorder1, stmakeorder2, stmakeorder3);
+                    page_num = 5;
+                    breaked = true;
+                    break;
+                }
+            }
+            if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
+                cout << "entered" << endl;
+                if (makeorderactive1)
+                {
+                    if (stmakeorder1.size() < 20) {
+                        if ((event.text.unicode >= 48 && event.text.unicode <= 57) || event.text.unicode == 32) {
+                            stmakeorder1 += static_cast<char>(event.text.unicode);
+                            makeordertext1.setString(stmakeorder1);
+                            window.draw(makeordertext1);
+                            window.display();
+                        }
+                    }
+                }
+                else if (makeorderactive2)
+                {
+                    if (stmakeorder2.size() < 20) {
+                        if ((event.text.unicode >= 48 && event.text.unicode <= 57) || event.text.unicode == 32)
+                        {
+                            stmakeorder2 += static_cast<char>(event.text.unicode);
+                            makeordertext2.setString(stmakeorder2);
+                            window.draw(makeordertext2);
+                            window.display();
+                        }
+
+                    }
+                }
+                else if (makeorderactive3)
+                {
+                    if (stmakeorder3.size() < 20) {
+                        if ((event.text.unicode >= 48 && event.text.unicode <= 57) || event.text.unicode == 32) {
+                            stmakeorder3 += static_cast<char>(event.text.unicode);
+                            makeordertext3.setString(stmakeorder3);
+                            window.draw(makeordertext3);
+                            window.display();
+                        }
+                    }
+                }
+            }
+
+            // Handle backspace key
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace) {
+                if (makeorderactive1) {
+                    // Delete the last character from the first text display
+                    if (!stmakeorder1.empty()) {
+                        stmakeorder1.pop_back();
+                        makeordertext1.setString(stmakeorder1);
+                        window.draw(makeordertext1);
+                        window.display();
+                    }
+                }
+                else if (makeorderactive2) {
+                    // Delete the last character from the first text display
+                    if (!stmakeorder2.empty()) {
+                        stmakeorder2.pop_back();
+                        makeordertext2.setString(stmakeorder2);
+                        window.draw(makeordertext2);
+                        window.display();
+                    }
+                }
+                else if (makeorderactive3) {
+                    // Delete the last character from the first text display
+                    if (!stmakeorder3.empty()) {
+                        stmakeorder3.pop_back();
+                        makeordertext3.setString(stmakeorder3);
+                        window.draw(makeordertext3);
+                        window.display();
+                    }
+                }
+            }
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+            {
+                window.close();
+            }
+        }
+        if (breaked) {
+            break;
+        }
+
+    }
 }
 
 void SetUserMenu(userMenu& usermenu) {
@@ -2726,12 +2863,12 @@ void DrawShowReceipt(showReceipt showreceipt) {
     window.draw(showreceipt.showTable);
     window.draw(showreceipt.confirm);
 }
-void ShowReceiptFunctional(order lastOrder, bool& show_order_receipt,
-    showReceipt showreceipt, string current_time) {
+void ShowReceiptFunctional( bool& show_order_receipt,
+    showReceipt showreceipt) {
     Event event;
     show_order_receipt = 1;
     DrawShowReceipt(showreceipt);
-    showOrderReceipt(lastOrder, current_time);
+    showOrderReceipt(lastyorder, current_time);
     window.display();
 }
 
@@ -5344,13 +5481,18 @@ void showOrderReceipt(order lastOrder, string current_time) {
     text.setString("ship date : " + (lastOrder.shipDate));
     text.setPosition(x, y);
     window.draw(text);
+    window.draw(error_text);
 }
 
 void makeOrder(string medicineIDS, string quantity, string payment_method) {
     // this function might take some time to be understood ...
     // i tried my best to make it more understandable with comments
     // Good Luck
-    order lastyorder = {};
+    lastyorder = {};
+    error_text.setString("");
+    error_text.setFont(Calibri);
+    error_text.setFillColor(sf::Color::Red);
+    error_text.setPosition(10, 50);
     int length_medicines = medicineIDS.size();
     int length_quantity = quantity.size();
     int first_space_pos = -1, second_space_pos = -1;
@@ -5362,7 +5504,7 @@ void makeOrder(string medicineIDS, string quantity, string payment_method) {
     bool error_id = false;
     bool quantity_problem = false;
     bool pay_in_range = false;
-    string current_time;
+    current_time;
     // simple general try and catch code because this can execute some exceptions
     // dependent on user input format
     try {
@@ -5381,6 +5523,8 @@ void makeOrder(string medicineIDS, string quantity, string payment_method) {
         cout << "medicine ids is in a wrong format ... this order will not be "
             "excuted"
             << endl;
+        error_text.setString("medicine ids is in a wrong format ... this order will not be "
+            "excuted");
         error_format = true;
     }
     j = 0;
@@ -5402,6 +5546,7 @@ void makeOrder(string medicineIDS, string quantity, string payment_method) {
     catch (...) {
         cout << "quantities is in a wrong format ... this order will not be excuted"
             << endl;
+        error_text.setString("quantities is in a wrong format ... this order will not be excuted");
         error_format = true;
     }
     try {
@@ -5411,6 +5556,8 @@ void makeOrder(string medicineIDS, string quantity, string payment_method) {
         cout << "payment method is in a wrong format ... this order will not be "
             "excuted"
             << endl;
+        error_text.setString("payment method is in a wrong format ... this order will not be "
+            "excuted");
         error_format = true;
     }
     // the order will be done only if the input was in the right format
@@ -5468,6 +5615,7 @@ void makeOrder(string medicineIDS, string quantity, string payment_method) {
         // order will be cleared if a medicine id is wrong
         if (error_id == true) {
             cout << "you entered a wrong id , your order will not be excuted" << endl;
+            error_text.setString("you entered a wrong id , your order will not be excuted");
             lastyorder = {};
             current_time = "";
         }
@@ -5476,11 +5624,13 @@ void makeOrder(string medicineIDS, string quantity, string payment_method) {
             cout
                 << "you entered unavailable quantity , your order will not be excuted"
                 << endl;
+            error_text.setString("you entered unavailable quantity, your order will not be excuted");
             lastyorder = {};
             current_time = "";
         }
         if (pay_in_range == false) {
             cout << "wrong payment method, your order will not be excuted" << endl;
+            error_text.setString("wrong payment method, your order will not be excuted");
             lastyorder = {};
             current_time = "";
         }
@@ -5488,11 +5638,12 @@ void makeOrder(string medicineIDS, string quantity, string payment_method) {
         if (error_id == false && error_format == false &&
             quantity_problem == false) {
             int i = 0;
-            for (i; orders[i].orderID != 0; i++)
-                ;
+            for (i; orders[i].orderID != 0; i++);
+            lastyorder.orderID = i + 1;
+            lastyorder.userID = currentUser.ID;
             orders[i] = lastyorder;
         }
-        showOrderReceipt(lastyorder, current_time);
+        //showOrderReceipt(lastyorder, current_time);
     }
 }
 void manageOrder_functional() {
@@ -5712,14 +5863,13 @@ void manageOrder_functional() {
 void page_switcher(Header& header, SignUp& signup, SignIn& signin,
     userMenu& usermenu, adminMenu& adminmenu,
     searchMedicine& searchmedicine, showReceipt& showreceipt,
-    Edit_Info& edit_info, string current_time,
+    Edit_Info& edit_info,
     StmakeOrder makeorder, manageMedicine manage_medicine) {
     // this is a page switcher to decide which page should be displayed right now
     // don't forgot to put your function draw or you new full functional page
     // function here events such as buttons click should change page_num so the
     // page shown would be changed ;
     Event event;
-    order lastorder = orders[1];  // this shoud be returned from makeorder when fully functional
 
     switch (page_num) {
     case 0:
@@ -5742,7 +5892,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         break;
 
     case 5:
-        ShowReceiptFunctional(lastorder, show_order_receipt, showreceipt, current_time);
+        ShowReceiptFunctional(show_order_receipt, showreceipt);
         break;
     case 6:
         Draw_EditInfo_Admin(edit_info);
@@ -5756,6 +5906,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         break;
     case 8:
         makeOrderFunctional(makeorder);
+        window.display();
         break;
     case 9:
         showAllPreviousOrders(window);
