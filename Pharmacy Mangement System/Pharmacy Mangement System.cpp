@@ -503,7 +503,7 @@ int main() {
     backgroundTexture.loadFromFile("Assets/pharmacy2.jpg");
     Sprite background;
     background.setTexture(backgroundTexture);
-    background.setScale(0.276, 0.218);
+    background.setScale(0.276, 0.22);
 
     // setting up headers and sign up/in
     // SetHeader(header);
@@ -1696,7 +1696,7 @@ void DrawSignUp(SignUp signup) {
 void SetSignUp(SignUp& signup) {
     // Background
     signup.Background.setTexture(BackgroundSign);
-    signup.Background.setScale(0.276, 0.218);
+    signup.Background.setScale(0.276, 0.22);
     // background 1 located behind value fields
     signup.background1.setTexture(Signbox);
     signup.background1.setPosition(650, 156.2);
@@ -2054,7 +2054,7 @@ void DrawSignIn(SignIn signin) {
 void SetSignIn(SignIn& signin) {
     //Background
     signin.Background.setTexture(BackgroundSign);
-    signin.Background.setScale(0.276, 0.218);
+    signin.Background.setScale(0.276, 0.22);
 
     // background 1 located behind value fields
     signin.background1.setTexture(Signbox);
@@ -4349,7 +4349,7 @@ void EditInfo_User_Functional(Edit_Info& edit_info) {
 void set_manageUser(manageUser& manage_user) {
     manage_user.background.setTexture(backgroundManageUser);
 
-    manage_user.background.setScale(0.27, 0.22);
+    manage_user.background.setScale(0.276, 0.22);
 
     manage_user.mainbutton.setTexture(mainmenuButton);
     manage_user.mainbutton.setPosition(50, 65);
@@ -4841,7 +4841,7 @@ void managePaymentMethodes()
 void set_manageMedicine(manageMedicine& manage_medicine) {
     manage_medicine.background.setTexture(backgroundManageUser);
 
-    manage_medicine.background.setScale(0.27, 0.22);
+    manage_medicine.background.setScale(0.276, 0.22);
 
     manage_medicine.mainbutton.setTexture(mainmenuButton);
     manage_medicine.mainbutton.setPosition(50, 65);
