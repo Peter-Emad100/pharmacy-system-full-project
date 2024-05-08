@@ -4364,7 +4364,6 @@ void set_manageUser(manageUser& manage_user) {
     manage_user.Title.setFont(Calibri);
 
 
-
     manage_user.Title.setString("Manage User");
 
     manage_user.Title.setPosition(250, 70);
@@ -4396,9 +4395,7 @@ void set_manageUser(manageUser& manage_user) {
     manage_user.removeUser.setPosition(556, 177);
 
     manage_user.editUser.setTexture(buttonEditUser);
-
     manage_user.editUser.setScale(0.6, 0.48);
-
     manage_user.editUser.setPosition(20, 290);
 
     manage_user.addUser.setTexture(buttonAddUser);
@@ -4526,7 +4523,12 @@ void functioning_manageUser()
                     brokenwindow = true;
 
                 }
+                if (manage_user.editUser.getGlobalBounds().contains(mousepos))
+                {
+                    page_num = 7;
+                    brokenwindow = true;
 
+                }
 
             }
 
