@@ -2402,6 +2402,21 @@ void makeOrderFunctional(StmakeOrder& makeorder) {
                     breaked = true;
                     break;
                 }
+                if (makeorder.mainbutton.getGlobalBounds().contains(mousePos))
+                {
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        breaked = true;
+                        break;
+                    }
+                    else if (currentUser.his_role == user::Admin)
+                    {
+                        page_num = 3;
+                        breaked = true;
+                        break;
+                    }
+                }
             }
             if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
                 cout << "entered" << endl;
@@ -2931,7 +2946,6 @@ void ShowReceiptFunctional( bool& show_order_receipt,
         window.display();
         while (window.pollEvent(event)) {
 
-       
 
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
             {
@@ -2972,6 +2986,7 @@ void ShowReceiptFunctional( bool& show_order_receipt,
                         break;
                     }
                 }
+                
             }
         }
         if (breaked) {
@@ -3624,6 +3639,21 @@ void functioningAddMedicine()
             if (evnt.type == Event::MouseButtonPressed && evnt.mouseButton.button == Mouse::Left) {
 
                 Vector2f MousePosition = window.mapPixelToCoords({ evnt.mouseButton.x, evnt.mouseButton.y });
+                if (searchmedicine.mainbutton.getGlobalBounds().contains(MousePosition))
+                {
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        brokenwindow = true;
+                        break;
+                    }
+                    else if (currentUser.his_role == user::Admin)
+                    {
+                        page_num = 3;
+                        brokenwindow= true;
+                        break;
+                    }
+                }
 
                 if (addmedicine.medNametextbox.getGlobalBounds().contains(MousePosition))
                 {
@@ -3698,12 +3728,6 @@ void functioningAddMedicine()
                 {
                     //make input registere
                     addNewMedicine(medNameSt, medConcSt, medCataSt, medDescSt, medPriceSt, medQuantitySt);
-                    brokenwindow = true;
-                    page_num = 3;
-
-                }
-                if (addmedicine.mainbutton.getGlobalBounds().contains(MousePosition))
-                {
                     brokenwindow = true;
                     page_num = 3;
 
@@ -4110,6 +4134,21 @@ void functioningAddUser()
 
                 Vector2f MousePosition = window.mapPixelToCoords({ evnt.mouseButton.x, evnt.mouseButton.y });
 
+                if (adduser.mainbutton.getGlobalBounds().contains(MousePosition))
+                {
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        brokenwindow = true;
+                        break;
+                    }
+                    else if (currentUser.his_role == user::Admin)
+                    {
+                        page_num = 3;
+                        brokenwindow= true;
+                        break;
+                    }
+                }
                 if (adduser.usernametextbox.getGlobalBounds().contains(MousePosition))
                 {
 
@@ -4177,12 +4216,6 @@ void functioningAddUser()
                     brokenwindow = true;
                     page_num = 3;
 
-
-                }
-                if (adduser.mainbutton.getGlobalBounds().contains(MousePosition))
-                {
-                    brokenwindow = true;
-                    page_num = 3;
 
                 }
             }
@@ -4440,6 +4473,21 @@ void functioning_manageUser()
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
                 Vector2f mousepos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+                if (manage_user.mainbutton.getGlobalBounds().contains(mousepos))
+                {
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        brokenwindow = true;
+                        break;
+                    }
+                    else if (currentUser.his_role == user::Admin)
+                    {
+                        page_num = 3;
+                        brokenwindow= true;
+                        break;
+                    }
+                }
 
                 if (manage_user.removeUser.getGlobalBounds().contains(mousepos))
                 {
@@ -4626,7 +4674,7 @@ void managePaymentMethodes()
 
     string newMethode;
 
-
+    bool breaked = false;
 
     while (window.isOpen()) {
         Event event;
@@ -4662,6 +4710,21 @@ void managePaymentMethodes()
 
                 else if (manage_payment.valuefield2.getGlobalBounds().contains(mousePos)) {
                     activeDisplay = false;
+                }
+                if (manage_payment.mainbutton.getGlobalBounds().contains(mousePos))
+                {
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        breaked = true;
+                        break;
+                    }
+                    else if (currentUser.his_role == user::Admin)
+                    {
+                        page_num = 3;
+                        breaked = true;
+                        break;
+                    }
                 }
             }
 
@@ -4770,7 +4833,9 @@ void managePaymentMethodes()
 
             savePayMethodeLocally();
         }
-
+        if (breaked) {
+            break;
+        }
     }
 }
 void set_manageMedicine(manageMedicine& manage_medicine) {
@@ -4890,6 +4955,21 @@ void functioning_manageMedicine()
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
             {
                 Vector2f mousepos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+                if (manage_medicine.mainbutton.getGlobalBounds().contains(mousepos))
+                {
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        brokenWindow = true;
+                        break;
+                    }
+                    else if (currentUser.his_role == user::Admin)
+                    {
+                        page_num = 3;
+                        brokenWindow = true;
+                        break;
+                    }
+                }
                 if (manage_medicine.removeMedicine.getGlobalBounds().contains(mousepos))
                 {
                     if (removeMedicine(stoi(inputMedicineID)) == false)
@@ -4906,7 +4986,6 @@ void functioning_manageMedicine()
                                 }
 
                             }
-
                             window2.clear();
                             Text text;
                             text.setFont(Calibri);
@@ -4932,6 +5011,7 @@ void functioning_manageMedicine()
                     brokenWindow = true;
                     break;
                 }
+
             }
         }
         if (brokenWindow)
@@ -5200,7 +5280,7 @@ void DrawMedicineEdit(MedicineInfo medicineinfo) {
 
 void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) {
     medicineEdit = true;
-
+    bool broken = false;
     window.clear();
     while (window.isOpen()) {
 
@@ -5229,6 +5309,21 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
 
                 Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
 
+                if (searchmedicine.mainbutton.getGlobalBounds().contains(mousePos))
+                {
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        broken = true;
+                        break;
+                    }
+                    else if (currentUser.his_role == user::Admin)
+                    {
+                        page_num = 3;
+                        broken = true;
+                        break;
+                    }
+                }
                 if (medicineinfo.valuefield1.getGlobalBounds().contains(mousePos))
                 {
                     active_1 = true;
@@ -5360,6 +5455,9 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
                 }
             }
 
+        }
+        if (broken) {
+            break;
         }
     }
 }
@@ -6162,16 +6260,15 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
 
     case 5:
         ShowReceiptFunctional(show_order_receipt, showreceipt);
+        window.display();
         break;
     case 6:
         Draw_EditInfo_Admin(edit_info);
         window.display();
         break;
     case 7:
-
         editUserCredentials(currentUser_Index);
         window.display();
-
         break;
     case 8:
         makeOrderFunctional(makeorder);
@@ -6312,7 +6409,7 @@ void Requestadrug_showfunctional(bool& requestdrug) {
                         break;
                     }
                 }
-                if (searchmedicine.mainbutton.getGlobalBounds().contains(mousePos))
+                if (requestadrug.mainbutton.getGlobalBounds().contains(mousePos))
                 {
                     if (currentUser.his_role == user::User)
                     {
