@@ -3589,6 +3589,13 @@ void functioningAddMedicine()
     bool brokenwindow = false;
     setAddMedicine(addmedicine);
 
+    medNameSt = "";
+    medCataSt = "";
+    medPriceSt = "";
+    medQuantitySt = "";
+    medConcSt = "";
+    medDescSt = "";
+
     while (window.isOpen())
     {
         if (brokenwindow)
@@ -3691,6 +3698,12 @@ void functioningAddMedicine()
                 {
                     //make input registere
                     addNewMedicine(medNameSt, medConcSt, medCataSt, medDescSt, medPriceSt, medQuantitySt);
+                    brokenwindow = true;
+                    page_num = 3;
+
+                }
+                if (addmedicine.mainbutton.getGlobalBounds().contains(MousePosition))
+                {
                     brokenwindow = true;
                     page_num = 3;
 
@@ -4063,6 +4076,11 @@ void functioningAddUser()
     AddUsers adduser;
     setAddusers(adduser);
     bool brokenwindow = false;
+    usernameDis.setString("");
+    passwordDis.setString("");
+    addressDis .setString("");
+    phoneDis   .setString("");
+    emailDis   .setString("");
 
     while (window.isOpen())
     {
@@ -4159,6 +4177,12 @@ void functioningAddUser()
                     brokenwindow = true;
                     page_num = 3;
 
+
+                }
+                if (adduser.mainbutton.getGlobalBounds().contains(MousePosition))
+                {
+                    brokenwindow = true;
+                    page_num = 3;
 
                 }
             }
