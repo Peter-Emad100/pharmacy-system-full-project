@@ -4640,7 +4640,7 @@ void set_managePayment(managePayment& manage_payment) {
 
     manage_payment.valuefield1.setTexture(textbox);
 
-    manage_payment.valuefield1.setScale(0.5, 0.4);
+    manage_payment.valuefield1.setScale(0.6, 0.5);
 
     manage_payment.valuefield1.setPosition(850, 250);
 
@@ -4648,7 +4648,7 @@ void set_managePayment(managePayment& manage_payment) {
 
     manage_payment.valuefield2.setTexture(textbox);
 
-    manage_payment.valuefield2.setScale(0.5, 0.4);
+    manage_payment.valuefield2.setScale(0.6, 0.5);
 
     manage_payment.valuefield2.setPosition(850, 450);
 
@@ -4656,17 +4656,17 @@ void set_managePayment(managePayment& manage_payment) {
 
     manage_payment.confirm_button.setTexture(manage_payment.confirm);
 
-    manage_payment.confirm_button.setScale(0.28, 0.24);
+    manage_payment.confirm_button.setScale(0.4, 0.4);
 
-    manage_payment.confirm_button.setPosition(940, 330);
+    manage_payment.confirm_button.setPosition(960, 330);
 
     // delete button for deleting payments
 
     manage_payment.delete_button.setTexture(manage_payment.Delete);
 
-    manage_payment.delete_button.setScale(0.25, 0.24);
+    manage_payment.delete_button.setScale(0.376, 0.35);
 
-    manage_payment.delete_button.setPosition(940, 540);
+    manage_payment.delete_button.setPosition(955, 540);
 
     // semi transparent background to display payment methods for user
 
@@ -4684,9 +4684,9 @@ void set_managePayment(managePayment& manage_payment) {
 
     manage_payment.button1.setString("Enter name of payment to add: ");
 
-    manage_payment.button1.setPosition(860, 230);
+    manage_payment.button1.setPosition(860, 220);
 
-    manage_payment.button1.setScale(0.7, 0.6);
+    manage_payment.button1.setScale(1,1);
 
     // text to delete payment
 
@@ -4696,9 +4696,9 @@ void set_managePayment(managePayment& manage_payment) {
 
     manage_payment.button2.setString("Enter name of payment to delete: ");
 
-    manage_payment.button2.setPosition(860, 430);
+    manage_payment.button2.setPosition(860, 410);
 
-    manage_payment.button2.setScale(0.7, 0.6);
+    manage_payment.button2.setScale(1, 1);
 
     // setting display1 :: adding payments
 
@@ -4767,12 +4767,25 @@ void managePaymentMethodes()
     while (window.isOpen()) {
         Event event;
         window.clear();
-
         Draw_managePayment(manage_payment);
         window.draw(managetext1);
-
         window.draw(managetext2);
-
+        Text text;
+        int c = 80, d = 140;
+        text.setFont(Calibri);
+        text.setString("Payment methods right now");
+        text.setPosition(c, d);
+        window.draw(text);
+        d += 30;
+        c += 20;
+        int i = 1;
+        for (auto it = paymentMethods.begin(); it != paymentMethods.end(); ++it) {
+            text.setString(to_string(i) + ". " + *it);
+            text.setPosition(c, d);
+            window.draw(text);
+            d += 30;
+            i++;
+        }
         window.display();
         while (window.pollEvent(event)) {
             // Handle mouse click
@@ -4792,6 +4805,22 @@ void managePaymentMethodes()
                 if (manage_payment.valuefield1.getGlobalBounds().contains(mousePos)) {
                     activeDisplay = true;
 
+                }
+                if (manage_payment.confirm_button.getGlobalBounds().contains(mousePos)) {
+                    newMethode = managedisplay1;
+                    if (newMethode != "") {
+                        paymentMethods.push_back(newMethode);
+                    }
+
+                }
+                if (manage_payment.delete_button.getGlobalBounds().contains(mousePos)) {
+
+                    for (auto it = paymentMethods.begin(); it != paymentMethods.end(); ++it) {
+                        if (managedisplay2 == *it) {
+                            paymentMethods.erase(it);
+                            break;
+                        }
+                    }
                 }
 
                 // Check if the mouse click is inside the second text field
@@ -4833,13 +4862,6 @@ void managePaymentMethodes()
 
                     }
 
-                    if (manage_payment.confirm_button.getGlobalBounds().contains(mousePos)) {
-                        newMethode = managedisplay1;
-
-                        paymentMethods.push_back(newMethode);
-
-                    }
-
                 }
 
                 else {
@@ -4856,15 +4878,6 @@ void managePaymentMethodes()
 
                     }
 
-                    if (manage_payment.delete_button.getGlobalBounds().contains(mousePos)) {
-
-                        for (auto it = paymentMethods.begin(); it != paymentMethods.end(); ++it) {
-                            if (managedisplay2 == *it) {
-                                paymentMethods.erase(it);
-
-                            }
-                        }
-                    }
                     // Debugging: Print the active display status
 
                     cout << "Active display: " << (activeDisplay ? "managedisplay1" : "managedisplay2")
@@ -4888,12 +4901,6 @@ void managePaymentMethodes()
                         window.display();
                     }
 
-                    if (manage_payment.confirm_button.getGlobalBounds().contains(mousePos)) {
-                        newMethode = managedisplay1;
-                        paymentMethods.push_back(newMethode);
-
-                    }
-
                 }
 
                 else {
@@ -4906,15 +4913,7 @@ void managePaymentMethodes()
                         window.draw(managetext2);
                         window.display();
                     }
-                    if (manage_payment.delete_button.getGlobalBounds().contains(mousePos)) {
 
-                        for (auto it = paymentMethods.begin(); it != paymentMethods.end(); ++it) {
-                            if (managedisplay2 == *it) {
-                                paymentMethods.erase(it);
-
-                            }
-                        }
-                    }
                 }
 
             }
