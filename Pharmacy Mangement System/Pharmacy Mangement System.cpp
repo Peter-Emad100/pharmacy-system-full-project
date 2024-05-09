@@ -2137,9 +2137,57 @@ void functioningSignIn() {
 
                 if (signin.buttonin.getGlobalBounds().contains(mousePos))
                 {
-                    logInInterface(display1, display2);
-                    brokenwindow = true;
-                    break;
+                    if (validateUser(display1, display2, currentUser))
+                    {
+                        if (currentUser.his_role == user::User)
+                        {
+                            window.clear();
+                            page_num = 2;
+                            brokenwindow = true;
+                            break;
+
+                        }
+                        else
+                        {
+                            window.clear();
+                            page_num = 3;
+                            brokenwindow = true;
+                            break;
+
+                        }
+                                                
+                    }
+                    else {
+                        display1.resize(0);
+                        display2.resize(0);
+                        displaytext1.setString(display1);
+                        displaytext2.setString(display2);
+
+                        RenderWindow window2(VideoMode(400, 200), "Warning!");
+                        // Main loop for the second window
+                        while (window2.isOpen())
+                        {
+                            sf::Event event2;
+                            while (window2.pollEvent(event2))
+                            {
+                                if (event2.type == sf::Event::Closed)
+                                {
+                                    window2.close();
+                                }
+
+                            }
+
+                            window2.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("Invalid credentials, Please try again!");
+                            text.setScale(0.5, 0.5);
+                            window2.draw(text);
+                            // Draw whatever you want in the second window
+                            window2.display();
+                        }
+                    }
+                   
                 }
 
                 if (signin.buttonup.getGlobalBounds().contains(mousePos))
@@ -3163,6 +3211,7 @@ void Set_EditInfo_Admin(Edit_Info& edit_info) {
     edit_info.wrng_id.setFillColor(Color::Black);
     edit_info.wrng_id.setPosition(280, 205);
 }
+
 void Draw_EditInfo_Admin(Edit_Info& edit_info) {
 
     int userIndex = 0;
@@ -3214,8 +3263,8 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
 
 
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-               // Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
-                // Check if the mouse click is inside the first text field
+                // Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+                 // Check if the mouse click is inside the first text field
                 if (edit_info.valuefield1.getGlobalBounds().contains(mousePos)) {
                     editactive1 = true;
                     editactive2 = false;
@@ -3226,10 +3275,123 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
                     editactive2 = true;
                     editactive3 = false;
                 }
-                else if (edit_info.valuefield3.getGlobalBounds().contains(mousePos)) {
+                else if (edit_info.valuefield3.getGlobalBounds().contains(mousePos)) { // id
                     editactive1 = false;
                     editactive2 = false;
                     editactive3 = true;
+                }
+
+
+
+                if (edit_info.confirm.getGlobalBounds().contains((mousePos))) {
+                    // Loop through the users until a user with userID = 0 is found,
+               // indicating that there are no more users in our database
+                    bool found = false;
+                    while (users[userIndex].ID != 0) {
+                        found = false;
+                        if (users[userIndex].ID == stoi(editAdisplay3)) {
+                            found = true;
+                            cout << "found" << endl;
+                            break;
+                        }
+                        userIndex++;
+                    }
+
+
+
+
+                    if (found) {
+                        // draws buttons with respect to the role of that user
+
+                      //  Vector2i mousePosition = Mouse::getPosition(window);
+
+                        if (edit_info.changeUser.getGlobalBounds().contains(
+                            static_cast<Vector2f>(mousePos))) {
+                            users[userIndex].username = editAdisplay1;
+
+
+                            RenderWindow window2(VideoMode(400, 200), "Success!");
+                            // Main loop for the second window
+                            while (window2.isOpen())
+                            {
+                                Event event2;
+                                while (window2.pollEvent(event2))
+                                {
+                                    if (event2.type == Event::Closed)
+                                    {
+                                        window2.close();
+                                    }
+
+                                }
+
+                                window2.clear();
+                                Text text;
+                                text.setFont(Calibri);
+                                text.setString("Username changed successfully!");
+                                text.setScale(0.5, 0.5);
+                                window2.draw(text);
+                                // Draw whatever you want in the second window
+                                window2.display();
+                            }
+                        }
+                        if (edit_info.changePass.getGlobalBounds().contains(
+                            static_cast<Vector2f>(mousePos))) {
+                            users[userIndex].password = editAdisplay2;
+
+                            RenderWindow window3(VideoMode(400, 200), "Success!");
+                            // Main loop for the third window
+                            while (window3.isOpen())
+                            {
+                                sf::Event event3;
+                                while (window3.pollEvent(event3))
+                                {
+                                    if (event3.type == sf::Event::Closed)
+                                    {
+                                        window3.close();
+                                    }
+
+                                }
+
+                                window3.clear();
+                                Text text;
+                                text.setFont(Calibri);
+                                text.setString("Password changed successfully!");
+                                text.setScale(0.5, 0.5);
+                                window3.draw(text);
+                                // Draw whatever you want in the second window
+                                window3.display();
+                            }
+                        }
+
+
+                        while (users[userIndex].his_role == user::User) {
+
+                            window.draw(edit_info.makeUserGreen);
+                            window.draw(edit_info.makeAdminRed);
+                            window.display();
+
+                            // change user to admin
+                            if (edit_info.makeAdminRed.getGlobalBounds().contains(
+                                static_cast<Vector2f>(mousePos))) {
+                                users[userIndex].his_role = user::Admin;
+
+                            }
+                        }
+
+                        if(users[userIndex].his_role == user::Admin) {
+                            window.draw(edit_info.makeAdminGreen);
+                            window.draw(edit_info.makeUserRed);
+                            window.display();
+
+                            // change admin to user
+                            if (edit_info.makeUserRed.getGlobalBounds().contains(
+                                static_cast<Vector2f>(mousePos))) {
+                                users[userIndex].his_role = user::User;
+
+                            }
+                        }
+                    }
+
                 }
             }
             if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
@@ -3294,81 +3456,14 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
                     }
                 }
             }
-         //   Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
-            if (edit_info.confirm.getGlobalBounds().contains((mousePos))) {
-                // Loop through the users until a user with userID = 0 is found,
-           // indicating that there are no more users in our database
-                bool found = false;
-                while (users[userIndex].ID != 0) {
-                    found = false;
-                    if (users[userIndex].username == editAdisplay3) {
-                        found = true;
-                        break;
-                    }
-                    userIndex++;
-                }
 
-                Clock clock;
-                if (!found) {
-
-                    clock.restart();
-                    Time elapsedTime = clock.getElapsedTime();
-                    while (elapsedTime < displayDuration) {
-                        window.draw(edit_info.wrng_id);
-                        elapsedTime = clock.getElapsedTime();
-                    }
-
-
-                }
-                if (found) {
-                    // draws buttons with respect to the role of that user
-
-                    Vector2i mousePosition = Mouse::getPosition(window);
-
-                    if (edit_info.changeUser.getGlobalBounds().contains(
-                        static_cast<Vector2f>(mousePosition))) {
-                        users[userIndex].username = editAdisplay1;
-                    }
-                    if (edit_info.changePass.getGlobalBounds().contains(
-                        static_cast<Vector2f>(mousePosition))) {
-                        users[userIndex].password = editAdisplay2;
-                    }
-
-
-                    while (users[userIndex].his_role == user::User) {
-
-                        window.draw(edit_info.makeUserGreen);
-                        window.draw(edit_info.makeAdminRed);
-                        window.display();
-
-                        // change user to admin
-                        if (edit_info.makeAdminRed.getGlobalBounds().contains(
-                            static_cast<Vector2f>(mousePosition))) {
-                            users[userIndex].his_role = user::Admin;
-
-                        }
-                    }
-
-                    while (users[userIndex].his_role == user::Admin) {
-                        window.draw(edit_info.makeAdminGreen);
-                        window.draw(edit_info.makeUserRed);
-                        window.display();
-
-                        // change admin to user
-                        if (edit_info.makeUserRed.getGlobalBounds().contains(
-                            static_cast<Vector2f>(mousePosition))) {
-                            users[userIndex].his_role = user::User;
-
-                        }
-                    }
-                }
+            if (breaked) {
+                break;
             }
-        }
-        if (breaked) {
-            break;
         }
     }
 }
+
 
 void setAddMedicine(AddMedicine& addmedicine)
 
@@ -5781,7 +5876,6 @@ void logInInterface(string username, string password) {
             display1.resize(0);
             display2.resize(0);
             activeDisplay = true;
-            functioningSignIn();
             window.display();
         }
     }
