@@ -5049,22 +5049,7 @@ void editUserCredentials(int index)
             Vector2f mousePos =
                 window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
 
-            if (edit_info.mainbutton.getGlobalBounds().contains(mousePos))
-            {
-                if (currentUser.his_role == user::User)
-                {
-                    page_num = 2;
-                    breaked = true;
-                    break;
-                }
-                else if (currentUser.his_role == user::Admin)
-                {
-                    page_num = 3;
-                    breaked = true;
-                    break;
-                }
-            }
-
+            
             if (event.type == Event::MouseButtonPressed &&
                 event.mouseButton.button == Mouse::Left) {
                 // Check if the mouse click is inside the first text field
@@ -5079,6 +5064,75 @@ void editUserCredentials(int index)
                 else if (edit_info.valuefield2.getGlobalBounds().contains(mousePos)) {
                     editUactive = false;
                 }
+                if (edit_info.mainbutton.getGlobalBounds().contains(mousePos))
+                {
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        breaked = true;
+                        break;
+                    }
+                    else if (currentUser.his_role == user::Admin)
+                    {
+                        page_num = 3;
+                        breaked = true;
+                        break;
+                    }
+                }
+
+
+                if (edit_info.changeAddress.getGlobalBounds().contains(mousePos)) {
+                    users[index].address = editUdisplay1;
+                    RenderWindow window2(sf::VideoMode(400, 200), "Confirmation message!");
+                    while (window2.isOpen())
+                    {
+                        sf::Event event2;
+                        while (window2.pollEvent(event2))
+                        {
+                            if (event2.type == sf::Event::Closed)
+                            {
+                                window2.close();
+                            }
+
+                        }
+                        window2.clear();
+                        Text text;
+                        text.setFont(Calibri);
+                        text.setString("Address changed!");
+                        text.setScale(0.5, 0.5);
+                        window2.draw(text);
+                        window2.display();
+                    }
+                    editUdisplay1.resize(0);
+                    editUtext1.setString(editUdisplay1);
+                }
+
+                if (edit_info.changePhone.getGlobalBounds().contains(mousePos)) {
+                    users[index].phone = editUdisplay2;
+                    RenderWindow window2(sf::VideoMode(400, 200), "Confirmation message!");
+                    while (window2.isOpen())
+                    {
+                        sf::Event event2;
+                        while (window2.pollEvent(event2))
+                        {
+                            if (event2.type == sf::Event::Closed)
+                            {
+                                window2.close();
+                            }
+
+                        }
+                        window2.clear();
+                        Text text;
+                        text.setFont(Calibri);
+                        text.setString("Phone number changed!");
+                        text.setScale(0.5, 0.5);
+                        window2.draw(text);
+                        window2.display();
+                    }
+                    editUdisplay2.resize(0);
+                    editUtext2.setString(editUdisplay2);
+                }
+
             }
 
             // Handle text input
@@ -5096,9 +5150,7 @@ void editUserCredentials(int index)
 
                     }
 
-                    if (edit_info.changeAddress.getGlobalBounds().contains(mousePos)) {
-                        users[index].address = editUdisplay1;
-                    }
+                   
                     window.draw(editUtext1);
                     window.display();
                 }
@@ -5118,9 +5170,7 @@ void editUserCredentials(int index)
                         }
                     }
 
-                    if (edit_info.changePhone.getGlobalBounds().contains(mousePos)) {
-                        users[index].phone = editUdisplay2;
-                    }
+                   
                 }
                 // Debugging: Print the active display status
 
@@ -5144,10 +5194,7 @@ void editUserCredentials(int index)
 
                     }
 
-                    if (edit_info.changeAddress.getGlobalBounds().contains(mousePos)) {
-                        users[index].address = editUdisplay1;
-                    }
-
+                   
                 }
 
                 else {
