@@ -31,7 +31,7 @@ bool issignin = false; //check if i need to switch to sign in page
 bool doneAdding = false;//to add
 bool active_1 = false, active_2 = false, active_3 = false; // switches between input fields in Medicine Edit page
 
-RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Fullscreen);
+RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Resize|Style::Close);
 Font Calibri;
 Texture BackgroundSign;
 Texture ButtonTexture, TextTexture, darkbox, textbox, headerbox, Signbox,
@@ -103,6 +103,7 @@ const Time displayDuration = milliseconds(5000);
 bool  usernameSc, addressSc, emailSc, phoneSc, passwordSc;
 string usernameSt, addressSt, emailSt, phoneSt, passwordSt;
 Text usernameDis, addressDis, emailDis, phoneDis, passwordDis;
+int roleChoice;
 
 bool medNameSc, medCataSc, medConcSc, medPriceSc, medQuantitySc, medDescSc;
 string medNameSt, medCataSt, medConcSt, medPriceSt, medQuantitySt, medDescSt;
@@ -378,7 +379,7 @@ void makeOrderFunctional(StmakeOrder& makeorder);
 void showOrderReceipt(order lastOrder, string current_time);
 void makeRequest(string _medicineName, string _amountReq);
 void showAllPreviousOrders();
-void addUser(string, string, string, string, string);
+void addUser(string, string, string, string, string,int);
 void addNewMedicine(string name, string concentraiton, string catagory, string description, string price, string quantity);
 void updateUser();
 bool removeUser(int userID);
@@ -1139,68 +1140,29 @@ void showAllPreviousOrders(RenderWindow& window) {
 
 
 
-void addUser(string username, string address, string email, string password, string phone) {
+void addUser(string username, string address, string email, string password, string phone,int role) {
+    
     int id = user_data + 1;
     newUser.ID = id;
+
     newUser.username = username;
     newUser.email = email;
     newUser.password = password;
-    newUser.phone = stoi(phone);
+    newUser.phone = phone;
     newUser.address = address;
-    /*if (roleChoice==0)
+
+    if (role == 1)
+    {
+        newUser.his_role = user::Admin;
+    }
+    else
     {
         newUser.his_role = user::User;
     }
-    else if (roleChoice == 1)
-    {
-        newUser.his_role = user::Admin;
-    }*/
+
     users[id - 1] = newUser;
-
-    saveOneUserDataLocally();
-
     user_data++;
 
-    // Increment user_data to keep track of the total number of
-    /*cout << "Please provide the following information for the new user:\n";
-    do {
-        cout << "Username: ";
-        cin >> newUser.username;
-
-        if (isUsernameTaken(newUser.username))
-
-            cout << "A user with that username already exists. Please enter a "
-            "different username: ";
-
-    } while (isUsernameTaken(newUser.username));*/
-    //cout << "Password: ";
-    //cin >> newUser.password;
-    //cout << "E-mail: ";
-    //cin >> newUser.email;
-    //cout << "Address: ";
-    //cin.ignore(1, '\n');
-    //getline(cin, newUser.address);
-    //cout << "Phone Number: ";
-    //cin >> newUser.phone;
-
-    //do {
-    //    cout << "Pick the new role\n1-User\n2-Admin\n";
-    //    cin >> roleChoice;
-    //    if (roleChoice == 1) {
-    //        newUser.his_role = user::User;
-    //    }
-    //    else if (roleChoice == 2) {
-    //        newUser.his_role = user::Admin;
-    //    }
-    //    else {
-    //        cout << "Invalid role choice. Please enter 1 for User or 2 for Admin.\n";
-    //    }
-    //} while (roleChoice != 1 && roleChoice != 2);
-
-
-    //cout << "Congratulations! A new user has been successfully created.\n";
-
-    //// users
 }
 void addNewMedicine(string name, string concentraiton, string catagory, string description, string price, string quantity)
 {
@@ -1216,11 +1178,9 @@ void addNewMedicine(string name, string concentraiton, string catagory, string d
     newMedicine.availability = true;
     newMedicine.ID = id;
 
-    medicines[id - 1] = newMedicine;
+    medicines[id-1] = newMedicine;
 
     medicine_data++;
-
-    saveMedicineDataLocally();
 }
 
 
@@ -3796,12 +3756,12 @@ void functioningAddMedicine()
     bool brokenwindow = false;
     setAddMedicine(addmedicine);
 
-    medNameSt = "";
-    medCataSt = "";
-    medPriceSt = "";
-    medQuantitySt = "";
-    medConcSt = "";
-    medDescSt = "";
+    medNameDis.setString(medNameSt);
+    medCataDis.setString(medCataSt);
+    medPriceDis.setString(medPriceSt);
+    medQuantityDis.setString(medQuantitySt); 
+    medConcDis.setString(medConcSt);
+    medDescDis.setString(medDescSt);
 
     while (window.isOpen())
     {
@@ -3916,12 +3876,22 @@ void functioningAddMedicine()
 
                 }
 
-                if (addmedicine.optionsbutton.getGlobalBounds().contains(MousePosition))
+                if (medNameSt != "" && medConcSt != "" && medCataSt != "" && medDescSt != "" && medPriceSt != "" && medQuantitySt != "")
                 {
-                    //make input registere
-                    addNewMedicine(medNameSt, medConcSt, medCataSt, medDescSt, medPriceSt, medQuantitySt);
-                    brokenwindow = true;
-                    page_num = 3;
+                    if (addmedicine.optionsbutton.getGlobalBounds().contains(MousePosition))
+                    {
+                            addNewMedicine(medNameSt, medConcSt, medCataSt, medDescSt, medPriceSt, medQuantitySt);
+                            
+                            medNameSt = "";
+                            medCataSt = "";
+                            medPriceSt = "";
+                            medQuantitySt = "";
+                            medConcSt = "";
+                            medDescSt = "";
+
+                            brokenwindow = true;
+                            page_num = 3;
+                    }
 
                 }
             }
@@ -4051,6 +4021,7 @@ void functioningAddMedicine()
         }
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
         {
+            saveAllDataLocally();
             window.close();
         }
 
@@ -4292,11 +4263,13 @@ void functioningAddUser()
     AddUsers adduser;
     setAddusers(adduser);
     bool brokenwindow = false;
-    usernameDis.setString("");
-    passwordDis.setString("");
-    addressDis.setString("");
-    phoneDis.setString("");
-    emailDis.setString("");
+
+
+    usernameDis.setString(usernameSt); 
+    passwordDis.setString(passwordSt); 
+    addressDis.setString(addressSt);
+    phoneDis.setString(phoneSt);
+    emailDis.setString(emailSt);
 
     while (window.isOpen())
     {
@@ -4322,7 +4295,8 @@ void functioningAddUser()
             {
                 window.close();
             }
-            if (evnt.type == Event::MouseButtonPressed && evnt.mouseButton.button == Mouse::Left) {
+            if (evnt.type == Event::MouseButtonPressed && evnt.mouseButton.button == Mouse::Left) 
+            {
 
                 Vector2f MousePosition = window.mapPixelToCoords({ evnt.mouseButton.x, evnt.mouseButton.y });
 
@@ -4394,21 +4368,29 @@ void functioningAddUser()
                 if (adduser.roleAdminbutton.getGlobalBounds().contains(MousePosition))
                 {
                     // make rule of new user admin.
-                    newUser.his_role = user::Admin;
+                    roleChoice = 1;
 
                 }
                 if (adduser.roleUserbutton.getGlobalBounds().contains(MousePosition))
                 {
                     // make rule of new user a User.
-                    newUser.his_role = user::User;
+                    roleChoice = 0;
                 }
-                if (adduser.optionsbutton.getGlobalBounds().contains(MousePosition))
+                if (usernameSt != "" && addressSt != "" && emailSt != "" && passwordSt != "" && phoneSt != "" && roleChoice != -1)
                 {
-                    addUser(usernameSt, addressSt, emailSt, passwordSt, phoneSt);
-                    brokenwindow = true;
-                    page_num = 3;
+                    if (adduser.optionsbutton.getGlobalBounds().contains(MousePosition))
+                    {
+                       addUser(usernameSt, addressSt, emailSt, passwordSt, phoneSt,roleChoice);
 
+                       usernameSt = "";
+                       passwordSt = "";
+                       addressSt = "";
+                       phoneSt = "";
+                       emailSt = "";
 
+                       brokenwindow = true;
+                       page_num = 3;
+                    }
                 }
             }
             if (evnt.type == Event::TextEntered && isprint(evnt.text.unicode)) {
@@ -4513,11 +4495,10 @@ void functioningAddUser()
                 }
 
             }
-
-
         }
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
         {
+            saveAllDataLocally();
             window.close();
         }
 
