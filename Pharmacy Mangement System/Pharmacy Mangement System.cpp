@@ -3719,7 +3719,7 @@ void drawAddMedicine(AddMedicine& addmedicine)
 {
     window.draw(addmedicine.background);
 
-    window.draw(addmedicine.secbackground);
+    window.draw(adduser.secbackground);
 
     window.draw(addmedicine.medNametextbox);
 
