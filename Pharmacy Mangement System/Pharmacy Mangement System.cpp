@@ -835,6 +835,9 @@ void adminPermissions() {
 bool searchForMedicineByName(string name) {
     searchmakeRequest = false;
     int x = name.size();
+    if (name == "") {
+        return 1;
+    }
     if (name[0] >= 'a' && name[0] <= 'z') {
         name[0] -= 32;
     }
@@ -911,6 +914,10 @@ void searchForMedicineByCategory(string category) {
     }
     for (int i = 0; i < Size; i++) {
         if (category == medicines[i].category) {
+            if (category == "") {
+                found = true;
+                break;
+            }
             DrawSearch(searchmedicine);
             float x = 20;
             searchID[textarrindex].setFont(Calibri);
@@ -2437,12 +2444,24 @@ void makeOrderFunctional(StmakeOrder& makeorder) {
                 if (makeorder.confrimOrder.getGlobalBounds().contains(mousePos))
                 {
                     makeOrder(stmakeorder1, stmakeorder2, stmakeorder3);
+                    stmakeorder1.resize(0);
+                    makeordertext1.setString(stmakeorder1);
+                    stmakeorder2.resize(0);
+                    makeordertext2.setString(stmakeorder2);
+                    stmakeorder3.resize(0);
+                    makeordertext3.setString(stmakeorder3);
                     page_num = 5;
                     breaked = true;
                     break;
                 }
                 if (makeorder.mainbutton.getGlobalBounds().contains(mousePos))
                 {
+                    stmakeorder1.resize(0);
+                    makeordertext1.setString(stmakeorder1);
+                    stmakeorder2.resize(0);
+                    makeordertext2.setString(stmakeorder2);
+                    stmakeorder3.resize(0);
+                    makeordertext3.setString(stmakeorder3);
                     if (currentUser.his_role == user::User)
                     {
                         page_num = 2;
@@ -2828,6 +2847,7 @@ void functioningsearch()
     notfound.setPosition(20, 300);
     notfound.setString("NOT FOUND");
     bool breaked = false;
+    searchmakeRequest = false;
     while (window.isOpen()) {
 
         window.clear();
@@ -2914,20 +2934,28 @@ void functioningsearch()
 
                 if (searchmedicine.byCategory.getGlobalBounds().contains(mousePos)) {
                     searchForMedicineByCategory(stringsearch);
+                    stringsearch.resize(0);
+                    Tsearchentered.setString(stringsearch);
                 }
 
                 if (searchmedicine.byName.getGlobalBounds().contains(mousePos)) {
                     searchForMedicineByName(stringsearch);
+                    stringsearch.resize(0);
+                    Tsearchentered.setString(stringsearch);
                 }
 
                 if (makerequ.getGlobalBounds().contains(mousePos)) {
                     page_num = 17;
+                    stringsearch.resize(0);
+                    Tsearchentered.setString(stringsearch);
                     breaked = true;
                     break;
                 }
 
                 if (searchmedicine.mainbutton.getGlobalBounds().contains(mousePos))
                 {
+                    stringsearch.resize(0);
+                    Tsearchentered.setString(stringsearch);
                     if (currentUser.his_role == user::User)
                     {
                         page_num = 2;
@@ -3524,11 +3552,11 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
                 }
             }
 
-            if (breaked) {
-                break;
-            }
         }
 
+        if (breaked) {
+            break;
+        }
     }
 }
 
@@ -4689,7 +4717,7 @@ void functioning_manageUser()
                 }
                 if (manage_user.editUser.getGlobalBounds().contains(mousepos))
                 {
-                    page_num = 7;
+                    page_num = 6;
                     brokenwindow = true;
 
                 }
@@ -4889,6 +4917,11 @@ void managePaymentMethodes()
                     if (newMethode != "") {
                         paymentMethods.push_back(newMethode);
                     }
+                    managedisplay1.resize(0);
+                    managedisplay2.resize(0);
+                    newMethode.resize(0);
+                    managetext1.setString(managedisplay1);
+                    managetext2.setString(managedisplay2);
 
                 }
                 if (manage_payment.delete_button.getGlobalBounds().contains(mousePos)) {
@@ -4899,6 +4932,11 @@ void managePaymentMethodes()
                             break;
                         }
                     }
+                    managedisplay1.resize(0);
+                    managedisplay2.resize(0);
+                    newMethode.resize(0);
+                    managetext1.setString(managedisplay1);
+                    managetext2.setString(managedisplay2);
                 }
 
                 // Check if the mouse click is inside the second text field
@@ -4908,6 +4946,11 @@ void managePaymentMethodes()
                 }
                 if (manage_payment.mainbutton.getGlobalBounds().contains(mousePos))
                 {
+                    managedisplay1.resize(0);
+                    managedisplay2.resize(0);
+                    newMethode.resize(0);
+                    managetext1.setString(managedisplay1);
+                    managetext2.setString(managedisplay2);
                     if (currentUser.his_role == user::User)
                     {
                         page_num = 2;
@@ -6193,6 +6236,7 @@ void makeOrder(string medicineIDS, string quantity, string payment_method) {
             lastyorder.orderID = i + 1;
             lastyorder.userID = currentUser.ID;
             orders[i] = lastyorder;
+            orderCounter++;
         }
         //showOrderReceipt(lastyorder, current_time);
     }
@@ -6605,6 +6649,10 @@ void Requestadrug_showfunctional(bool& requestdrug) {
                 if (requestadrug.request.getGlobalBounds().contains(mousePos))
                 {
                     makeRequest(strequest1, strequest2);
+                    strequest1.resize(0);
+                    strequest2.resize(0);
+                    requesttext1.setString(strequest1);
+                    requesttext2.setString(strequest2);
                     if (currentUser.his_role == user::User)
                     {
                         page_num = 2;
@@ -6620,6 +6668,10 @@ void Requestadrug_showfunctional(bool& requestdrug) {
                 }
                 if (requestadrug.mainbutton.getGlobalBounds().contains(mousePos))
                 {
+                    strequest1.resize(0);
+                    strequest2.resize(0);
+                    requesttext1.setString(strequest1);
+                    requesttext2.setString(strequest2);
                     if (currentUser.his_role == user::User)
                     {
                         page_num = 2;

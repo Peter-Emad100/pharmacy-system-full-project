@@ -217,6 +217,7 @@ void saveAllDataLocally() {
 	saveUserDataLocally();
 	saveRequestsDataLocally();
 	savePayMethodeLocally();
+	saveOrderDataLocally();
 }
 
 void saveMedicineDataToArr() {
