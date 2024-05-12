@@ -4647,12 +4647,17 @@ void functioning_manageUser()
                 {
                     if (currentUser.his_role == user::User)
                     {
+                        inputUserID.resize(0);
+                        inputUserIDText.setString(inputUserID);
                         page_num = 2;
                         brokenwindow = true;
                         break;
                     }
                     else if (currentUser.his_role == user::Admin)
                     {
+                       
+                        inputUserID.resize(0);
+                        inputUserIDText.setString(inputUserID);
                         page_num = 3;
                         brokenwindow = true;
                         break;
@@ -4688,16 +4693,27 @@ void functioning_manageUser()
                         }
                     }
                     else
+                    {
                         removeUser(stoi(inputUserID));
+                        inputUserID.resize(0);
+                        inputUserIDText.setString(inputUserID);
+                    }
+                        
                 }
                 if (manage_user.addUser.getGlobalBounds().contains(mousepos))
                 {
+                    
+                    inputUserID.resize(0);
+                    inputUserIDText.setString(inputUserID);
                     page_num = 14;
                     brokenwindow = true;
 
                 }
                 if (manage_user.editUser.getGlobalBounds().contains(mousepos))
                 {
+                   
+                    inputUserID.resize(0);
+                    inputUserIDText.setString(inputUserID);
                     page_num = 6;
                     brokenwindow = true;
 
@@ -5148,12 +5164,18 @@ void functioning_manageMedicine()
                 {
                     if (currentUser.his_role == user::User)
                     {
+                        
+                        inputMedicineID.resize(0);
+                        inputMedicineIDText.setString(inputMedicineID);
                         page_num = 2;
                         brokenWindow = true;
                         break;
                     }
                     else if (currentUser.his_role == user::Admin)
                     {
+                        
+                        inputMedicineID.resize(0);
+                        inputMedicineIDText.setString(inputMedicineID);
                         page_num = 3;
                         brokenWindow = true;
                         break;
@@ -5185,10 +5207,19 @@ void functioning_manageMedicine()
                         }
                     }
                     else
+                    {
+                        
                         removeMedicine(stoi(inputMedicineID));
+                        inputMedicineID.resize(0);
+                        inputMedicineIDText.setString(inputMedicineID);
+                    }
+                        
                 }
                 else if (manage_medicine.editMedicine.getGlobalBounds().contains(mousepos))
                 {
+                    
+                    inputMedicineID.resize(0);
+                    inputMedicineIDText.setString(inputMedicineID);
                     page_num = 16;
                     brokenWindow = true;
                     break;
@@ -5196,6 +5227,9 @@ void functioning_manageMedicine()
                 }
                 else if (manage_medicine.addMedicine.getGlobalBounds().contains(mousepos))
                 {
+                    
+                    inputMedicineID.resize(0);
+                    inputMedicineIDText.setString(inputMedicineID);
                     page_num = 15;
                     brokenWindow = true;
                     break;
@@ -5549,12 +5583,24 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
                 {
                     if (currentUser.his_role == user::User)
                     {
+                        inputMedicineID2.resize(0);
+                        inputMedicineID2Text.setString(inputMedicineID2);
+                        inputPrice.resize(0);
+                        inputPriceText.setString(inputPrice);
+                        inputQuantity.resize(0);
+                        inputQuantityText.setString(inputQuantity);
                         page_num = 2;
                         broken = true;
                         break;
                     }
                     else if (currentUser.his_role == user::Admin)
                     {
+                        inputMedicineID2.resize(0);
+                        inputMedicineID2Text.setString(inputMedicineID2);
+                        inputPrice.resize(0);
+                        inputPriceText.setString(inputPrice);
+                        inputQuantity.resize(0);
+                        inputQuantityText.setString(inputQuantity);
                         page_num = 3;
                         broken = true;
                         break;
@@ -5659,7 +5705,12 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
 
 
                             saveMedicineDataLocally();
-
+                            inputMedicineID2.resize(0);
+                            inputMedicineID2Text.setString(inputMedicineID2);
+                            inputPrice.resize(0);
+                            inputPriceText.setString(inputPrice);
+                            inputQuantity.resize(0);
+                            inputQuantityText.setString(inputQuantity);
                             break;
 
                         }
