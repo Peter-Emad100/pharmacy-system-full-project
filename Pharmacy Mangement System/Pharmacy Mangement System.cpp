@@ -456,7 +456,7 @@ void functioning_manageMedicine();
 // manage payment
 void set_managePayment(managePayment& manage_payment);
 void Draw_managePayment(managePayment& manage_payment);
-void ManagePayment_functional(managePayment& manage_payment);
+void ManagePayment_functional();
 
 void showOrderReceipt(order lastOrder, string current_time);
 void ShowReceiptFunctional(bool& show_order_receipt,
@@ -473,7 +473,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
 //user
 void Set_EditInfo_User(Edit_Info& edit_info);
 void Draw_EditInfo_User(Edit_Info& edit_info);
-void EditInfo_User_Functional(Edit_Info& edit_info);
+void editUser_functional(int index);
 String trackorder(order orders[], int orderid);
 
 
@@ -481,6 +481,7 @@ String trackorder(order orders[], int orderid);
 //admin
 void Set_EditInfo_Admin(Edit_Info& edit_info);
 void Draw_EditInfo_Admin(Edit_Info& edit_info);
+void  EditInfo_Admin_functional(Edit_Info& edit_info);
 
 void SetEditOrderInfo(EditOrderInfo& edit);
 void DrawEditOrderInfo(EditOrderInfo edit);
@@ -1164,6 +1165,34 @@ void addUser(string username, string address, string email, string password, str
     user_data++;
 
 }
+void editUserCredentials(int index)
+{
+    cout << "What are you willing to change ?\n";
+    cout << "1- Phone Number\n";
+    cout << "2- Address\n";
+    int choice;
+    do {
+
+        cin >> choice;
+        if (choice == 1) {
+            cout << "Enter your new phone number: ";
+            cin >> users[index].phone;
+
+        }
+        else if (choice == 2) {
+            cout << "Enter your new adress: ";
+            cin.ignore(1, '\n');
+            getline(cin, users[index].address);
+        }
+        else {
+            cout << "Invalid choice. Please enter 1 for Phone Number or 2 for Address.\n";
+        }
+    } while (choice != 1 && choice != 2); // Loop until a valid choice is made
+
+    saveUserDataLocally();
+
+
+}
 void addNewMedicine(string name, string concentraiton, string catagory, string description, string price, string quantity)
 {
     medicine newMedicine;
@@ -1394,6 +1423,7 @@ String trackorder(order orders[], int orderid) {
     }
     return orderstate;
 }
+
 void manage_orders(order orders[Size]) {
     int ID, indx;
     bool found = 0;
@@ -3099,9 +3129,23 @@ void Draw_EditInfo_User(Edit_Info& edit_info) {
     window.draw(edit_info.phonenum);
 }
 
-void EditInfo_Admin_functional(Edit_Info& edit_info) {
-    Set_EditInfo_Admin(edit_info);
-    Draw_EditInfo_Admin(edit_info);
+void Draw_EditInfo_Admin(Edit_Info& edit_info) {
+  
+    window.draw(edit_info.background);
+    window.draw(edit_info.changeUser);
+    window.draw(edit_info.changePass);
+    window.draw(edit_info.valuefield1);
+    window.draw(edit_info.valuefield2);
+    window.draw(edit_info.valuefield3);
+    window.draw(edit_info.input_id);
+    window.draw(edit_info.confirm);
+    window.draw(editAtext1);
+    window.draw(editAtext2);
+    window.draw(editAtext3);
+    window.draw(edit_info.mainbutton);
+
+    window.draw(edit_info.button_role1);
+    window.draw(edit_info.button_role2);
 }
 
 void Set_EditInfo_Admin(Edit_Info& edit_info) {
@@ -3201,7 +3245,7 @@ void Set_EditInfo_Admin(Edit_Info& edit_info) {
     edit_info.wrng_id.setPosition(280, 205);
 }
 
-void Draw_EditInfo_Admin(Edit_Info& edit_info) {
+void EditInfo_Admin_functional(Edit_Info& edit_info) {
 
     int userIndex = 0;
     bool breaked = false;
@@ -3209,21 +3253,8 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
     Event event;
     while (window.isOpen()) {
         window.clear();
-        window.draw(edit_info.background);
-        window.draw(edit_info.changeUser);
-        window.draw(edit_info.changePass);
-        window.draw(edit_info.valuefield1);
-        window.draw(edit_info.valuefield2);
-        window.draw(edit_info.valuefield3);
-        window.draw(edit_info.input_id);
-        window.draw(edit_info.confirm);
-        window.draw(editAtext1);
-        window.draw(editAtext2);
-        window.draw(editAtext3);
-        window.draw(edit_info.mainbutton);
 
-        window.draw(edit_info.button_role1);
-        window.draw(edit_info.button_role2);
+        Draw_EditInfo_Admin(edit_info);
 
         window.display();
         while (window.pollEvent(event)) {
@@ -3231,6 +3262,14 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
             {
                 saveAllDataLocally();
+                editAdisplay1.resize(0);
+                editAtext1.setString(editAdisplay1);
+
+                editAdisplay2.resize(0);
+                editAtext2.setString(editAdisplay2);
+
+                editAdisplay3.resize(0);
+                editAtext3.setString(editAdisplay3);
                 window.close();
             }
 
@@ -3268,14 +3307,28 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
                     }
                     else if (currentUser.his_role == user::Admin)
                     {
+
                         page_num = 3;
                         breaked = true;
-                        break;
                     }
+
+                    editAdisplay1.resize(0);
+                    editAtext1.setString(editAdisplay1);
+
+                    editAdisplay2.resize(0);
+                    editAtext2.setString(editAdisplay2);
+
+                    editAdisplay3.resize(0);
+                    editAtext3.setString(editAdisplay3);
+
+                    edit_info.button_role1.setTexture(Texture());
+                    edit_info.button_role2.setTexture(Texture());
+                    break;
+
                 }
                 if (edit_info.changeUser.getGlobalBounds().contains(mousePos))
                 {
-                    if (found == true) {
+                    if (found == true and editAdisplay1.size() > 0) {
                         users[userIndex].username = editAdisplay1;
 
 
@@ -3335,7 +3388,7 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
 
                 }
                 if (edit_info.changePass.getGlobalBounds().contains(mousePos)) {
-                    if (found == true)
+                    if (found == true and editAdisplay2.size() > 0)
                     {
                         users[userIndex].password = editAdisplay2;
 
@@ -3395,60 +3448,45 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
                 }
 
 
-                if (edit_info.confirm.getGlobalBounds().contains(mousePos)) {
+                if (edit_info.confirm.getGlobalBounds().contains(mousePos) and editAdisplay3.size() > 0) {
                     // Loop through the users until a user with userID = 0 is found,
                     // indicating that there are no more users in our database
                     found = false;
+                    userIndex = 0;
                     while (users[userIndex].ID != 0) {
 
                         if (users[userIndex].ID == stoi(editAdisplay3)) {
                             found = true;
                             cout << "found" << endl;
+                            if (users[userIndex].his_role == user::Admin) {
+                                edit_info.button_role1.setTexture(edit_info.make_user_red);
+                                edit_info.button_role2.setTexture(edit_info.make_admin_green);
+                            }
+                            else  if (users[userIndex].his_role == user::User) {
+                                edit_info.button_role1.setTexture(edit_info.make_user_green);
+                                edit_info.button_role2.setTexture(edit_info.make_admin_red);
+
+                            }
                             break;
                         }
                         userIndex++;
                     }
-
-
-
-
-                    if (found) {
-
-                        // draws buttons with respect to the role of that user
-                        Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
-                        cout << "entered found condition" << endl;
-                        if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-
-
-
-
-                            if (users[userIndex].his_role == user::User) {
-                                edit_info.button_role1.setTexture(edit_info.make_user_green);
-                                edit_info.button_role2.setTexture(edit_info.make_admin_red);
-
-
-                                // change user to admin
-                                if (edit_info.button_role2.getGlobalBounds().contains(mousePos)) {
-                                    users[userIndex].his_role = user::Admin;
-
-                                }
-                            }
-
-                            if (users[userIndex].his_role == user::Admin) {
-                                edit_info.button_role1.setTexture(edit_info.make_user_red);
-                                edit_info.button_role2.setTexture(edit_info.make_admin_green);
-
-                                // change admin to user
-                                if (edit_info.button_role1.getGlobalBounds().contains(mousePos)) {
-                                    users[userIndex].his_role = user::User;
-
-                                }
-                            }
-                        }
-                    }
+                }
+                // change user to admin
+                if (found and users[userIndex].his_role == user::User and edit_info.button_role2.getGlobalBounds().contains(mousePos)) {
+                    users[userIndex].his_role = user::Admin;
+                    edit_info.button_role1.setTexture(edit_info.make_user_red);
+                    edit_info.button_role2.setTexture(edit_info.make_admin_green);
+                }
+                // change admin to user
+                if (found and users[userIndex].his_role == user::Admin and edit_info.button_role1.getGlobalBounds().contains(mousePos)) {
+                    users[userIndex].his_role = user::User;
+                    edit_info.button_role1.setTexture(edit_info.make_user_green);
+                    edit_info.button_role2.setTexture(edit_info.make_admin_red);
 
                 }
             }
+
             if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
                 if (editactive1)
                 {
@@ -3519,6 +3557,7 @@ void Draw_EditInfo_Admin(Edit_Info& edit_info) {
         }
     }
 }
+
 
 
 
@@ -4859,7 +4898,7 @@ void showPaymentMehtode(vector<string> x) {
         pos_y += 20;
     }
 }
-void managePaymentMethodes()
+void ManagePayment_functional()
 {
     vector<string>::iterator it = paymentMethods.begin();
 
@@ -5243,7 +5282,7 @@ void functioning_manageMedicine()
 }
 
 
-void editUserCredentials(int index)
+void editUser_functional(int index)
 
 {
     bool breaked = false;
@@ -5291,64 +5330,123 @@ void editUserCredentials(int index)
                     {
                         page_num = 2;
                         breaked = true;
+                        editUdisplay1.resize(0);
+                        editUtext1.setString(editUdisplay1);
+                        editUdisplay2.resize(0);
+                        editUtext2.setString(editUdisplay2);
                         break;
                     }
                     else if (currentUser.his_role == user::Admin)
                     {
                         page_num = 3;
                         breaked = true;
+                        editUdisplay1.resize(0);
+                        editUtext1.setString(editUdisplay1);
+                        editUdisplay2.resize(0);
+                        editUtext2.setString(editUdisplay2);
                         break;
                     }
                 }
 
 
                 if (edit_info.changeAddress.getGlobalBounds().contains(mousePos)) {
-                    users[index].address = editUdisplay1;
-                    RenderWindow window2(sf::VideoMode(400, 200), "Confirmation message!");
-                    while (window2.isOpen())
-                    {
-                        sf::Event event2;
-                        while (window2.pollEvent(event2))
+                    if (editUdisplay1.size() > 0) {
+                        currentUser.address = editUdisplay1;
+                        users[index].address = editUdisplay1;
+                        RenderWindow window2(sf::VideoMode(400, 200), "Success!");
+                        while (window2.isOpen())
                         {
-                            if (event2.type == sf::Event::Closed)
+                            sf::Event event2;
+                            while (window2.pollEvent(event2))
                             {
-                                window2.close();
-                            }
+                                if (event2.type == sf::Event::Closed)
+                                {
+                                    window2.close();
+                                }
 
+                            }
+                            window2.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("Address changed!");
+                            text.setScale(0.5, 0.5);
+                            window2.draw(text);
+                            window2.display();
                         }
-                        window2.clear();
-                        Text text;
-                        text.setFont(Calibri);
-                        text.setString("Address changed!");
-                        text.setScale(0.5, 0.5);
-                        window2.draw(text);
-                        window2.display();
+                    }
+                    else {
+                        RenderWindow window3(sf::VideoMode(400, 200), "Error!");
+                        while (window3.isOpen())
+                        {
+                            Event event3;
+                            while (window3.pollEvent(event3))
+                            {
+                                if (event3.type == Event::Closed)
+                                {
+                                    window3.close();
+                                }
+
+                            }
+                            window3.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("Wrong input, please try again");
+                            text.setScale(0.5, 0.5);
+                            window3.draw(text);
+                            window3.display();
+                        }
+
                     }
                     editUdisplay1.resize(0);
                     editUtext1.setString(editUdisplay1);
                 }
 
                 if (edit_info.changePhone.getGlobalBounds().contains(mousePos)) {
-                    users[index].phone = editUdisplay2;
-                    RenderWindow window2(sf::VideoMode(400, 200), "Confirmation message!");
-                    while (window2.isOpen())
-                    {
-                        sf::Event event2;
-                        while (window2.pollEvent(event2))
+                    if (editUdisplay2.size() > 0) {
+                        currentUser.phone = editUdisplay2;
+                        users[index].phone = editUdisplay2;
+                        RenderWindow window2(sf::VideoMode(400, 200), "Success!");
+                        while (window2.isOpen())
                         {
-                            if (event2.type == sf::Event::Closed)
+                            sf::Event event2;
+                            while (window2.pollEvent(event2))
                             {
-                                window2.close();
-                            }
+                                if (event2.type == sf::Event::Closed)
+                                {
+                                    window2.close();
+                                }
 
+                            }
+                            window2.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("Phone number changed!");
+                            text.setScale(0.5, 0.5);
+                            window2.draw(text);
+                            window2.display();
                         }
-                        window2.clear();
-                        Text text;
-                        text.setFont(Calibri);
-                        text.setString("Phone number changed!");
-                        text.setScale(0.5, 0.5);
-                        window2.draw(text);
-                        window2.display();
+                    }
+                    else {
+                        RenderWindow window3(sf::VideoMode(400, 200), "Error!");
+                        while (window3.isOpen())
+                        {
+                            Event event3;
+                            while (window3.pollEvent(event3))
+                            {
+                                if (event3.type == Event::Closed)
+                                {
+                                    window3.close();
+                                }
+
+                            }
+                            window3.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("Wrong input, please try again");
+                            text.setScale(0.5, 0.5);
+                            window3.draw(text);
+                            window3.display();
+                        }
                     }
                     editUdisplay2.resize(0);
                     editUtext2.setString(editUdisplay2);
@@ -5439,7 +5537,7 @@ void editUserCredentials(int index)
         }
 
 
-        saveUserDataLocally();
+        // saveUserDataLocally();
 
         if (breaked) {
             break;
@@ -6548,11 +6646,11 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         window.display();
         break;
     case 6:
-        Draw_EditInfo_Admin(edit_info);
+        EditInfo_Admin_functional(edit_info);
         window.display();
         break;
     case 7:
-        editUserCredentials(currentUser_Index);
+        editUser_functional(currentUser_Index);
         window.display();
         break;
     case 8:
@@ -6564,7 +6662,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         window.display();
         break;
     case 10:
-        managePaymentMethodes();
+        ManagePayment_functional();
         window.display();
         break;
     case 11:
