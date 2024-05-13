@@ -31,7 +31,7 @@ bool issignin = false; //check if i need to switch to sign in page
 bool doneAdding = false;//to add
 bool active_1 = false, active_2 = false, active_3 = false; // switches between input fields in Medicine Edit page
 
-RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Resize|Style::Close);
+RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Fullscreen);
 Font Calibri;
 Texture BackgroundSign;
 Texture ButtonTexture, TextTexture, darkbox, textbox, headerbox, Signbox,
@@ -378,7 +378,7 @@ void makeOrder(string medicineIDS, string quantity, string payment_method);
 void makeOrderFunctional(StmakeOrder& makeorder);
 void showOrderReceipt(order lastOrder, string current_time);
 void makeRequest(string _medicineName, string _amountReq);
-void showAllPreviousOrders();
+void showAllPreviousOrdersFunctional();
 void addUser(string, string, string, string, string,int);
 void addNewMedicine(string name, string concentraiton, string catagory, string description, string price, string quantity);
 void updateUser();
@@ -997,145 +997,203 @@ void makeRequest(string _medicineName, string _amountReq) {
     }
 }
 
-void showAllPreviousOrders(RenderWindow& window) {
-    drawShowAllOrders(ShowAllOrders);
-
-
-    for (int i = 0; i < user_data; i++) {  // checking for the current user ID to be
-        // able to get his/her orders using ID
+void showAllPreviousOrdersFunctional()
+{
+    //window.clear();
+    bool found_orders = false;
+    bool breaked = false;
+    int num_order = 1;
+    Event event;
+    Text headerstext, Titletext ,ordersT;
+    string headers, ordersText;
+    headerstext.setString(headers);
+    headerstext.setFont(Calibri);
+    Titletext.setFont(Calibri);
+    Titletext.setString("Previous Orders");
+    Titletext.setPosition(70, 140);
+    Titletext.setCharacterSize(40);
+    Titletext.setFillColor(Color::Black);
+    ordersT.setFont(Calibri);
+    ordersT.setCharacterSize(18.5);
+    ordersT.setPosition(70, 210);
+    ordersT.setString(ordersText);
+    int ordernum = 0;
+    for (int i = 0; i < Size; i++) {   // checking for the current user ID to be able to get his/her orders using ID
         if (currentUser.username == users[i].username) {
             currentUser.ID == users[i].ID;
             break;
         }
     }
-    String medicine = "";
-    int num_order = 1;  // to display list of numbered orders
-    Font font1 = Calibri;
-    Text Title;
-    Title.setString("Previous Orders");
-    Title.setCharacterSize(40);
-    Title.setFont(font1);
-    Title.setFillColor(Color::Black);
-    Title.setPosition(70, 140);
-    window.draw(Title);
-
-
-    string ordersText;
-    String conc = "", name = "";
-
-    String delivered = "";
-
-    bool found_orders = false;  // to check if there were no orders regesitered for this user
-
-
-    //checking
     for (int i = 0; i < Size; i++) {
         if (orders[i].userID == currentUser.ID) {
+            ordernum++;
             found_orders = true;
-
-
-            if (orders[i].orderID != 0) {
-                ordersText += "Order number: " + to_string(orders[i].orderID - 1) + "\n";
-                ordersText += "Date of order     ship date         total price \n";
-                ordersText += "-----------------------------------------------------";
-
-            }
-
-
-            int j = 0;
-            int currentID = 0;
-
-            while (orders[i].medicine_ID[j] != 0) {
-                currentID *= 10;
-
-                j++;
-                currentID += orders[i].medicine_ID[j];
-            }
-            cout << "\n";
-            for (int i = 0; i < Size; i++) {
-                if (medicines[i].ID == currentID) {
-
-
-
-
-
-                    break;
-                }
-            }
-
-
-            for (int k = 0; k < 3; k++) {
-                if (orders[i].orderID != 0) {
-                    name += (medicines[orders[i].medicine_ID[k]].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
-                }
-                if (k == 2) {
-                    ordersText += "\n";
-                }
-            }
-
-
-
-
-
-            if (orders[i].orderID != 0) {
-
-
-                ordersText += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n ----------------------------------------------------- \n";
-                ordersText += "Medicine                           Concentration\n";
-                ordersText += name + "\n";
-                ordersText += "Order Status: " + trackorder(orders, orders[i].orderID) + "\n";
-
-            }
-
-            num_order++;
-        }
-    }
-
-
-
-    Font font = Calibri;
-    Text text;
-    text.setFont(font);
-    text.setCharacterSize(24);
-    text.setFillColor(sf::Color::White);
-    text.setPosition(70, 210);
-
-
-
-
-    text.setString(ordersText);
-    text.setCharacterSize(18.5);
-
-
-    window.draw(text);
-    Event event;
-    bool breaked = false;
-    while (window.pollEvent(event)) {
-        if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) {
-            window.close();
-        }
-        if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
-
-            Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
-
-            if (ShowAllOrders.mainbutton.getGlobalBounds().contains(mousePos))
+            if (ordernum > 2)
             {
-                if (currentUser.his_role == user::User)
-                {
-                    page_num = 2;
-                    breaked = true;
-                    break;
+               
+                if (orders[i].orderID != 0) {
+                    ordersText += "Order number: " + to_string(orders[i].orderID) + "\n";
+                    ordersText += "Date of order     ship date         total price \n";
+                    ordersText += "-----------------------------------------------------\n";
+                    ordersText += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n ----------------------------------------------------- \n";
+                    ordersText += "Medicine                           Concentration\n";
+                    //ordersText += name + "\n";
+                    int j = 0;
+                    while (orders[i].medicine_ID[j] != 0)
+                    {
+                        for (int k = 0;k < Size;k++)
+                        {
+
+                            if (medicines[k].ID == orders[i].medicine_ID[j])
+                            {
+                                //cout << "yes me" << endl;
+                                ordersText += (medicines[orders[i].medicine_ID[k]].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
+                            }
+
+                        }
+                        j++;
+                    }
+                    ordersText += "-----------------------------------------------------\n";
+
+
+                    //ordersText += "Order Status: " + trackorder(orders, orders[i].orderID) + "\n";
+
+
+                    ordersT.setString(ordersText);
+                    continue;
                 }
-                else if (currentUser.his_role == user::Admin)
+                if (orders[i].orderID == 0)
                 {
-                    page_num = 3;
-                    breaked = true;
                     break;
                 }
             }
+            else {
+                ordersT.setPosition(70, 210);
+                if (orders[i].orderID != 0) {
+                    ordersText += "Order number: " + to_string(orders[i].orderID) + "\n";
+                    ordersText += "Date of order     ship date         total price \n";
+                    ordersText += "-----------------------------------------------------\n";
+                    ordersText += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n ----------------------------------------------------- \n";
+                    ordersText += "Medicine                           Concentration\n";
+                    //ordersText += name + "\n";
+                    int j = 0;
+                    while (orders[i].medicine_ID[j] != 0)
+                    {
+                        for (int k = 0;k < Size;k++)
+                        {
+
+                            if (medicines[k].ID == orders[i].medicine_ID[j])
+                            {
+                                //cout << "yes me" << endl;
+                                ordersText += (medicines[orders[i].medicine_ID[k]].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
+                            }
+
+                        }
+                        j++;
+                    }
+                    ordersText += "-----------------------------------------------------\n";
+
+
+                    //ordersText += "Order Status: " + trackorder(orders, orders[i].orderID) + "\n";
+
+
+                    ordersT.setString(ordersText);
+                    continue;
+                }
+                if (orders[i].orderID == 0)
+                {
+                    break;
+                }
+            }
+           
         }
     }
+
+    if (!found_orders)
+    {
+        RenderWindow window2(VideoMode(400, 200), "Warning!");
+        // Main loop for the second window
+        while (window2.isOpen())
+        {
+            sf::Event event2;
+            while (window2.pollEvent(event2))
+            {
+                if (event2.type == sf::Event::Closed)
+                {
+
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        
+                    }
+                    else if (currentUser.his_role == user::Admin)
+                    {
+                        page_num = 3;
+                    }
+                    window2.close();
+                }
+
+            }
+
+            window2.clear();
+            Text text;
+            text.setFont(Calibri);
+            text.setString("No previous orders to show!");
+            text.setScale(0.5, 0.5);
+            window2.draw(text);
+            // Draw whatever you want in the second window
+            window2.display();
+        }
+    }
+    if (found_orders == true)
+    {
+        while (window.isOpen())
+        {
+            drawShowAllOrders(ShowAllOrders);
+            window.draw(Titletext);
+            window.draw(ordersT);
+            window.display();
+
+            while (window.pollEvent(event))
+            {
+                if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+                {
+                    window.close();
+                }
+                if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                    Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+
+                    if (ShowAllOrders.mainbutton.getGlobalBounds().contains(mousePos))
+                    {
+                        if (currentUser.his_role == user::User)
+                        {
+                            page_num = 2;
+                            breaked = true;
+                            break;
+                        }
+                        else if (currentUser.his_role == user::Admin)
+                        {
+                            page_num = 3;
+                            breaked = true;
+                            break;
+                        }
+                    }
+                }
+            }
+            if (breaked==true)
+            {
+                break;
+            }
+
+        }
+    }
+
+   
 }
+
+   
+
 
 
 
@@ -6658,7 +6716,7 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         window.display();
         break;
     case 9:
-        showAllPreviousOrders(window);
+        showAllPreviousOrdersFunctional();
         window.display();
         break;
     case 10:
