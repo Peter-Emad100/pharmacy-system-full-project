@@ -22,6 +22,7 @@ int user_data = 0;
 int requestcounter = 0;
 int orderCounter = 0;
 int chosenOption;  // variable to choose with which order you want to go through
+int number_of_user_orders = 0; //for show all orders page
 // after log in
 bool activeDisplay = true;  // Initialize active display to display1
 bool activeS1 = true, activeS2 = false, activeS3 = false, activesS4 = false,
@@ -31,7 +32,7 @@ bool issignin = false; //check if i need to switch to sign in page
 bool doneAdding = false;//to add
 bool active_1 = false, active_2 = false, active_3 = false; // switches between input fields in Medicine Edit page
 
-RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Fullscreen);
+RenderWindow window(VideoMode(1366, 768), "Your pharmacy");
 Font Calibri;
 Texture BackgroundSign;
 Texture ButtonTexture, TextTexture, darkbox, textbox, headerbox, Signbox,
@@ -999,13 +1000,19 @@ void makeRequest(string _medicineName, string _amountReq) {
 
 void showAllPreviousOrdersFunctional()
 {
+    number_of_user_orders=0;
+    for (int i = 0; i < orderCounter&&number_of_user_orders!=6; i++) {
+        if (orders[i].userID == currentUser.ID) {
+            number_of_user_orders++;
+        }
+    }
     //window.clear();
     bool found_orders = false;
     bool breaked = false;
     int num_order = 1;
     Event event;
-    Text headerstext, Titletext, ordersT;
-    string headers, ordersText;
+    Text headerstext, Titletext, ordersT, ordersT2;
+    string headers, ordersText,ordersText2;
     headerstext.setString(headers);
     headerstext.setFont(Calibri);
     Titletext.setFont(Calibri);
@@ -1017,6 +1024,10 @@ void showAllPreviousOrdersFunctional()
     ordersT.setCharacterSize(18.5);
     ordersT.setPosition(70, 210);
     ordersT.setString(ordersText);
+    ordersT2.setFont(Calibri);
+    ordersT2.setCharacterSize(18.5);
+    ordersT2.setPosition(470, 210);
+    ordersT2.setString(ordersText2);
     int ordernum = 0;
     for (int i = 0; i < Size; i++) {   // checking for the current user ID to be able to get his/her orders using ID
         if (currentUser.username == users[i].username) {
@@ -1024,19 +1035,29 @@ void showAllPreviousOrdersFunctional()
             break;
         }
     }
-    for (int i = 0; i < Size; i++) {
+    for (int i = orderCounter; i > 0 && ordernum < 6; i--) {
         if (orders[i].userID == currentUser.ID) {
             ordernum++;
             found_orders = true;
 
 
             if (orders[i].orderID != 0) {
-                ordersText += "Order number: " + to_string(orders[i].orderID) + "\n";
-                ordersText += "Date of order     ship date         total price \n";
-                ordersText += "-----------------------------------------------------\n";
-                ordersText += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n ----------------------------------------------------- \n";
-                ordersText += "Medicine                           Concentration\n";
-                //ordersText += name + "\n";
+                if ((ordernum <= number_of_user_orders / 2 && number_of_user_orders % 2 == 0)||(ordernum <= (number_of_user_orders / 2)+1 && number_of_user_orders % 2 == 1)) {
+                    ordersText += "Order number: " + to_string(orders[i].orderID) + "\n";
+                    ordersText += "Date of order     ship date         total price \n";
+                    ordersText += "-----------------------------------------------------\n";
+                    ordersText += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n ----------------------------------------------------- \n";
+                    ordersText += "Medicine                           Concentration\n";
+                    //ordersText += name + "\n";
+                }
+                else {
+                    ordersText2 += "Order number: " + to_string(orders[i].orderID) + "\n";
+                    ordersText2 += "Date of order     ship date         total price \n";
+                    ordersText2 += "-----------------------------------------------------\n";
+                    ordersText2 += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n ----------------------------------------------------- \n";
+                    ordersText2 += "Medicine                           Concentration\n";
+                    //ordersText += name + "\n";
+                }
                 int j = 0;
                 while (orders[i].medicine_ID[j] != 0)
                 {
@@ -1046,17 +1067,27 @@ void showAllPreviousOrdersFunctional()
                         if (medicines[k].ID == orders[i].medicine_ID[j])
                         {
                             //cout << "yes me" << endl;
-                            ordersText += (medicines[orders[i].medicine_ID[k]].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
+                            if ((ordernum <= number_of_user_orders / 2 && number_of_user_orders % 2 == 0) || (ordernum <= (number_of_user_orders / 2) + 1 && number_of_user_orders % 2 == 1)) {
+                                ordersText += (medicines[orders[i].medicine_ID[k]].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
+                            }
+                            else{
+                                ordersText2 += (medicines[orders[i].medicine_ID[k]].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
+                            }
                         }
 
                     }
                     j++;
                 }
-            
-                ordersText += "Order Status: " + trackorder(orders, orders[i].orderID) + "\n";
-                ordersText += "-----------------------------------------------------\n";
-
+                if ((ordernum <= number_of_user_orders / 2 && number_of_user_orders % 2 == 0) || (ordernum <= (number_of_user_orders / 2) + 1 && number_of_user_orders % 2 == 1)) {
+                    ordersText += "Order Status: " + trackorder(orders, orders[i].orderID) + "\n";
+                    ordersText += "-----------------------------------------------------\n";
+                }
+                else{
+                    ordersText2 += "Order Status: " + trackorder(orders, orders[i].orderID) + "\n";
+                    ordersText2 += "-----------------------------------------------------\n";
+                }
                 ordersT.setString(ordersText);
+                ordersT2.setString(ordersText2);
                 continue;
             }
             if (orders[i].orderID == 0)
@@ -1064,8 +1095,8 @@ void showAllPreviousOrdersFunctional()
                 break;
             }
 
-
         }
+
     }
 
     if (!found_orders)
@@ -1106,11 +1137,39 @@ void showAllPreviousOrdersFunctional()
     }
     if (found_orders == true)
     {
+        cout << number_of_user_orders;
         while (window.isOpen())
         {
             drawShowAllOrders(ShowAllOrders);
             window.draw(Titletext);
+            switch(number_of_user_orders){
+            case 1:
+                ordersT.setCharacterSize(35);
+                ordersT2.setCharacterSize(35);
+                break;
+            case 2:
+                ordersT.setCharacterSize(20);
+                ordersT2.setCharacterSize(20);
+                break;
+            case 3:
+                ordersT.setCharacterSize(20);
+                ordersT2.setCharacterSize(20);
+                break;
+            case 4:
+                ordersT.setCharacterSize(20);
+                ordersT2.setCharacterSize(20);
+                break;
+            case 5:
+                ordersT.setCharacterSize(17.5);
+                ordersT2.setCharacterSize(17.5);
+                break;
+            case 6:
+                ordersT.setCharacterSize(17.5);
+                ordersT2.setCharacterSize(17.5);
+                break;
+            }
             window.draw(ordersT);
+            window.draw(ordersT2);
             window.display();
 
             while (window.pollEvent(event))
@@ -5933,8 +5992,8 @@ void setShowAllOrders(strShowAllOrders& ShowAllOrders) {
 
     ShowAllOrders.trans_back.setTexture(showTable);
     ShowAllOrders.trans_back.setOrigin(128.5, 314.5);
-    ShowAllOrders.trans_back.setPosition(490, 450);
-    ShowAllOrders.trans_back.scale(3.5, 0.8);
+    ShowAllOrders.trans_back.setPosition(490, 480);
+    ShowAllOrders.trans_back.scale(3.5, 0.9);
 
 
 }
