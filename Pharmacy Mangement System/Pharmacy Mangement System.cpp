@@ -379,7 +379,7 @@ void makeOrderFunctional(StmakeOrder& makeorder);
 void showOrderReceipt(order lastOrder, string current_time);
 void makeRequest(string _medicineName, string _amountReq);
 void showAllPreviousOrdersFunctional();
-void addUser(string, string, string, string, string,int);
+void addUser(string, string, string, string, string, int);
 void addNewMedicine(string name, string concentraiton, string catagory, string description, string price, string quantity);
 void updateUser();
 bool removeUser(int userID);
@@ -1004,7 +1004,7 @@ void showAllPreviousOrdersFunctional()
     bool breaked = false;
     int num_order = 1;
     Event event;
-    Text headerstext, Titletext ,ordersT;
+    Text headerstext, Titletext, ordersT;
     string headers, ordersText;
     headerstext.setString(headers);
     headerstext.setFont(Calibri);
@@ -1028,45 +1028,43 @@ void showAllPreviousOrdersFunctional()
         if (orders[i].userID == currentUser.ID) {
             ordernum++;
             found_orders = true;
-            
-               
-                if (orders[i].orderID != 0) {
-                    ordersText += "Order number: " + to_string(orders[i].orderID) + "\n";
-                    ordersText += "Date of order     ship date         total price \n";
-                    ordersText += "-----------------------------------------------------\n";
-                    ordersText += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n ----------------------------------------------------- \n";
-                    ordersText += "Medicine                           Concentration\n";
-                    //ordersText += name + "\n";
-                    int j = 0;
-                    while (orders[i].medicine_ID[j] != 0)
-                    {
-                        for (int k = 0;k < Size;k++)
-                        {
-
-                            if (medicines[k].ID == orders[i].medicine_ID[j])
-                            {
-                                //cout << "yes me" << endl;
-                                ordersText += (medicines[orders[i].medicine_ID[k]].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
-                            }
-
-                        }
-                        j++;
-                    }
-                    ordersText += "-----------------------------------------------------\n";
 
 
-                    //ordersText += "Order Status: " + trackorder(orders, orders[i].orderID) + "\n";
-
-
-                    ordersT.setString(ordersText);
-                    continue;
-                }
-                if (orders[i].orderID == 0)
+            if (orders[i].orderID != 0) {
+                ordersText += "Order number: " + to_string(orders[i].orderID) + "\n";
+                ordersText += "Date of order     ship date         total price \n";
+                ordersText += "-----------------------------------------------------\n";
+                ordersText += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n ----------------------------------------------------- \n";
+                ordersText += "Medicine                           Concentration\n";
+                //ordersText += name + "\n";
+                int j = 0;
+                while (orders[i].medicine_ID[j] != 0)
                 {
-                    break;
+                    for (int k = 0;k < Size;k++)
+                    {
+
+                        if (medicines[k].ID == orders[i].medicine_ID[j])
+                        {
+                            //cout << "yes me" << endl;
+                            ordersText += (medicines[orders[i].medicine_ID[k]].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
+                        }
+
+                    }
+                    j++;
                 }
             
-           
+                ordersText += "Order Status: " + trackorder(orders, orders[i].orderID) + "\n";
+                ordersText += "-----------------------------------------------------\n";
+
+                ordersT.setString(ordersText);
+                continue;
+            }
+            if (orders[i].orderID == 0)
+            {
+                break;
+            }
+
+
         }
     }
 
@@ -1085,7 +1083,7 @@ void showAllPreviousOrdersFunctional()
                     if (currentUser.his_role == user::User)
                     {
                         page_num = 2;
-                        
+
                     }
                     else if (currentUser.his_role == user::Admin)
                     {
@@ -1142,7 +1140,7 @@ void showAllPreviousOrdersFunctional()
                     }
                 }
             }
-            if (breaked==true)
+            if (breaked == true)
             {
                 break;
             }
@@ -1150,18 +1148,18 @@ void showAllPreviousOrdersFunctional()
         }
     }
 
-   
+
 }
 
-   
 
 
 
 
 
 
-void addUser(string username, string address, string email, string password, string phone,int role) {
-    
+
+void addUser(string username, string address, string email, string password, string phone, int role) {
+
     int id = user_data + 1;
     newUser.ID = id;
 
@@ -1226,7 +1224,7 @@ void addNewMedicine(string name, string concentraiton, string catagory, string d
     newMedicine.availability = true;
     newMedicine.ID = id;
 
-    medicines[id-1] = newMedicine;
+    medicines[id - 1] = newMedicine;
 
     medicine_data++;
 }
@@ -1416,25 +1414,28 @@ bool removeMedicine(int medID) {
 String trackorder(order orders[], int orderid) {
     bool orderfound = false;
 
-
-
     String orderstate = "";
-    for (size_t i = 0; i < 3; i++) {
-        cout << orders[i].orderID;
-        if (orderid == orders[i].orderID) {
-            cout << orders[i].orderID;
-            if (orders[i].orderState == 0) {
+    for (size_t i = 0; i < Size; i++) {
+        //cout << orders[i].orderID;
+        if (orders[i].orderID != 0)
+        {
+            if (orderid == orders[i].orderID) {
+                //cout << orders[i].orderID;
+                if (orders[i].orderState == 0) {
 
+                    orderstate = "OrderNotDelivered";
+                }
+                else {
 
-                orderstate = "OrderNotDelivered";
+                    orderstate = "OrderDelivered";
+                }
+                orderfound = true;
+                break;
             }
-            else {
-
-                orderstate = "OrderDelivered";
-            }
-            orderfound = true;
-            break;
         }
+        else
+            break;
+
     }
     if (orderfound != true) {
 
@@ -3179,7 +3180,7 @@ void Draw_EditInfo_User(Edit_Info& edit_info) {
 }
 
 void Draw_EditInfo_Admin(Edit_Info& edit_info) {
-  
+
     window.draw(edit_info.background);
     window.draw(edit_info.changeUser);
     window.draw(edit_info.changePass);
@@ -3847,7 +3848,7 @@ void functioningAddMedicine()
     medNameDis.setString(medNameSt);
     medCataDis.setString(medCataSt);
     medPriceDis.setString(medPriceSt);
-    medQuantityDis.setString(medQuantitySt); 
+    medQuantityDis.setString(medQuantitySt);
     medConcDis.setString(medConcSt);
     medDescDis.setString(medDescSt);
 
@@ -3968,17 +3969,17 @@ void functioningAddMedicine()
                 {
                     if (addmedicine.optionsbutton.getGlobalBounds().contains(MousePosition))
                     {
-                            addNewMedicine(medNameSt, medConcSt, medCataSt, medDescSt, medPriceSt, medQuantitySt);
-                            
-                            medNameSt = "";
-                            medCataSt = "";
-                            medPriceSt = "";
-                            medQuantitySt = "";
-                            medConcSt = "";
-                            medDescSt = "";
+                        addNewMedicine(medNameSt, medConcSt, medCataSt, medDescSt, medPriceSt, medQuantitySt);
 
-                            brokenwindow = true;
-                            page_num = 3;
+                        medNameSt = "";
+                        medCataSt = "";
+                        medPriceSt = "";
+                        medQuantitySt = "";
+                        medConcSt = "";
+                        medDescSt = "";
+
+                        brokenwindow = true;
+                        page_num = 3;
                     }
 
                 }
@@ -4353,8 +4354,8 @@ void functioningAddUser()
     bool brokenwindow = false;
 
 
-    usernameDis.setString(usernameSt); 
-    passwordDis.setString(passwordSt); 
+    usernameDis.setString(usernameSt);
+    passwordDis.setString(passwordSt);
     addressDis.setString(addressSt);
     phoneDis.setString(phoneSt);
     emailDis.setString(emailSt);
@@ -4383,7 +4384,7 @@ void functioningAddUser()
             {
                 window.close();
             }
-            if (evnt.type == Event::MouseButtonPressed && evnt.mouseButton.button == Mouse::Left) 
+            if (evnt.type == Event::MouseButtonPressed && evnt.mouseButton.button == Mouse::Left)
             {
 
                 Vector2f MousePosition = window.mapPixelToCoords({ evnt.mouseButton.x, evnt.mouseButton.y });
@@ -4468,16 +4469,16 @@ void functioningAddUser()
                 {
                     if (adduser.optionsbutton.getGlobalBounds().contains(MousePosition))
                     {
-                       addUser(usernameSt, addressSt, emailSt, passwordSt, phoneSt,roleChoice);
+                        addUser(usernameSt, addressSt, emailSt, passwordSt, phoneSt, roleChoice);
 
-                       usernameSt = "";
-                       passwordSt = "";
-                       addressSt = "";
-                       phoneSt = "";
-                       emailSt = "";
+                        usernameSt = "";
+                        passwordSt = "";
+                        addressSt = "";
+                        phoneSt = "";
+                        emailSt = "";
 
-                       brokenwindow = true;
-                       page_num = 3;
+                        brokenwindow = true;
+                        page_num = 3;
                     }
                 }
             }
@@ -4743,7 +4744,7 @@ void functioning_manageUser()
                     }
                     else if (currentUser.his_role == user::Admin)
                     {
-                       
+
                         inputUserID.resize(0);
                         inputUserIDText.setString(inputUserID);
                         page_num = 3;
@@ -4786,11 +4787,11 @@ void functioning_manageUser()
                         inputUserID.resize(0);
                         inputUserIDText.setString(inputUserID);
                     }
-                        
+
                 }
                 if (manage_user.addUser.getGlobalBounds().contains(mousepos))
                 {
-                    
+
                     inputUserID.resize(0);
                     inputUserIDText.setString(inputUserID);
                     page_num = 14;
@@ -4799,7 +4800,7 @@ void functioning_manageUser()
                 }
                 if (manage_user.editUser.getGlobalBounds().contains(mousepos))
                 {
-                   
+
                     inputUserID.resize(0);
                     inputUserIDText.setString(inputUserID);
                     page_num = 6;
@@ -5252,7 +5253,7 @@ void functioning_manageMedicine()
                 {
                     if (currentUser.his_role == user::User)
                     {
-                        
+
                         inputMedicineID.resize(0);
                         inputMedicineIDText.setString(inputMedicineID);
                         page_num = 2;
@@ -5261,7 +5262,7 @@ void functioning_manageMedicine()
                     }
                     else if (currentUser.his_role == user::Admin)
                     {
-                        
+
                         inputMedicineID.resize(0);
                         inputMedicineIDText.setString(inputMedicineID);
                         page_num = 3;
@@ -5296,16 +5297,16 @@ void functioning_manageMedicine()
                     }
                     else
                     {
-                        
+
                         removeMedicine(stoi(inputMedicineID));
                         inputMedicineID.resize(0);
                         inputMedicineIDText.setString(inputMedicineID);
                     }
-                        
+
                 }
                 else if (manage_medicine.editMedicine.getGlobalBounds().contains(mousepos))
                 {
-                    
+
                     inputMedicineID.resize(0);
                     inputMedicineIDText.setString(inputMedicineID);
                     page_num = 16;
@@ -5315,7 +5316,7 @@ void functioning_manageMedicine()
                 }
                 else if (manage_medicine.addMedicine.getGlobalBounds().contains(mousepos))
                 {
-                    
+
                     inputMedicineID.resize(0);
                     inputMedicineIDText.setString(inputMedicineID);
                     page_num = 15;
@@ -6450,18 +6451,24 @@ void manageOrder_functional() {
             Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
             if (edit_info.mainbutton.getGlobalBounds().contains(mousePos))
             {
-                if (currentUser.his_role == user::User)
-                {
-                    page_num = 2;
-                    breaked = true;
-                    break;
-                }
-                else if (currentUser.his_role == user::Admin)
-                {
-                    page_num = 3;
-                    breaked = true;
-                    break;
-                }
+
+                page_num = 3;
+
+                editOrder.medname.setString("");
+                editOrder.medconc.setString("");
+                editOrder.ordstate.setString("");
+                editOrder.price.setString("");
+                editOrder.ordDate.setString("");
+
+                orderdisplay_Price.resize(0);
+                orderPrice_text.setString(orderdisplay_Price);
+                orderdisplay_Id.resize(0);
+                orderId_text.setString(orderdisplay_Id);
+
+
+                breaked = true;
+                break;
+
             }
 
 
@@ -6483,13 +6490,13 @@ void manageOrder_functional() {
                     order_display = false;
                 }
 
-                if (editOrder.confirm.getGlobalBounds().contains(mousePos)) {
+                if (orderdisplay_Id.size() > 0 and editOrder.confirm.getGlobalBounds().contains(mousePos)) {
                     found = false;
                     index = 0;
 
 
                     while (index < Size) {
-                        //  found = false;
+
                         if (to_string(orders[index].orderID) == orderdisplay_Id) {
                             found = true;
                             cout << "FOUND" << endl;
@@ -6497,7 +6504,45 @@ void manageOrder_functional() {
                         }
                         index++;
                     }
+                    if (!found) {
+                        RenderWindow window6(VideoMode(400, 200), "Error!");
+                        // Main loop for the second window
+                        while (window6.isOpen())
+                        {
+                            Event event6;
+                            while (window6.pollEvent(event6))
+                            {
+                                if (event6.type == Event::Closed)
+                                {
+                                    window6.close();
+                                }
+
+                            }
+
+                            window6.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("Invalid Id, please try again");
+                            text.setScale(0.5, 0.5);
+                            window6.draw(text);
+                            // Draw whatever you want in the second window
+                            window6.display();
+                        }
+                        editOrder.medname.setString("");
+                        editOrder.medconc.setString("");
+                        editOrder.ordstate.setString("");
+                        editOrder.price.setString("");
+                        editOrder.ordDate.setString("");
+
+                        orderdisplay_Price.resize(0);
+                        orderPrice_text.setString(orderdisplay_Price);
+                        orderdisplay_Id.resize(0);
+                        orderId_text.setString(orderdisplay_Id);
+                    }
+
+
                 }
+
                 if (found) {
 
                     // getting order's data
@@ -6534,56 +6579,42 @@ void manageOrder_functional() {
                     window.draw(editOrder.ordstate);
                     window.draw(editOrder.price);
                     window.display();
+                }
 
 
-                    if (editOrder.changeButton.getGlobalBounds().contains(mousePos)) {
-                        cout << "change1" << endl;
+                if (found and editOrder.changeButton.getGlobalBounds().contains(mousePos)) {
+                    cout << "change1" << endl;
 
-                        if (orders[index].orderState) {
-                            orders[index].orderState = false;
-                            editOrder.ordstate.setString("");
-                            editOrder.ordstate.setString("Not Delivered Yet ");
+                    if (orders[index].orderState) {
+                        orders[index].orderState = false;
 
-                        }
-                        else {
-                            orders[index].orderState = true;
-                            editOrder.ordstate.setString("");
-                            editOrder.ordstate.setString(" Delivered ");
-
-                        }
+                        editOrder.ordstate.setString("Not Delivered Yet ");
 
                     }
+                    else {
+                        orders[index].orderState = true;
 
-
-
-
-                    //editing total price
-
-                    if (editOrder.changeButton2.getGlobalBounds().contains(mousePos)) {
-                        cout << "change2" << endl;
-                        orders[index].totalPrice = stof(orderdisplay_Price);
-                        priceee = to_string(orders[index].totalPrice);
-                        editOrder.price.setString(priceee);
-
-                        window.draw(editOrder.price);
-                        window.display();
+                        editOrder.ordstate.setString(" Delivered ");
 
                     }
-
-
 
                 }
 
 
-                // editing order's data:
-                   //-----------------------
+                //editing total price
 
-                    // editing order's state
+                if (found and orderdisplay_Price.size() > 0 and editOrder.changeButton2.getGlobalBounds().contains(mousePos)) {
+                    cout << "change2" << endl;
+                    orders[index].totalPrice = stof(orderdisplay_Price);
+                    priceee = to_string(orders[index].totalPrice);
+                    editOrder.price.setString(priceee);
 
+                    window.draw(editOrder.price);
+                    window.display();
+
+                }
 
             }
-
-
 
             // Handle text input
             if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
