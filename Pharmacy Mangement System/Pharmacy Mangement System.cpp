@@ -1028,8 +1028,7 @@ void showAllPreviousOrdersFunctional()
         if (orders[i].userID == currentUser.ID) {
             ordernum++;
             found_orders = true;
-            if (ordernum > 2)
-            {
+            
                
                 if (orders[i].orderID != 0) {
                     ordersText += "Order number: " + to_string(orders[i].orderID) + "\n";
@@ -1066,45 +1065,7 @@ void showAllPreviousOrdersFunctional()
                 {
                     break;
                 }
-            }
-            else {
-                ordersT.setPosition(70, 210);
-                if (orders[i].orderID != 0) {
-                    ordersText += "Order number: " + to_string(orders[i].orderID) + "\n";
-                    ordersText += "Date of order     ship date         total price \n";
-                    ordersText += "-----------------------------------------------------\n";
-                    ordersText += orders[i].orderDate + "         " + orders[i].shipDate + "     " + to_string(orders[i].totalPrice) + "\n ----------------------------------------------------- \n";
-                    ordersText += "Medicine                           Concentration\n";
-                    //ordersText += name + "\n";
-                    int j = 0;
-                    while (orders[i].medicine_ID[j] != 0)
-                    {
-                        for (int k = 0;k < Size;k++)
-                        {
-
-                            if (medicines[k].ID == orders[i].medicine_ID[j])
-                            {
-                                //cout << "yes me" << endl;
-                                ordersText += (medicines[orders[i].medicine_ID[k]].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
-                            }
-
-                        }
-                        j++;
-                    }
-                    ordersText += "-----------------------------------------------------\n";
-
-
-                    //ordersText += "Order Status: " + trackorder(orders, orders[i].orderID) + "\n";
-
-
-                    ordersT.setString(ordersText);
-                    continue;
-                }
-                if (orders[i].orderID == 0)
-                {
-                    break;
-                }
-            }
+            
            
         }
     }
@@ -1924,9 +1885,17 @@ void functioningSignUp() {
                 if (signup.buttonin.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 1;
+                    displayS1.resize(0);
+                    displayStext1.setString(displayS1);
+                    displayS2.resize(0);
+                    displayStext2.setString(displayS2);
+                    displayS3.resize(0);
+                    displayStext3.setString(displayS3);
+                    displayS4.resize(0);
+                    displayStext4.setString(displayS4);
+                    displayS5.resize(0);
+                    displayStext5.setString(displayS5);
                     //brokenwindow = true;
-                    //page_switcher(header, signup, signin, usermenu, adminmenu, searchmedicine,
-                      //  showreceipt, edit_info, "12:00", makeorder);
                     issignin = true;
                     break;
                 }
@@ -1966,6 +1935,16 @@ void functioningSignUp() {
                     else {
                         signUp(displayS1, displayS2, displayS3, displayS4, displayS5);
                         page_num = 1;
+                        displayS1.resize(0);
+                        displayStext1.setString(displayS1);
+                        displayS2.resize(0);
+                        displayStext2.setString(displayS2);
+                        displayS3.resize(0);
+                        displayStext3.setString(displayS3);
+                        displayS4.resize(0);
+                        displayStext4.setString(displayS4);
+                        displayS5.resize(0);
+                        displayStext5.setString(displayS5);
                         brokenwindow = true;
                         break;
 
@@ -2189,6 +2168,10 @@ void functioningSignIn() {
                         {
                             window.clear();
                             page_num = 2;
+                            display1.resize(0);
+                            display2.resize(0);
+                            displaytext1.setString(display1);
+                            displaytext2.setString(display2);
                             brokenwindow = true;
                             break;
 
@@ -2197,6 +2180,10 @@ void functioningSignIn() {
                         {
                             window.clear();
                             page_num = 3;
+                            display1.resize(0);
+                            display2.resize(0);
+                            displaytext1.setString(display1);
+                            displaytext2.setString(display2);
                             brokenwindow = true;
                             break;
 
@@ -2239,6 +2226,10 @@ void functioningSignIn() {
                 if (signin.buttonup.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 0;
+                    display1.resize(0);
+                    display2.resize(0);
+                    displaytext1.setString(display1);
+                    displaytext2.setString(display2);
                     brokenwindow = true;
                     break;
 
@@ -6679,10 +6670,6 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
         functioningSignUp();
         break;
     case 1:
-        display1.resize(0);
-        display2.resize(0);
-        displaytext1.setString(display1);
-        displaytext2.setString(display2);
         window.clear();
         functioningSignIn();
         break;
