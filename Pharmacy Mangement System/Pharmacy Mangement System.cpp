@@ -1428,7 +1428,7 @@ bool removeUser(int userID) {
             users[i].ID = -1;
 
             found = true;
-            saveUserDataLocally();
+            
             return true;
         }
     }
@@ -1456,8 +1456,7 @@ bool removeMedicine(int medID) {
         }
         if (medicines[i].ID == medID) {
             medicines[i].ID = -1;
-            found = true;
-            saveMedicineDataLocally();
+            found = true;           
             return true;
         }
     }
@@ -5919,7 +5918,7 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
 
 
 
-                            saveMedicineDataLocally();
+                            
                             inputMedicineID2.resize(0);
                             inputMedicineID2Text.setString(inputMedicineID2);
                             inputPrice.resize(0);
