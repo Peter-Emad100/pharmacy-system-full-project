@@ -32,7 +32,7 @@ bool issignin = false; //check if i need to switch to sign in page
 bool doneAdding = false;//to add
 bool active_1 = false, active_2 = false, active_3 = false; // switches between input fields in Medicine Edit page
 
-RenderWindow window(VideoMode(1366, 768), "Your pharmacy");
+RenderWindow window(VideoMode(1366, 768), "Your pharmacy",Style::Fullscreen);
 Font Calibri;
 Texture BackgroundSign;
 Texture ButtonTexture, TextTexture, darkbox, textbox, headerbox, Signbox,
@@ -1061,17 +1061,17 @@ void showAllPreviousOrdersFunctional()
                 int j = 0;
                 while (orders[i].medicine_ID[j] != 0)
                 {
-                    for (int k = 0;k < Size;k++)
+                    for (int k = 0;medicines[k].ID!=0;k++)
                     {
 
                         if (medicines[k].ID == orders[i].medicine_ID[j])
                         {
                             //cout << "yes me" << endl;
                             if ((ordernum <= number_of_user_orders / 2 && number_of_user_orders % 2 == 0) || (ordernum <= (number_of_user_orders / 2) + 1 && number_of_user_orders % 2 == 1)) {
-                                ordersText += (medicines[orders[i].medicine_ID[k]].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
+                                ordersText += (medicines[k].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
                             }
                             else{
-                                ordersText2 += (medicines[orders[i].medicine_ID[k]].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
+                                ordersText2 += (medicines[k].name) + "                          " + (medicines[orders[i].medicine_ID[k]].concentration) + "\n";
                             }
                         }
 
@@ -4055,11 +4055,13 @@ void functioningAddMedicine()
                 }
                 else if (medConcSc)
                 {
-                    if (medConcSt.size() < 30) {
-                        medConcSt += static_cast<char>(evnt.text.unicode);
-                        medConcDis.setString(medConcSt);
-                        window.draw(medConcDis);
-                        window.display();
+                    if (medConcSt.size() < 7) {
+                        if (evnt.text.unicode >= 48 && evnt.text.unicode <= 57) {
+                            medConcSt += static_cast<char>(evnt.text.unicode);
+                            medConcDis.setString(medConcSt);
+                            window.draw(medConcDis);
+                            window.display();
+                        }
                     }
 
                 }
@@ -4097,7 +4099,7 @@ void functioningAddMedicine()
                 }
                 else if (medDescSc)
                 {
-                    if (medDescSt.size() < 40) {
+                    if (medDescSt.size() < 25) {
                         medDescSt += static_cast<char>(evnt.text.unicode);
                         medDescDis.setString(medDescSt);
                         window.draw(medDescDis);
@@ -5670,7 +5672,7 @@ void SetMedicineEdit(MedicineInfo& medicineinfo)
 
     medicineinfo.confirm.setScale(0.25, 0.25);
 
-    medicineinfo.confirm.setPosition(580, 210);
+    medicineinfo.confirm.setPosition(325, 498);
 
     medicineinfo.quantity.setTexture(quantity);
 
@@ -5838,22 +5840,28 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
             if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
                 // Handle Text Input
                 if (active_1 && inputMedicineID2.size() < 17) {
-                    inputMedicineID2 += static_cast<char>(event.text.unicode);
-                    inputMedicineID2Text.setString(inputMedicineID2);
-                    window.draw(inputMedicineID2Text);
-                    window.display();
+                    if (event.text.unicode >= 48 && event.text.unicode <= 57) {
+                        inputMedicineID2 += static_cast<char>(event.text.unicode);
+                        inputMedicineID2Text.setString(inputMedicineID2);
+                        window.draw(inputMedicineID2Text);
+                        window.display();
+                    }
                 }
                 else if (active_2 && inputQuantity.size() < 17) {
-                    inputQuantity += static_cast<char>(event.text.unicode);
-                    inputQuantityText.setString(inputQuantity);
-                    window.draw(inputQuantityText);
-                    window.display();
+                    if (event.text.unicode >= 48 && event.text.unicode <= 57) {
+                        inputQuantity += static_cast<char>(event.text.unicode);
+                        inputQuantityText.setString(inputQuantity);
+                        window.draw(inputQuantityText);
+                        window.display();
+                    }
                 }
                 else if (active_3 && inputPrice.size() < 17) {
-                    inputPrice += static_cast<char>(event.text.unicode);
-                    inputPriceText.setString(inputPrice);
-                    window.draw(inputPriceText);
-                    window.display();
+                    if (event.text.unicode >= 48 && event.text.unicode <= 57) {
+                        inputPrice += static_cast<char>(event.text.unicode);
+                        inputPriceText.setString(inputPrice);
+                        window.draw(inputPriceText);
+                        window.display();
+                    }
                 }
             }
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace) {
@@ -5883,7 +5891,7 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
 
 
 
-                if (medicineinfo.confirm.getGlobalBounds().contains((mousePos)))
+                if (medicineinfo.confirm.getGlobalBounds().contains((mousePos))&& inputMedicineID2 !="")
                 {
                     int id = stoi(inputMedicineID2);
 
@@ -5974,9 +5982,10 @@ void MedicineEditShow() {
 
     window.draw(text);
 
-    text.setString("Order price:");
+    text.setScale(0.8, 0.8);
+    text.setString("Medicine Price:");
 
-    text.setPosition(40, 449);
+    text.setPosition(40, 454);
 
     window.draw(text);
 }
