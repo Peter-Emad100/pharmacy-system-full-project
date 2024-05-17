@@ -199,6 +199,7 @@ void saveRequestsDataLocally()
 {
 	ofstream file;
 	file.open("RequestsData.txt", ios::app);
+
 	if (file.is_open())
 	{
 		for (int i = 0; i < requestcounter; i++)

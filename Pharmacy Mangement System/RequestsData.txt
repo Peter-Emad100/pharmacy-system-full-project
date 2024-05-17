@@ -1,2 +1,9 @@
-      
+ID      |    Name    |   Quantity
 0       |anareq      |1        
+7       |Flagyl      |3        
+7       |Flagyl      |3        
+7       |moov      |1        
+7       |paramol      |1        
+7       |markfast      |1        
+7       |kjlkjl      |5        
+7       |gfh      |3        

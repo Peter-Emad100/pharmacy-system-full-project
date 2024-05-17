@@ -497,7 +497,6 @@ bool show_order_receipt = 0;
 bool medicineEdit = 0;
 int main() {
     saveAllDataToArr();
-    dataForTestPurposes();
     TextureAFonts();
     // sign_up = true;
 
@@ -3483,7 +3482,7 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                             window2.clear();
                             Text text;
                             text.setFont(Calibri);
-                            text.setString("Username unnnnnnnnchanged successfully!");
+                            text.setString("Username unchanged!");
                             text.setScale(0.5, 0.5);
                             window2.draw(text);
                             // Draw whatever you want in the second window
@@ -3543,7 +3542,7 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                             window3.clear();
                             Text text;
                             text.setFont(Calibri);
-                            text.setString("Password unnnnnnchanged successfully!");
+                            text.setString("Password unchanged!");
                             text.setScale(0.5, 0.5);
                             window3.draw(text);
                             // Draw whatever you want in the second window
@@ -3579,6 +3578,35 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                         }
                         userIndex++;
                     }
+                    if (found == false)
+                    {
+                        RenderWindow window3(VideoMode(400, 200), "failure!");
+                        // Main loop for the third window
+                        while (window3.isOpen())
+                        {
+                            sf::Event event3;
+                            while (window3.pollEvent(event3))
+                            {
+                                if (event3.type == sf::Event::Closed)
+                                {
+                                    window3.close();
+                                    editAdisplay3.resize(0);
+                                    editAtext3.setString(editAdisplay3);
+                                }
+
+                            }
+
+                            window3.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("Invalid ID!");
+                            text.setScale(0.5, 0.5);
+                            window3.draw(text);
+                            // Draw whatever you want in the second window
+                            window3.display();
+                        }
+                    }
+                    
                 }
                 // change user to admin
                 if (found and users[userIndex].his_role == user::User and edit_info.button_role2.getGlobalBounds().contains(mousePos)) {
@@ -3938,17 +3966,41 @@ void functioningAddMedicine()
             if (evnt.type == Event::MouseButtonPressed && evnt.mouseButton.button == Mouse::Left) {
 
                 Vector2f MousePosition = window.mapPixelToCoords({ evnt.mouseButton.x, evnt.mouseButton.y });
-                if (searchmedicine.mainbutton.getGlobalBounds().contains(MousePosition))
+                if (addmedicine.mainbutton.getGlobalBounds().contains(MousePosition))
                 {
                     if (currentUser.his_role == user::User)
                     {
                         page_num = 2;
+                        medNameSt.resize(0);
+                        medCataSt.resize(0);
+                        medPriceSt.resize(0);
+                        medQuantitySt.resize(0);
+                        medConcSt.resize(0);
+                        medDescSt.resize(0);
+                        medNameDis.setString(medNameSt);
+                        medCataDis.setString(medCataSt);
+                        medPriceDis.setString(medPriceSt);
+                        medQuantityDis.setString(medQuantitySt);
+                        medConcDis.setString(medConcSt);
+                        medDescDis.setString(medDescSt);
                         brokenwindow = true;
                         break;
                     }
                     else if (currentUser.his_role == user::Admin)
                     {
                         page_num = 3;
+                        medNameSt.resize(0);
+                        medCataSt.resize(0);
+                        medPriceSt.resize(0);
+                        medQuantitySt.resize(0);
+                        medConcSt.resize(0);
+                        medDescSt.resize(0);
+                        medNameDis.setString(medNameSt);
+                        medCataDis.setString(medCataSt);
+                        medPriceDis.setString(medPriceSt);
+                        medQuantityDis.setString(medQuantitySt);
+                        medConcDis.setString(medConcSt);
+                        medDescDis.setString(medDescSt);
                         brokenwindow = true;
                         break;
                     }
@@ -4035,9 +4087,31 @@ void functioningAddMedicine()
                         medQuantitySt = "";
                         medConcSt = "";
                         medDescSt = "";
+                        RenderWindow window2(VideoMode(400, 200), "Success!");
+                        // Main loop for the second window
+                        while (window2.isOpen())
+                        {
+                            Event event2;
+                            while (window2.pollEvent(event2))
+                            {
+                                if (event2.type == Event::Closed)
+                                {
+                                    window2.close();
+                                }
+
+                            }
+
+                            window2.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("Medicine added successfully!");
+                            text.setScale(0.5, 0.5);
+                            window2.draw(text);
+                            // Draw whatever you want in the second window
+                            window2.display();
+                        }
 
                         brokenwindow = true;
-                        page_num = 3;
                     }
 
                 }
@@ -4098,7 +4172,7 @@ void functioningAddMedicine()
                 }
                 else if (medDescSc)
                 {
-                    if (medDescSt.size() < 25) {
+                    if (medDescSt.size() < 40) {
                         medDescSt += static_cast<char>(evnt.text.unicode);
                         medDescDis.setString(medDescSt);
                         window.draw(medDescDis);
@@ -5015,6 +5089,7 @@ void ManagePayment_functional()
     string newMethode;
 
     bool breaked = false;
+    bool found = false;
 
     while (window.isOpen()) {
         Event event;
@@ -5025,7 +5100,7 @@ void ManagePayment_functional()
         Text text;
         int c = 80, d = 140;
         text.setFont(Calibri);
-        text.setString("Payment methods right now");
+        text.setString("Available payment methods");
         text.setPosition(c, d);
         window.draw(text);
         d += 30;
@@ -5074,8 +5149,35 @@ void ManagePayment_functional()
 
                     for (auto it = paymentMethods.begin(); it != paymentMethods.end(); ++it) {
                         if (managedisplay2 == *it) {
+                            found = true;
                             paymentMethods.erase(it);
                             break;
+                        }
+                    }
+                    if (found == false)
+                    {
+                        RenderWindow window2(VideoMode(400, 200), "Warning!");
+                        // Main loop for the second window
+                        while (window2.isOpen())
+                        {
+                            sf::Event event2;
+                            while (window2.pollEvent(event2))
+                            {
+                                if (event2.type == sf::Event::Closed)
+                                {
+                                    window2.close();
+                                }
+
+                            }
+
+                            window2.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("Invalid payment method, Try again!");
+                            text.setScale(0.5, 0.5);
+                            window2.draw(text);
+                            // Draw whatever you want in the second window
+                            window2.display();
                         }
                     }
                     managedisplay1.resize(0);
@@ -6926,17 +7028,28 @@ void Requestadrug_showfunctional(bool& requestdrug) {
                     strequest2.resize(0);
                     requesttext1.setString(strequest1);
                     requesttext2.setString(strequest2);
-                    if (currentUser.his_role == user::User)
+                    RenderWindow window2(VideoMode(400, 200), "Success!");
+                    // Main loop for the second window
+                    while (window2.isOpen())
                     {
-                        page_num = 2;
-                        brokenwindow = true;
-                        break;
-                    }
-                    else if (currentUser.his_role == user::Admin)
-                    {
-                        page_num = 3;
-                        brokenwindow = true;
-                        break;
+                        Event event2;
+                        while (window2.pollEvent(event2))
+                        {
+                            if (event2.type == Event::Closed)
+                            {
+                                window2.close();
+                            }
+
+                        }
+
+                        window2.clear();
+                        Text text;
+                        text.setFont(Calibri);
+                        text.setString("Request done successfully!");
+                        text.setScale(0.5, 0.5);
+                        window2.draw(text);
+                        // Draw whatever you want in the second window
+                        window2.display();
                     }
                 }
                 if (requestadrug.mainbutton.getGlobalBounds().contains(mousePos))

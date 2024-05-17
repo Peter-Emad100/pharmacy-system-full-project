@@ -1,5 +1,6 @@
-visa
-pick at pharmacy
-debit
-credit cards
-paypal
+Visa
+Pick at pharmacy
+Debit card
+Credit card
+Paypal
+Miza
