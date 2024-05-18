@@ -1,3 +1,13 @@
+/*NOTEE::::
+There are two options to choose from regarding how the system will be displayed, if your system display resolution
+is any higher than 1366*768, you will have to choose either lessen your resolution to 1366*768 and use the Fullscreen option
+OR if you don't want to change your display resolution and don't mind viewing the system in a minimized mode then keep your
+resolution as is and use the Titlebar option.
+Keep in mind that you can close the window only using the esc button in either of the mentioned options!
+The options are at lines 46 & 47 and the fullscreen one is used now.
+*/
+
+
 //**********Libraries***********//
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
@@ -14,6 +24,7 @@
 #include "SaveData.h"
 using namespace std;
 using namespace sf;
+
 //**********Declarations***********//
 extern vector<string> paymentMethods;
 const int Size = 100;
@@ -33,6 +44,8 @@ bool doneAdding = false;//to add
 bool active_1 = false, active_2 = false, active_3 = false; // switches between input fields in Medicine Edit page
 
 RenderWindow window(VideoMode(1366, 768), "Your pharmacy",Style::Fullscreen);
+//RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Titlebar);
+
 Font Calibri;
 Texture BackgroundSign;
 Texture ButtonTexture, TextTexture, darkbox, textbox, headerbox, Signbox,
@@ -158,6 +171,7 @@ user users[Size];
 user newUser;
 user currentUser;  // Temp to keep the current user's data
 int currentUser_Index;
+
 struct order {
     int userID;
     string orderDate;
@@ -184,6 +198,7 @@ struct order {
 };
 order orders[Size] = {};
 order lastyorder = {};
+
 struct request {
     int userID;
     string medicineName;
@@ -321,7 +336,8 @@ struct managePayment {
 
     Text button1, button2, method, numb;
 
-} manage_payment;
+};
+managePayment manage_payment;
 
 struct SignIn {
     Sprite background1,
@@ -389,6 +405,8 @@ void logOut();
 void managePaymentMethodes();
 void showPaymentMehtode(vector<string> x);
 void logInInterface(string username, string password);
+
+
 //**********GUI FUNCTIONS DECLARATION***********//
 void TextureAFonts();
 
@@ -405,64 +423,71 @@ void DrawAdminMenu(adminMenu adminmenu);
 void SetAdminMenu(adminMenu& adminmenu);
 void functioningAdminMenu();
 
-
+//search
 void DrawSearch(searchMedicine searchmedicine);
 void SetSearch(searchMedicine& searchmedicine);
 void functioningsearch();
 
+//makeorder
 void DrawMakeOrder(StmakeOrder& makeorder);
 void SetMakeOrder(StmakeOrder& makeorder);
 
+
+//showreceipt
 void DrawShowReceipt(showReceipt showreceipt);
 void SetShowReceipt(showReceipt& showreceipt);
+void ShowReceiptFunctional(bool& show_order_receipt,
+    showReceipt showreceipt);
 
+
+
+//signup
 void DrawSignUp(SignUp signup);
 void SetSignUp(SignUp& signup);
 void functioningSignUp();
 
+//addmedicine
 void setAddMedicine(AddMedicine& addmedicine);
 void drawAddMedicine(AddMedicine& addmedicine);
 void functioningAddMedicine();
 
+//adduser
 void setAddusers(AddUsers& adduser);
 void drawAddusers(AddUsers& adduser);
 void functioningAddUser();
 
+//editmedicine
 void SetMedicineEdit(MedicineInfo& medicineinfo);
 void MedicineEditShow();
+void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo);
 
+
+//requestadrug
 void Set_Request_drug(RequestaDrug& requestadrug);
 void Requestadrug_showfunctional(bool& requestdrug);
 void Draw_Requestadrug(RequestaDrug& requestadrug);
 
+//signin
 void DrawSignIn(SignIn signin);
 void SetSignIn(SignIn& signin);
 void functioningSignIn();
 
-
-void SetMedicineEdit(MedicineInfo& medicineinfo);
-
-void MedicineEditShow();
-void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo);
-
 // Manage User
-
 void set_manageUser(manageUser& manage_user);
 void draw_manageUser(manageUser manage_user);
 void functioning_manageUser();
+
 // Manage Medicine
 void set_manageMedicine(manageMedicine& manage_medicine);
 void draw_manageMedicine(manageMedicine manage_medicine);
 void functioning_manageMedicine();
+
 // manage payment
 void set_managePayment(managePayment& manage_payment);
 void Draw_managePayment(managePayment& manage_payment);
 void ManagePayment_functional();
 
-void showOrderReceipt(order lastOrder, string current_time);
-void ShowReceiptFunctional(bool& show_order_receipt,
-    showReceipt showreceipt);
-
+//pageswitcher
 void page_switcher(Header& header, SignUp& signup, SignIn& signin,
     userMenu& usermenu, adminMenu& adminmenu,
     searchMedicine& searchmedicine, showReceipt& showreceipt,
@@ -477,24 +502,21 @@ void Draw_EditInfo_User(Edit_Info& edit_info);
 void editUser_functional(int index);
 String trackorder(order orders[], int orderid);
 
-
-
 //admin
 void Set_EditInfo_Admin(Edit_Info& edit_info);
 void Draw_EditInfo_Admin(Edit_Info& edit_info);
 void  EditInfo_Admin_functional(Edit_Info& edit_info);
 
+//order
 void SetEditOrderInfo(EditOrderInfo& edit);
 void DrawEditOrderInfo(EditOrderInfo edit);
-
-
 
 bool sign_up;
 bool requestdrug = 0;
 int page_num = 0;
 bool show_order_receipt = 0;
-
 bool medicineEdit = 0;
+
 int main() {
     saveAllDataToArr();
     TextureAFonts();
@@ -605,73 +627,10 @@ int main() {
 
     Event event;
     while (window.pollEvent(event)) {
-        /*if (event.type == Event::Closed)
-        {
-                window.close();
-        }*/
+      
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) {
             window.close();
         }
-        // createEditMedicineWindow(window);
-        /*if (event.type == Event::MouseButtonPressed) {
-            // Check if left mouse button is pressed
-            if (show_order_receipt) {
-                if (event.mouseButton.button == Mouse::Left) {
-                    // Get the current mouse position
-                    Vector2i mousePosition = Mouse::getPosition(window);
-                    // Check if the mouse position intersects with confirm button
-                    if (showreceipt.confirm.getGlobalBounds().contains(
-                        static_cast<Vector2f>(mousePosition))) {
-                        // action performed to get to main menu
-                        show_order_receipt = 0;
-                        if (currentUser.his_role == user::User) {
-                            window.clear();
-                            page_num = 2;
-                        }
-                        else {
-                            window.clear();
-                            page_num = 3;F
-                        }
-                    }
-                }
-            }
-        }*/
-
-        /*if (event.type == Event::MouseButtonPressed) {
-            // Check if left mouse button is pressed
-            if (event.mouseButton.button == Mouse::Left) {
-                // Get the current mouse position
-                Vector2i mousePosition = Mouse::getPosition(window);
-                // Check if the mouse position intersects with signup button
-                if (sign_up) {
-                    if (signup.buttonin.getGlobalBounds().contains(
-                        static_cast<Vector2f>(mousePosition))) {
-                        // action performed for sign in
-                        sign_up = false;
-                    }
-                }
-                else {
-                    if (signin.buttonup.getGlobalBounds().contains(
-                        static_cast<Vector2f>(mousePosition)) and
-                        !sign_up) {
-                        sign_up = true;
-                    }
-                }
-            }
-        }*/
-
-        //window.clear();
-        //ManagePayment_functional(manage_payment);
-        // DrawSignUp(signup);
-        //window.display();
-        /*if (sign_up) {
-                DrawSignUp(signup);
-                window.draw(displaytext);
-        }
-        else {
-                DrawSignIn(signin);
-
-        }*/
 
         while (window.isOpen())
         {
@@ -682,6 +641,7 @@ int main() {
     }
     saveAllDataLocally();
 }
+
 //**********Functions***********//
 
 void dataForTestPurposes() {
@@ -953,6 +913,7 @@ void searchForMedicineByCategory(string category) {
     }
 
 }
+
 // Convert date string to integers
 void parseDateString(const std::string& dateString, int& year, int& month,
     int& day) {
@@ -1209,13 +1170,6 @@ void showAllPreviousOrdersFunctional()
 
 }
 
-
-
-
-
-
-
-
 void addUser(string username, string address, string email, string password, string phone, int role) {
 
     int id = user_data + 1;
@@ -1240,6 +1194,7 @@ void addUser(string username, string address, string email, string password, str
     user_data++;
 
 }
+
 void editUserCredentials(int index)
 {
     cout << "What are you willing to change ?\n";
@@ -1268,6 +1223,7 @@ void editUserCredentials(int index)
 
 
 }
+
 void addNewMedicine(string name, string concentraiton, string catagory, string description, string price, string quantity)
 {
     medicine newMedicine;
@@ -1286,7 +1242,6 @@ void addNewMedicine(string name, string concentraiton, string catagory, string d
 
     medicine_data++;
 }
-
 
 void updateUser() {
     int userID;
@@ -1468,6 +1423,7 @@ bool removeMedicine(int medID) {
 
     return true;
 }
+
 String trackorder(order orders[], int orderid) {
     bool orderfound = false;
 
@@ -2894,7 +2850,6 @@ void functioningAdminMenu() {
     }
 }
 
-
 void DrawSearch(searchMedicine searchmedicine) {
     window.draw(searchmedicine.backgroundx);
     window.draw(searchmedicine.searchBar);
@@ -3075,6 +3030,7 @@ void functioningsearch()
         }
     }
 }
+
 void SetShowReceipt(showReceipt& showreceipt) {
     // setting showtable
     showreceipt.showTable.setTexture(showTable);
@@ -3235,6 +3191,14 @@ void Draw_EditInfo_User(Edit_Info& edit_info) {
     window.draw(edit_info.address);
     window.draw(edit_info.phonenum);
 }
+void EditInfo_User_Functional(Edit_Info& edit_info) {
+    Event event;
+    window.clear();
+    Set_EditInfo_User(edit_info);
+    Draw_EditInfo_User(edit_info);
+    editUserCredentials(currentUser_Index);
+    window.display();
+}
 
 void Draw_EditInfo_Admin(Edit_Info& edit_info) {
 
@@ -3351,7 +3315,6 @@ void Set_EditInfo_Admin(Edit_Info& edit_info) {
     edit_info.wrng_id.setFillColor(Color::Black);
     edit_info.wrng_id.setPosition(280, 205);
 }
-
 void EditInfo_Admin_functional(Edit_Info& edit_info) {
 
     int userIndex = 0;
@@ -3694,9 +3657,6 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
     }
 }
 
-
-
-
 void setAddMedicine(AddMedicine& addmedicine)
 
 {
@@ -3754,174 +3714,113 @@ void setAddMedicine(AddMedicine& addmedicine)
     // textboxes
 
     addmedicine.medNametextbox.setTexture(textboxTex);
-
     addmedicine.medNametextbox.setScale(0.6, 0.6);
-
     addmedicine.medNametextbox.setPosition(450, 160);
 
     addmedicine.medCatagorytextbox.setTexture(textboxTex);
-
     addmedicine.medCatagorytextbox.setScale(0.6, 0.6);
-
     addmedicine.medCatagorytextbox.setPosition(450, 250);
 
     addmedicine.medConcentrationtextbox.setTexture(textboxTex);
-
     addmedicine.medConcentrationtextbox.setScale(0.6, 0.6);
-
     addmedicine.medConcentrationtextbox.setPosition(450, 340);
 
     addmedicine.medPricetextbox.setTexture(textboxTex);
-
     addmedicine.medPricetextbox.setScale(0.6, 0.6);
-
     addmedicine.medPricetextbox.setPosition(450, 430);
 
     addmedicine.medQuantitytextbox.setTexture(textboxTex);
-
     addmedicine.medQuantitytextbox.setScale(0.6, 0.6);
-
     addmedicine.medQuantitytextbox.setPosition(450, 520);
 
     addmedicine.medDesctextbox.setTexture(textboxTex);
-
     addmedicine.medDesctextbox.setScale(0.6, 0.6);
-
     addmedicine.medDesctextbox.setPosition(450, 610);
-
 
     // medicine Name
 
     addmedicine.medNametext.setFont(Calibri);
-
     addmedicine.medNametext.setString("Name:");
-
     addmedicine.medNametext.setPosition(100, 168);
-
     addmedicine.medNametext.setFillColor(sf::Color::White);
-
     addmedicine.medNametext.setCharacterSize(55);
 
     // medicineCatagory
 
     addmedicine.medCatagorytext.setFont(Calibri);
-
     addmedicine.medCatagorytext.setString("Catagory:");
-
     addmedicine.medCatagorytext.setPosition(100, 258);
-
     addmedicine.medCatagorytext.setFillColor(sf::Color::White);
-
     addmedicine.medCatagorytext.setCharacterSize(55);
 
     // medicine Concentraion
 
     addmedicine.medConcentrationtext.setFont(Calibri);
-
     addmedicine.medConcentrationtext.setString("Concentration:");
-
     addmedicine.medConcentrationtext.setPosition(100, 348);
-
     addmedicine.medConcentrationtext.setFillColor(sf::Color::White);
-
     addmedicine.medConcentrationtext.setCharacterSize(55);
 
     // medicine price
 
     addmedicine.medPricetext.setFont(Calibri);
-
     addmedicine.medPricetext.setString("Price:");
-
     addmedicine.medPricetext.setPosition(100, 438);
-
     addmedicine.medPricetext.setFillColor(sf::Color::White);
-
     addmedicine.medPricetext.setCharacterSize(55);
 
     // medicines Quantity
 
     addmedicine.medQuantitytext.setFont(Calibri);
-
     addmedicine.medQuantitytext.setString("Quantity:");
-
     addmedicine.medQuantitytext.setPosition(100, 528);
-
     addmedicine.medQuantitytext.setFillColor(sf::Color::White);
-
     addmedicine.medQuantitytext.setCharacterSize(55);
 
     // medicines Description
     addmedicine.medDescriptiontext.setFont(Calibri);
-
     addmedicine.medDescriptiontext.setString("Description:");
-
     addmedicine.medDescriptiontext.setPosition(100, 628);
-
     addmedicine.medDescriptiontext.setFillColor(sf::Color::White);
-
     addmedicine.medDescriptiontext.setCharacterSize(55);
 
     // confirmation
 
     addmedicine.medConfirmationtext.setFont(Calibri);
-
     addmedicine.medConfirmationtext.setString("If input completed click confirm");
-
     addmedicine.medConfirmationtext.setPosition(120, 700);
-
     addmedicine.medConfirmationtext.setCharacterSize(30);
-
     addmedicine.medConfirmationtext.setFillColor(sf::Color::Black);
 
     // options background
 
     addmedicine.secbackground.setTexture(secbackgroundTex);
-
     addmedicine.secbackground.setPosition(65, 140);
-
     addmedicine.secbackground.scale(0.95, 1.15);
 
     // main background
 
     addmedicine.background.setTexture(backgroundTex);
-
     addmedicine.background.setPosition(0, 0);
-
     addmedicine.background.setScale(0.28, 0.28);
 }
 void drawAddMedicine(AddMedicine& addmedicine)
-
 {
     window.draw(addmedicine.background);
-
     window.draw(adduser.secbackground);
-
     window.draw(addmedicine.medNametextbox);
-
     window.draw(addmedicine.medNametext);
-
     window.draw(addmedicine.medCatagorytextbox);
-
     window.draw(addmedicine.medCatagorytext);
-
     window.draw(addmedicine.medPricetextbox);
-
     window.draw(addmedicine.medPricetext);
-
     window.draw(addmedicine.medConcentrationtextbox);
-
     window.draw(addmedicine.medConcentrationtext);
-
     window.draw(addmedicine.medQuantitytextbox);
-
     window.draw(addmedicine.medQuantitytext);
-
     window.draw(addmedicine.medConfirmationtext);
-
     window.draw(addmedicine.optionsbutton);
-
     window.draw(addmedicine.medDescriptiontext);
-
     window.draw(addmedicine.medDesctextbox);
     window.draw(addmedicine.mainbutton);
 }
@@ -4252,7 +4151,6 @@ void functioningAddMedicine()
 }
 
 void setAddusers(AddUsers& adduser)
-
 {
     // buttons
 
@@ -4260,55 +4158,37 @@ void setAddusers(AddUsers& adduser)
     adduser.mainbutton.setPosition(90, 35);
     adduser.mainbutton.setScale(0.08, 0.08);
 
-
     adduser.optionsbutton.setTexture(buttonTex);
-
     adduser.optionsbutton.setScale(0.39, 0.39);
-
     adduser.optionsbutton.setPosition(590, 650);
 
     adduser.roleAdminbutton.setTexture(roleAdminbuttonTex);
-
     adduser.roleAdminbutton.setScale(0.35, 0.35);
-
     adduser.roleAdminbutton.setPosition(455, 570);
 
     adduser.roleUserbutton.setTexture(roleUserbuttonTex);
-
     adduser.roleUserbutton.setScale(0.35, 0.35);
-
     adduser.roleUserbutton.setPosition(670, 570);
 
     // textboxes
-
     adduser.usernametextbox.setTexture(textboxTex);
-
     adduser.usernametextbox.setScale(0.6, 0.6);
-
     adduser.usernametextbox.setPosition(450, 160);
 
     adduser.addresstextbox.setTexture(textboxTex);
-
     adduser.addresstextbox.setScale(0.6, 0.6);
-
     adduser.addresstextbox.setPosition(450, 240);
 
     adduser.emailtextbox.setTexture(textboxTex);
-
     adduser.emailtextbox.setScale(0.6, 0.6);
-
     adduser.emailtextbox.setPosition(450, 320);
 
     adduser.passwordtextbox.setTexture(textboxTex);
-
     adduser.passwordtextbox.setScale(0.6, 0.6);
-
     adduser.passwordtextbox.setPosition(450, 400);
 
     adduser.phonetextbox.setTexture(textboxTex);
-
     adduser.phonetextbox.setScale(0.6, 0.6);
-
     adduser.phonetextbox.setPosition(450, 480);
 
     // texts for later
@@ -4345,139 +4225,90 @@ void setAddusers(AddUsers& adduser)
     // username
 
     adduser.usernametext.setFont(Calibri);
-
     adduser.usernametext.setString("Username:");
-
     adduser.usernametext.setPosition(100, 168);
-
     adduser.usernametext.setFillColor(sf::Color::White);
-
     adduser.usernametext.setCharacterSize(55);
 
     // address
 
     adduser.addresstext.setFont(Calibri);
-
     adduser.addresstext.setString("Address:");
-
     adduser.addresstext.setPosition(100, 248);
-
     adduser.addresstext.setFillColor(sf::Color::White);
-
     adduser.addresstext.setCharacterSize(55);
 
     // email
 
     adduser.emailtext.setFont(Calibri);
-
     adduser.emailtext.setString("Email:");
-
     adduser.emailtext.setPosition(100, 328);
-
     adduser.emailtext.setFillColor(sf::Color::White);
-
     adduser.emailtext.setCharacterSize(55);
 
     // password
 
     adduser.passwordtext.setFont(Calibri);
-
     adduser.passwordtext.setString("Password:");
-
     adduser.passwordtext.setPosition(100, 408);
-
     adduser.passwordtext.setFillColor(sf::Color::White);
-
     adduser.passwordtext.setCharacterSize(55);
 
     // phone
 
     adduser.phonetext.setFont(Calibri);
-
     adduser.phonetext.setString("Phone:");
-
     adduser.phonetext.setPosition(100, 488);
-
     adduser.phonetext.setFillColor(sf::Color::White);
-
     adduser.phonetext.setCharacterSize(55);
 
     // role
 
     adduser.roletext.setFont(Calibri);
-
     adduser.roletext.setString("Role:");
-
     adduser.roletext.setPosition(100, 568);
-
     adduser.roletext.setFillColor(sf::Color::White);
-
     adduser.roletext.setCharacterSize(55);
 
     // confirmation
 
     adduser.confirmationtext.setFont(Calibri);
-
     adduser.confirmationtext.setString("If input completed click confirm");
-
     adduser.confirmationtext.setPosition(120, 675);
-
     adduser.confirmationtext.setCharacterSize(30);
-
     adduser.confirmationtext.setFillColor(sf::Color::Black);
 
     // options background
 
     adduser.secbackground.setTexture(secbackgroundTex);
-
     adduser.secbackground.setPosition(65, 140);
-
     adduser.secbackground.scale(0.9, 1.3);
 
     // main background
 
     adduser.background.setTexture(backgroundTex);
-
     adduser.background.setPosition(0, 0);
-
     adduser.background.setScale(0.28, 0.28);
 }
 void drawAddusers(AddUsers& adduser)
-
 {
 
     window.draw(adduser.background);
-
     window.draw(adduser.secbackground);
-
     window.draw(adduser.usernametextbox);
-
     window.draw(adduser.addresstextbox);
-
     window.draw(adduser.emailtextbox);
-
     window.draw(adduser.passwordtextbox);
-
     window.draw(adduser.phonetextbox);
-
     window.draw(adduser.optionsbutton);
-
     window.draw(adduser.roleAdminbutton);
-
     window.draw(adduser.roleUserbutton);
-
     window.draw(adduser.usernametext);
-
     window.draw(adduser.addresstext);
-
     window.draw(adduser.emailtext);
-
     window.draw(adduser.passwordtext);
-
     window.draw(adduser.phonetext);
-
     window.draw(adduser.roletext);
-
     window.draw(adduser.confirmationtext);
     window.draw(adduser.mainbutton);
 }
@@ -4728,23 +4559,8 @@ void functioningAddUser()
     }
 }
 
-void EditInfo_User_Functional(Edit_Info& edit_info) {
-    Event event;
-
-    window.clear();
-
-    Set_EditInfo_User(edit_info);
-
-    Draw_EditInfo_User(edit_info);
-
-    editUserCredentials(currentUser_Index);
-
-    window.display();
-}
-
 void set_manageUser(manageUser& manage_user) {
     manage_user.background.setTexture(backgroundManageUser);
-
     manage_user.background.setScale(0.276, 0.22);
 
     manage_user.mainbutton.setTexture(mainmenuButton);
@@ -4752,42 +4568,26 @@ void set_manageUser(manageUser& manage_user) {
     manage_user.mainbutton.setScale(0.08, 0.08);
 
     manage_user.semiTransparent.setTexture(showTable);
-
     manage_user.semiTransparent.setScale(2.95, 0.6);
-
     manage_user.semiTransparent.setPosition(12, 60);
 
     manage_user.Title.setFont(Calibri);
-
-
     manage_user.Title.setString("Manage User");
-
     manage_user.Title.setPosition(250, 70);
-
     manage_user.Title.setCharacterSize(50);
-
     manage_user.Title.setStyle(Text::Bold);
 
     manage_user.userID.setFont(Calibri);
-
     manage_user.userID.setString("User ID");
-
-
-
     manage_user.userID.setPosition(24, 190);
-
     manage_user.userID.setCharacterSize(39);
 
     manage_user.idTextBox.setTexture(textbox);
-
     manage_user.idTextBox.setScale(0.55, 0.6);
-
     manage_user.idTextBox.setPosition(150, 170);
 
     manage_user.removeUser.setTexture(buttonRemoveUser);
-
     manage_user.removeUser.setScale(0.35, 0.37);
-
     manage_user.removeUser.setPosition(556, 177);
 
     manage_user.editUser.setTexture(buttonEditUser);
@@ -4795,9 +4595,7 @@ void set_manageUser(manageUser& manage_user) {
     manage_user.editUser.setPosition(20, 290);
 
     manage_user.addUser.setTexture(buttonAddUser);
-
     manage_user.addUser.setScale(0.6, 0.48);
-
     manage_user.addUser.setPosition(400, 290);
 
     inputUserIDText.setFont(Calibri);
@@ -4809,19 +4607,12 @@ void set_manageUser(manageUser& manage_user) {
 }
 void draw_manageUser(manageUser manage_user) {
     window.draw(manage_user.background);
-
     window.draw(manage_user.semiTransparent);
-
     window.draw(manage_user.Title);
-
     window.draw(manage_user.userID);
-
     window.draw(manage_user.idTextBox);
-
     window.draw(manage_user.removeUser);
-
     window.draw(manage_user.editUser);
-
     window.draw(manage_user.addUser);
     window.draw(inputUserIDText);
     window.draw(manage_user.mainbutton);
@@ -4829,9 +4620,7 @@ void draw_manageUser(manageUser manage_user) {
 }
 void functioning_manageUser()
 {
-
     int brokenwindow = false;
-
 
     window.clear();
     while (window.isOpen())
@@ -4889,8 +4678,6 @@ void functioning_manageUser()
 
                 if (manage_user.removeUser.getGlobalBounds().contains(mousepos))
                 {
-
-
                     if (removeUser(stoi(inputUserID)) == false)
                     {
                         RenderWindow window2(sf::VideoMode(400, 200), "Warning!");
@@ -4945,17 +4732,12 @@ void functioning_manageUser()
             }
 
         }
-
-
-        //if (event.type == Event::KeyReleased && event.key.code == Keyboard::BackSpace && inputUserID.size() > 0)
-
     }
 }
 
 
 void set_managePayment(managePayment& manage_payment) {
     manage_payment.background.setTexture(manage_payment.managepayment_background);
-
     manage_payment.background.setScale(0.27, 0.22);
 
     manage_payment.mainbutton.setTexture(mainmenuButton);
@@ -4965,106 +4747,73 @@ void set_managePayment(managePayment& manage_payment) {
     // valuefield1 -> add new payment methode
 
     manage_payment.valuefield1.setTexture(textbox);
-
     manage_payment.valuefield1.setScale(0.6, 0.5);
-
     manage_payment.valuefield1.setPosition(850, 250);
 
     // valuefield2-> delete a current payment methode
 
     manage_payment.valuefield2.setTexture(textbox);
-
     manage_payment.valuefield2.setScale(0.6, 0.5);
-
     manage_payment.valuefield2.setPosition(850, 450);
 
     // confirm button for adding payments
 
     manage_payment.confirm_button.setTexture(manage_payment.confirm);
-
     manage_payment.confirm_button.setScale(0.4, 0.4);
-
     manage_payment.confirm_button.setPosition(960, 330);
 
     // delete button for deleting payments
 
     manage_payment.delete_button.setTexture(manage_payment.Delete);
-
     manage_payment.delete_button.setScale(0.376, 0.35);
-
     manage_payment.delete_button.setPosition(955, 540);
 
     // semi transparent background to display payment methods for user
 
     manage_payment.backgroundview.setTexture(Signbox);
-
     manage_payment.backgroundview.setScale(0.43, 1.21);
-
     manage_payment.backgroundview.setPosition(70, 136);
 
     // text to add payment
 
     manage_payment.button1.setFont(Calibri);
-
     manage_payment.button1.setFillColor(Color::Black);
-
     manage_payment.button1.setString("Enter name of payment to add: ");
-
     manage_payment.button1.setPosition(860, 220);
-
     manage_payment.button1.setScale(1, 1);
 
     // text to delete payment
 
     manage_payment.button2.setFont(Calibri);
-
     manage_payment.button2.setFillColor(Color::Black);
-
     manage_payment.button2.setString("Enter name of payment to delete: ");
-
     manage_payment.button2.setPosition(860, 410);
-
     manage_payment.button2.setScale(1, 1);
 
     // setting display1 :: adding payments
 
     managetext1.setFont(Calibri);
-
     managetext1.setScale(1, 1);
-
     managetext1.setPosition(870, 258);
-
     managetext1.setFillColor(Color::Black);
-
     managetext1.setString(display1);
 
     // settind display2 :: deleting payments
 
     managetext2.setFont(Calibri);
-
     managetext2.setScale(1, 1);
-
     managetext2.setPosition(870, 460);
-
     managetext2.setFillColor(Color::Black);
-
     managetext2.setString(display2);
 }
 void Draw_managePayment(managePayment& manage_payment) {
     window.draw(manage_payment.background);
-
     window.draw(manage_payment.valuefield1);
-
     window.draw(manage_payment.valuefield2);
-
     window.draw(manage_payment.confirm_button);
-
     window.draw(manage_payment.delete_button);
-
     window.draw(manage_payment.backgroundview);
-
     window.draw(manage_payment.button1);
-
     window.draw(manage_payment.button2);
     window.draw(manage_payment.mainbutton);
 }
@@ -5294,9 +5043,9 @@ void ManagePayment_functional()
         }
     }
 }
+
 void set_manageMedicine(manageMedicine& manage_medicine) {
     manage_medicine.background.setTexture(backgroundManageUser);
-
     manage_medicine.background.setScale(0.276, 0.22);
 
     manage_medicine.mainbutton.setTexture(mainmenuButton);
@@ -5304,51 +5053,33 @@ void set_manageMedicine(manageMedicine& manage_medicine) {
     manage_medicine.mainbutton.setScale(0.08, 0.08);
 
     manage_medicine.semiTransparent.setTexture(showTable);
-
     manage_medicine.semiTransparent.setScale(2.95, 0.6);
-
     manage_medicine.semiTransparent.setPosition(12, 60);
 
     manage_medicine.Title.setFont(Calibri);
-
     manage_medicine.Title.setString("Manage Medicine");
-
     manage_medicine.Title.setPosition(210, 70);
-
     manage_medicine.Title.setCharacterSize(50);
-
     manage_medicine.Title.setStyle(Text::Bold);
-
     manage_medicine.medicineID.setFont(Calibri);
-
     manage_medicine.medicineID.setString("Med ID");
-
     manage_medicine.medicineID.setPosition(18, 190);
-
     manage_medicine.medicineID.setCharacterSize(39);
 
     manage_medicine.idTextBox.setTexture(textbox);
-
     manage_medicine.idTextBox.setScale(0.55, 0.6);
-
     manage_medicine.idTextBox.setPosition(150, 170);
 
     manage_medicine.removeMedicine.setTexture(buttonRemoveMedicine);
-
     manage_medicine.removeMedicine.setScale(0.35, 0.37);
-
     manage_medicine.removeMedicine.setPosition(556, 177);
 
     manage_medicine.editMedicine.setTexture(buttonEditMedicine);
-
     manage_medicine.editMedicine.setScale(0.6, 0.48);
-
     manage_medicine.editMedicine.setPosition(20, 290);
 
     manage_medicine.addMedicine.setTexture(buttonAddMedicine);
-
     manage_medicine.addMedicine.setScale(0.6, 0.48);
-
     manage_medicine.addMedicine.setPosition(400, 290);
 
     inputMedicineIDText.setFont(Calibri);
@@ -5358,31 +5089,20 @@ void set_manageMedicine(manageMedicine& manage_medicine) {
     inputMedicineIDText.setString(inputMedicineID);
     inputMedicineIDText.setCharacterSize(40);
 }
-
-
 void draw_manageMedicine(manageMedicine manage_medicine)
 
 {
     window.draw(manage_medicine.background);
-
     window.draw(manage_medicine.semiTransparent);
-
     window.draw(manage_medicine.Title);
-
     window.draw(manage_medicine.medicineID);
-
     window.draw(manage_medicine.idTextBox);
-
     window.draw(manage_medicine.removeMedicine);
-
     window.draw(manage_medicine.editMedicine);
-
     window.draw(manage_medicine.addMedicine);
-
     window.draw(inputMedicineIDText);
     window.draw(manage_medicine.mainbutton);
 }
-
 void functioning_manageMedicine()
 {
     bool brokenWindow = false;
@@ -5492,7 +5212,6 @@ void functioning_manageMedicine()
             break;
     }
 }
-
 
 void editUser_functional(int index)
 
@@ -5759,10 +5478,8 @@ void editUser_functional(int index)
 }
 
 void SetMedicineEdit(MedicineInfo& medicineinfo)
-
 {
     medicineinfo.backgroundy.setTexture(backgroundsearch);
-
     medicineinfo.backgroundy.setScale(0.276, 0.24);
 
     medicineinfo.mainbutton.setTexture(mainmenuButton);
@@ -5770,39 +5487,27 @@ void SetMedicineEdit(MedicineInfo& medicineinfo)
     medicineinfo.mainbutton.setScale(0.08, 0.08);
 
     medicineinfo.confirm.setTexture(confirm);
-
     medicineinfo.confirm.setScale(0.25, 0.25);
-
     medicineinfo.confirm.setPosition(325, 498);
 
     medicineinfo.quantity.setTexture(quantity);
-
     medicineinfo.quantity.setScale(0.25, .25);
-
     medicineinfo.quantity.setPosition(580, 325);
 
     medicineinfo.price.setTexture(price);
-
     medicineinfo.price.setScale(0.25, 0.25);
-
     medicineinfo.price.setPosition(580, 447);
 
     medicineinfo.valuefield1.setTexture(textbox);
-
     medicineinfo.valuefield1.setScale(0.5, 0.35);
-
     medicineinfo.valuefield1.setPosition(200, 210);
 
     medicineinfo.valuefield2.setTexture(textbox);
-
     medicineinfo.valuefield2.setScale(0.5, 0.35);
-
     medicineinfo.valuefield2.setPosition(200, 325);
 
     medicineinfo.valuefield3.setTexture(textbox);
-
     medicineinfo.valuefield3.setScale(0.5, 0.35);
-
     medicineinfo.valuefield3.setPosition(200, 445);
 
     //medicine ID field 
@@ -5832,33 +5537,22 @@ void SetMedicineEdit(MedicineInfo& medicineinfo)
 }
 
 void DrawMedicineEdit(MedicineInfo medicineinfo) {
+   
     window.draw(medicineinfo.backgroundy);
-
     RectangleShape backgroundRect1(Vector2f(745, 380));
-
     backgroundRect1.setPosition(20, 170);
-
     backgroundRect1.setFillColor(Color(0, 0, 0, 150));
-
     window.draw(backgroundRect1);
-
     window.draw(medicineinfo.confirm);
-
-    //window.draw(medicineinfo.price);
-
-   // window.draw(medicineinfo.quantity);
-
     window.draw(medicineinfo.valuefield1);
-
     window.draw(medicineinfo.valuefield2);
-
     window.draw(medicineinfo.valuefield3);
     window.draw(medicineinfo.mainbutton);
-
 
 }
 
 void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) {
+   
     medicineEdit = true;
     bool broken = false;
     window.clear();
@@ -5882,8 +5576,6 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
                 saveAllDataLocally();
                 window.close();
             }
-
-
 
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
 
@@ -5990,13 +5682,9 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
 
                 Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
 
-
-
                 if (medicineinfo.confirm.getGlobalBounds().contains((mousePos))&& inputMedicineID2 !="")
                 {
                     int id = stoi(inputMedicineID2);
-
-
 
                     bool found = false;
 
@@ -6018,8 +5706,6 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
                                 //cout << "Quantity updated: " << medicines[i].quantity_in_stock << endl; //Testing
                             }
 
-
-
                             
                             inputMedicineID2.resize(0);
                             inputMedicineID2Text.setString(inputMedicineID2);
@@ -6034,9 +5720,6 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
                     if (!found)
                     {
                         RenderWindow invalidIDWindow(VideoMode(300, 100), "Error", Style::Default);
-
-
-
 
                         while (invalidIDWindow.isOpen()) {
                             Event event;
@@ -6067,25 +5750,20 @@ void MedicineEditShowFunctional(bool& medicineEdit, MedicineInfo& medicineinfo) 
 // positions
 void MedicineEditShow() {
     Text text;
-
     text.setFont(Calibri);
     text.setString("Medicine ID:");
-
     text.setPosition(40, 216);
 
     window.draw(text);
 
     text.setFont(Calibri);
-
     text.setString("Quantity : ");
-
     text.setPosition(40, 330);
 
     window.draw(text);
 
     text.setScale(0.8, 0.8);
     text.setString("Medicine Price:");
-
     text.setPosition(40, 454);
 
     window.draw(text);
@@ -6110,7 +5788,6 @@ void setShowAllOrders(strShowAllOrders& ShowAllOrders) {
 void drawShowAllOrders(strShowAllOrders ShowAllOrders) {
     window.draw(ShowAllOrders.background);
     window.draw(ShowAllOrders.trans_back);
-
     window.draw(ShowAllOrders.mainbutton);
 }
 
@@ -6854,97 +6531,6 @@ void manageOrder_functional() {
 
 }
 
-void page_switcher(Header& header, SignUp& signup, SignIn& signin,
-    userMenu& usermenu, adminMenu& adminmenu,
-    searchMedicine& searchmedicine, showReceipt& showreceipt,
-    Edit_Info& edit_info,
-    StmakeOrder makeorder, manageMedicine manage_medicine) {
-    // this is a page switcher to decide which page should be displayed right now
-    // don't forgot to put your function draw or you new full functional page
-    // function here events such as buttons click should change page_num so the
-    // page shown would be changed ;
-    Event event;
-
-    switch (page_num) {
-    case 0:
-        functioningSignUp();
-        break;
-    case 1:
-        window.clear();
-        functioningSignIn();
-        break;
-    case 2:
-        functioningUserMenu();
-        break;
-    case 3:
-        functioningAdminMenu();
-        break;
-    case 4:
-
-        functioningsearch();
-        window.display();
-
-        break;
-
-    case 5:
-        ShowReceiptFunctional(show_order_receipt, showreceipt);
-        window.display();
-        break;
-    case 6:
-        EditInfo_Admin_functional(edit_info);
-        window.display();
-        break;
-    case 7:
-        editUser_functional(currentUser_Index);
-        window.display();
-        break;
-    case 8:
-        makeOrderFunctional(makeorder);
-        window.display();
-        break;
-    case 9:
-        showAllPreviousOrdersFunctional();
-        window.display();
-        break;
-    case 10:
-        ManagePayment_functional();
-        window.display();
-        break;
-    case 11:
-        functioning_manageUser();
-        window.display();
-        break;
-    case 12:
-        functioning_manageMedicine();
-        window.display();
-        break;
-    case 13:
-        window.clear();
-        manageOrder_functional();
-        window.display();
-        break;
-    case 14:
-        window.clear();
-        functioningAddUser();
-        window.display();
-        break;
-    case 15:
-        window.clear();
-        functioningAddMedicine();
-        window.display();
-        break;
-    case 16:
-        window.clear();
-        MedicineEditShowFunctional(medicineEdit, medicineinfo);
-        window.display();
-        break;
-
-    case 17:
-        Requestadrug_showfunctional(requestdrug);
-        window.display();
-        break;
-    }
-}
 void Set_Request_drug(RequestaDrug& requestadrug) {
     requestadrug.backgroundy.setTexture(backgroundsearch);
     requestadrug.backgroundy.setScale(0.276, 0.24);
@@ -6964,7 +6550,6 @@ void Set_Request_drug(RequestaDrug& requestadrug) {
     requestadrug.mainbutton.setPosition(90, 25);
     requestadrug.mainbutton.setScale(0.08, 0.08);
 }
-
 void Draw_Requestadrug(RequestaDrug& requestadrug) {
     window.draw(requestadrug.backgroundy);
     window.draw(requestadrug.semiBlack);
@@ -6973,7 +6558,6 @@ void Draw_Requestadrug(RequestaDrug& requestadrug) {
     window.draw(requestadrug.valuefield2);
     window.draw(requestadrug.mainbutton);
 }
-
 void Requestadrug_showfunctional(bool& requestdrug) {
     requestdrug = 1;
     Text mediName;
@@ -7128,5 +6712,97 @@ void Requestadrug_showfunctional(bool& requestdrug) {
             break;
         }
 
+    }
+}
+
+void page_switcher(Header& header, SignUp& signup, SignIn& signin,
+    userMenu& usermenu, adminMenu& adminmenu,
+    searchMedicine& searchmedicine, showReceipt& showreceipt,
+    Edit_Info& edit_info,
+    StmakeOrder makeorder, manageMedicine manage_medicine) {
+    // this is a page switcher to decide which page should be displayed right now
+    // don't forgot to put your function draw or you new full functional page
+    // function here events such as buttons click should change page_num so the
+    // page shown would be changed ;
+    Event event;
+
+    switch (page_num) {
+    case 0:
+        functioningSignUp();
+        break;
+    case 1:
+        window.clear();
+        functioningSignIn();
+        break;
+    case 2:
+        functioningUserMenu();
+        break;
+    case 3:
+        functioningAdminMenu();
+        break;
+    case 4:
+
+        functioningsearch();
+        window.display();
+
+        break;
+
+    case 5:
+        ShowReceiptFunctional(show_order_receipt, showreceipt);
+        window.display();
+        break;
+    case 6:
+        EditInfo_Admin_functional(edit_info);
+        window.display();
+        break;
+    case 7:
+        editUser_functional(currentUser_Index);
+        window.display();
+        break;
+    case 8:
+        makeOrderFunctional(makeorder);
+        window.display();
+        break;
+    case 9:
+        showAllPreviousOrdersFunctional();
+        window.display();
+        break;
+    case 10:
+        ManagePayment_functional();
+        window.display();
+        break;
+    case 11:
+        functioning_manageUser();
+        window.display();
+        break;
+    case 12:
+        functioning_manageMedicine();
+        window.display();
+        break;
+    case 13:
+        window.clear();
+        manageOrder_functional();
+        window.display();
+        break;
+    case 14:
+        window.clear();
+        functioningAddUser();
+        window.display();
+        break;
+    case 15:
+        window.clear();
+        functioningAddMedicine();
+        window.display();
+        break;
+    case 16:
+        window.clear();
+        MedicineEditShowFunctional(medicineEdit, medicineinfo);
+        window.display();
+        break;
+
+    case 17:
+        Requestadrug_showfunctional(requestdrug);
+        window.display();
+        break;
     }
 }
