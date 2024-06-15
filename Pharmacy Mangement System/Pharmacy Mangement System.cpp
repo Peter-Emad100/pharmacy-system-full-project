@@ -43,8 +43,8 @@ bool issignin = false; //check if i need to switch to sign in page
 bool doneAdding = false;//to add
 bool active_1 = false, active_2 = false, active_3 = false; // switches between input fields in Medicine Edit page
 
-RenderWindow window(VideoMode(1366, 768), "Your pharmacy",Style::Fullscreen);
-//RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Titlebar);
+//RenderWindow window(VideoMode(1366, 768), "Your pharmacy",Style::Fullscreen);
+RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Titlebar);
 
 Font Calibri;
 Texture BackgroundSign;
@@ -123,6 +123,14 @@ bool medNameSc, medCataSc, medConcSc, medPriceSc, medQuantitySc, medDescSc;
 string medNameSt, medCataSt, medConcSt, medPriceSt, medQuantitySt, medDescSt;
 Text medNameDis, medCataDis, medConcDis, medPriceDis, medQuantityDis, medDescDis;
 
+string signine, signinp;
+string signup1, signup2, signup3, signup4, signup5;
+string search1, makerequest1, makerequest2;
+string addmed1, addmed2, addmed3, addmed4, addmed5, addmed6;
+string editad1, editad2, editad3;
+string editu1, editu2;
+string makeOrd1, makeOrd2, makeOrd3;
+string managep1, managep2;
 
 struct medicine {
     int ID;
@@ -1811,16 +1819,32 @@ void SetSignUp(SignUp& signup) {
 void functioningSignUp() {
 
     bool brokenwindow = false;
-
+    bool cursorVisible = true;
+    Clock cursorTimer;
     issignin = false;
+    activeS1 = false;
+    activeS2 = false;
+    activeS3 = false;
+    activesS4 = false;
+    activeS5 = false;
+   
     while (window.isOpen())
     {
         if (brokenwindow)
         {
+            displayStext1.setString(displayS1);
+            displayStext2.setString(displayS2);
+            displayStext3.setString(displayS3);
+            displayStext4.setString(displayS4);
+            displayStext5.setString(displayS5);
             break;
         }
         if (issignin) {
             break;
+        }
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
         }
         window.clear();
         DrawSignUp(signup);
@@ -1853,6 +1877,11 @@ void functioningSignUp() {
                     activeS3 = false;
                     activesS4 = false;
                     activeS5 = false;
+                    displayStext2.setString(displayS2);
+                    displayStext3.setString(displayS3);
+                    displayStext4.setString(displayS4);
+                    displayStext5.setString(displayS5);
+
                 }
                 else if (signup.valuefield2.getGlobalBounds().contains(mousePos)) {
 
@@ -1861,6 +1890,10 @@ void functioningSignUp() {
                     activeS3 = false;
                     activesS4 = false;
                     activeS5 = false;
+                    displayStext1.setString(displayS1);
+                    displayStext3.setString(displayS3);
+                    displayStext4.setString(displayS4);
+                    displayStext5.setString(displayS5);
                 }
                 else if (signup.valuefield3.getGlobalBounds().contains(mousePos)) {
 
@@ -1869,6 +1902,10 @@ void functioningSignUp() {
                     activeS3 = true;
                     activesS4 = false;
                     activeS5 = false;
+                    displayStext2.setString(displayS2);
+                    displayStext1.setString(displayS1);
+                    displayStext4.setString(displayS4);
+                    displayStext5.setString(displayS5);
                 }
                 else if (signup.valuefield4.getGlobalBounds().contains(mousePos)) {
 
@@ -1877,6 +1914,10 @@ void functioningSignUp() {
                     activeS3 = false;
                     activesS4 = true;
                     activeS5 = false;
+                    displayStext2.setString(displayS2);
+                    displayStext3.setString(displayS3);
+                    displayStext1.setString(displayS1);
+                    displayStext5.setString(displayS5);
                 }
                 else if (signup.valuefield5.getGlobalBounds().contains(mousePos)) {
 
@@ -1885,6 +1926,10 @@ void functioningSignUp() {
                     activeS3 = false;
                     activesS4 = false;
                     activeS5 = true;
+                    displayStext2.setString(displayS2);
+                    displayStext3.setString(displayS3);
+                    displayStext4.setString(displayS4);
+                    displayStext1.setString(displayS1);
                 }
                 if (signup.adminButton1.getGlobalBounds().contains(mousePos))
                 {
@@ -2073,7 +2118,46 @@ void functioningSignUp() {
                 window.close();
             }
         }
+        if (activeS1 == true && cursorVisible)
+        {
+           signup1 = displayS1;
 
+            signup1 += "_";
+            displayStext1.setString(signup1);
+
+        }
+        if (activeS2 == true && cursorVisible)
+        {
+           signup2 = displayS2;
+
+            signup2 += "_";
+            displayStext2.setString(signup2);
+
+        }
+        if (activeS3 == true && cursorVisible)
+        {
+           signup3 = displayS3;
+
+            signup3 += "_";
+            displayStext3.setString(signup3);
+
+        }
+        if (activesS4 == true && cursorVisible)
+        {
+            signup4 = displayS4;
+
+            signup4 += "_";
+            displayStext4.setString(signup4);
+
+        }
+        if (activeS5 == true && cursorVisible)
+        {
+            signup5 = displayS5;
+
+            signup5 += "_";
+            displayStext5.setString(signup5);
+
+        }
     }
 
 }
@@ -2141,8 +2225,16 @@ void SetSignIn(SignIn& signin) {
 void functioningSignIn() {
     bool brokenwindow = false;
     window.clear();
-
+    bool cursorVisible = true;
+    Clock cursorTimer;
+    signine = display1;
+    signinp = display2;
     while (window.isOpen()) {
+
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
+        }
 
         DrawSignIn(signin);
         window.draw(displaytext1);
@@ -2165,6 +2257,8 @@ void functioningSignIn() {
                 if (signin.valuefield1.getGlobalBounds().contains(mousePos)) {
 
                     activeDisplay = true;
+                    displaytext2.setString(display2);
+                    
                 }
 
                 // Check if the mouse click is inside the second text field
@@ -2172,6 +2266,8 @@ void functioningSignIn() {
                 if (signin.valuefield2.getGlobalBounds().contains(mousePos)) {
 
                     activeDisplay = false;
+                    displaytext1.setString(display1);
+                   
                 }
 
                 if (signin.buttonin.getGlobalBounds().contains(mousePos))
@@ -2187,6 +2283,7 @@ void functioningSignIn() {
                             displaytext1.setString(display1);
                             displaytext2.setString(display2);
                             brokenwindow = true;
+                            activeDisplay = true;
                             break;
 
                         }
@@ -2199,6 +2296,7 @@ void functioningSignIn() {
                             displaytext1.setString(display1);
                             displaytext2.setString(display2);
                             brokenwindow = true;
+                            activeDisplay = true;
                             break;
 
                         }
@@ -2257,6 +2355,7 @@ void functioningSignIn() {
                     // Append the entered character to the first text display
                     if (display1.size() < 20) {
                         display1 += static_cast<char>(event.text.unicode);
+                        
                         displaytext1.setString(display1);
                     }
                 }
@@ -2264,7 +2363,9 @@ void functioningSignIn() {
                     // Append the entered character to the second text display
                     if (display2.size() < 20) {
                         display2 += static_cast<char>(event.text.unicode);
+                       
                         displaytext2.setString(display2);
+                        
                     }
                 }
 
@@ -2279,15 +2380,13 @@ void functioningSignIn() {
                     if (!display1.empty()) {
                         display1.pop_back();
                         displaytext1.setString(display1);
-
                     }
                 }
                 else {
                     // Delete the last character from the second text display
                     if (!display2.empty()) {
-                        display2.pop_back();
+                        display2.pop_back();        
                         displaytext2.setString(display2);
-
                     }
                 }
             }
@@ -2302,6 +2401,24 @@ void functioningSignIn() {
         {
             break;
         }
+        if (activeDisplay == true && cursorVisible)
+        {
+            signine = display1;
+
+            signine += "_";
+            displaytext1.setString(signine);
+
+        }
+        if (!activeDisplay && !cursorVisible)
+        {
+            signinp = display2;
+
+            signinp += "_";
+            displaytext2.setString(signinp);
+
+        }
+
+
     }
 }
 
@@ -2450,6 +2567,10 @@ void DrawMakeOrder(StmakeOrder& makeorder) {
     }
 }
 void makeOrderFunctional(StmakeOrder& makeorder) {
+    makeorderactive1 = false;
+    makeorderactive2 = false;
+    makeorderactive3 = false;
+    
     makeordertext1.setFont(Calibri);
     makeordertext2.setFont(Calibri);
     makeordertext3.setFont(Calibri);
@@ -2458,7 +2579,10 @@ void makeOrderFunctional(StmakeOrder& makeorder) {
     makeordertext3.setPosition(100, 585);
     makeordertext1.setFillColor(sf::Color::Black);
     makeordertext2.setFillColor(sf::Color::Black);
-    makeordertext3.setFillColor(sf::Color::Black);
+    makeordertext3.setFillColor(sf::Color::Black); 
+    
+    bool cursorVisible = true;
+    Clock cursorTimer;
     bool breaked = false;
     while (window.isOpen()) {
         DrawMakeOrder(makeorder);
@@ -2467,6 +2591,12 @@ void makeOrderFunctional(StmakeOrder& makeorder) {
         window.draw(makeordertext3);
         window.display();
         Event event;
+
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
+        }
+
 
         while (window.pollEvent(event))
         {
@@ -2481,6 +2611,8 @@ void makeOrderFunctional(StmakeOrder& makeorder) {
                     makeorderactive1 = true;
                     makeorderactive2 = false;
                     makeorderactive3 = false;
+                    makeordertext2.setString(stmakeorder2);
+                    makeordertext3.setString(stmakeorder3);
 
                 }
                 else if (makeorder.textbox_2.getGlobalBounds().contains(mousePos)) {
@@ -2488,11 +2620,15 @@ void makeOrderFunctional(StmakeOrder& makeorder) {
                     makeorderactive1 = false;
                     makeorderactive2 = true;
                     makeorderactive3 = false;
+                    makeordertext1.setString(stmakeorder1);
+                    makeordertext3.setString(stmakeorder3);
                 }
                 else if (makeorder.textbox_3.getGlobalBounds().contains(mousePos)) {
                     makeorderactive1 = false;
                     makeorderactive2 = false;
                     makeorderactive3 = true;
+                    makeordertext1.setString(stmakeorder1);
+                    makeordertext2.setString(stmakeorder2);
                 }
                 if (makeorder.confrimOrder.getGlobalBounds().contains(mousePos))
                 {
@@ -2607,7 +2743,24 @@ void makeOrderFunctional(StmakeOrder& makeorder) {
         if (breaked) {
             break;
         }
-
+        if (makeorderactive1 && cursorVisible)
+        {
+            makeOrd1 = stmakeorder1;
+            makeOrd1 += "_";
+            makeordertext1.setString(makeOrd1);
+        }
+        if (makeorderactive2 && cursorVisible)
+        {
+            makeOrd2 = stmakeorder2;
+            makeOrd2 += "_";
+            makeordertext2.setString(makeOrd2);
+        }
+        if (makeorderactive3 && cursorVisible)
+        {
+            makeOrd3 = stmakeorder3;
+            makeOrd3 += "_";
+            makeordertext3.setString(makeOrd3);
+        }
     }
 }
 
@@ -2886,6 +3039,11 @@ void SetSearch(searchMedicine& searchmedicine) {
 }
 void functioningsearch()
 {
+    bool cursorVisible = true;
+    Clock cursorTimer;
+
+    
+    search1 = stringsearch;
     //setting stringsearch :: username
     Tsearchentered.setFont(Calibri);
     Tsearchentered.setScale(1.5, 1.5);
@@ -2905,6 +3063,12 @@ void functioningsearch()
         window.clear();
         DrawSearch(searchmedicine);
         window.draw(Tsearchentered);
+
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
+        }
+
         float x = 20, y = 260;
         Text text;
         text.setFont(Calibri);
@@ -3023,6 +3187,12 @@ void functioningsearch()
                 }
             }
 
+        }
+        if (cursorVisible)
+        {
+            search1 = stringsearch;
+            search1 += "_";
+            Tsearchentered.setString(search1);
         }
         if (breaked) {
             break;
@@ -3320,6 +3490,12 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
     int userIndex = 0;
     bool breaked = false;
     bool found = false;
+    bool cursorVisible = true;
+    Clock cursorTimer;
+    editactive1 = false;
+    editactive2 = false;
+    editactive3 = false;
+
     Event event;
     while (window.isOpen()) {
         window.clear();
@@ -3327,6 +3503,13 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
         Draw_EditInfo_Admin(edit_info);
 
         window.display();
+
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
+        }
+
+
         while (window.pollEvent(event)) {
 
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
@@ -3355,16 +3538,25 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                     editactive1 = true;
                     editactive2 = false;
                     editactive3 = false;
+                    editAtext2.setString(editAdisplay2);
+                    editAtext3.setString(editAdisplay3);
+
                 }
                 if (edit_info.valuefield2.getGlobalBounds().contains(mousePos)) {
                     editactive1 = false;
                     editactive2 = true;
                     editactive3 = false;
+                    editAtext3.setString(editAdisplay3);
+                    editAtext1.setString(editAdisplay1);
+
                 }
                 if (edit_info.valuefield3.getGlobalBounds().contains(mousePos)) { // id
                     editactive1 = false;
                     editactive2 = false;
                     editactive3 = true;
+                    editAtext1.setString(editAdisplay1);
+                    editAtext2.setString(editAdisplay2);
+
                 }
 
                 if (edit_info.mainbutton.getGlobalBounds().contains(mousePos))
@@ -3592,8 +3784,6 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                     if (editAdisplay1.size() < 20) {
                         editAdisplay1 += static_cast<char>(event.text.unicode);
                         editAtext1.setString(editAdisplay1);
-                        window.draw(editAtext1);
-                        window.display();
                     }
                 }
                 if (editactive2)
@@ -3601,8 +3791,7 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                     if (editAdisplay2.size() < 20) {
                         editAdisplay2 += static_cast<char>(event.text.unicode);
                         editAtext2.setString(editAdisplay2);
-                        window.draw(editAtext2);
-                        window.display();
+                       
                     }
                 }
                 if (editactive3)
@@ -3612,8 +3801,7 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                         {
                             editAdisplay3 += static_cast<char>(event.text.unicode);
                             editAtext3.setString(editAdisplay3);
-                            window.draw(editAtext3);
-                            window.display();
+                           
                         }
                     }
                 }
@@ -3625,8 +3813,7 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                     if (!editAdisplay1.empty()) {
                         editAdisplay1.pop_back();
                         editAtext1.setString(editAdisplay1);
-                        window.draw(editAtext1);
-                        window.display();
+                        
                     }
                 }
                 if (editactive2)
@@ -3634,8 +3821,7 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                     if (!editAdisplay2.empty()) {
                         editAdisplay2.pop_back();
                         editAtext2.setString(editAdisplay2);
-                        window.draw(editAtext2);
-                        window.display();
+                       
                     }
                 }
                 if (editactive3)
@@ -3643,8 +3829,7 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                     if (!editAdisplay3.empty()) {
                         editAdisplay3.pop_back();
                         editAtext3.setString(editAdisplay3);
-                        window.draw(editAtext3);
-                        window.display();
+                        
                     }
                 }
             }
@@ -3653,6 +3838,27 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
 
         if (breaked) {
             break;
+        }
+        if (editactive1 == true && cursorVisible)
+        {
+            editad1 = editAdisplay1;
+
+            editad1 += "_";
+            editAtext1.setString(editad1);
+        }
+        if (editactive2 == true && cursorVisible)
+        {
+            editad2 = editAdisplay2;
+
+            editad2 += "_";
+            editAtext2.setString(editad2);
+        }
+        if (editactive3 == true && cursorVisible)
+        {
+            editad3 = editAdisplay3;
+
+            editad3 += "_";
+            editAtext3.setString(editad3);
         }
     }
 }
@@ -3828,8 +4034,11 @@ void functioningAddMedicine()
 {
     AddMedicine addmed;
     bool brokenwindow = false;
-    setAddMedicine(addmedicine);
+    bool cursorVisible = true;
+    Clock cursorTimer;
 
+   
+    setAddMedicine(addmedicine);
     medNameDis.setString(medNameSt);
     medCataDis.setString(medCataSt);
     medPriceDis.setString(medPriceSt);
@@ -3837,11 +4046,24 @@ void functioningAddMedicine()
     medConcDis.setString(medConcSt);
     medDescDis.setString(medDescSt);
 
+    medNameSc = true;
+    medPriceSc = false;
+    medCataSc = false;
+    medConcSc = false;
+    medQuantitySc = false;
+    medDescSc = false;
+
+
     while (window.isOpen())
     {
         if (brokenwindow)
         {
             break;
+        }
+
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
         }
 
         drawAddMedicine(addmedicine);
@@ -3914,6 +4136,11 @@ void functioningAddMedicine()
                     medConcSc = false;
                     medQuantitySc = false;
                     medDescSc = false;
+                    medCataDis.setString(medCataSt);
+                    medPriceDis.setString(medPriceSt);
+                    medQuantityDis.setString(medQuantitySt);
+                    medConcDis.setString(medConcSt);
+                    medDescDis.setString(medDescSt);
 
                 }
                 if (addmedicine.medPricetextbox.getGlobalBounds().contains(MousePosition))
@@ -3925,7 +4152,11 @@ void functioningAddMedicine()
                     medConcSc = false;
                     medQuantitySc = false;
                     medDescSc = false;
-
+                    medNameDis.setString(medNameSt);
+                    medCataDis.setString(medCataSt);
+                    medQuantityDis.setString(medQuantitySt);
+                    medConcDis.setString(medConcSt);
+                    medDescDis.setString(medDescSt);
                 }
                 if (addmedicine.medCatagorytextbox.getGlobalBounds().contains(MousePosition))
                 {
@@ -3936,7 +4167,11 @@ void functioningAddMedicine()
                     medConcSc = false;
                     medQuantitySc = false;
                     medDescSc = false;
-
+                    medNameDis.setString(medNameSt);
+                    medPriceDis.setString(medPriceSt);
+                    medQuantityDis.setString(medQuantitySt);
+                    medConcDis.setString(medConcSt);
+                    medDescDis.setString(medDescSt);
                 }
                 if (addmedicine.medConcentrationtextbox.getGlobalBounds().contains(MousePosition))
                 {
@@ -3947,7 +4182,11 @@ void functioningAddMedicine()
                     medConcSc = true;
                     medQuantitySc = false;
                     medDescSc = false;
-
+                    medNameDis.setString(medNameSt);
+                    medCataDis.setString(medCataSt);
+                    medPriceDis.setString(medPriceSt);
+                    medQuantityDis.setString(medQuantitySt);
+                    medDescDis.setString(medDescSt);
 
                 }
                 if (addmedicine.medQuantitytextbox.getGlobalBounds().contains(MousePosition))
@@ -3959,7 +4198,11 @@ void functioningAddMedicine()
                     medConcSc = false;
                     medQuantitySc = true;
                     medDescSc = false;
-
+                    medNameDis.setString(medNameSt);
+                    medCataDis.setString(medCataSt);
+                    medPriceDis.setString(medPriceSt);
+                    medConcDis.setString(medConcSt);
+                    medDescDis.setString(medDescSt);
 
                 }
                 if (addmedicine.medDesctextbox.getGlobalBounds().contains(MousePosition))
@@ -3971,7 +4214,12 @@ void functioningAddMedicine()
                     medConcSc = false;
                     medQuantitySc = false;
                     medDescSc = true;
-
+                    medNameDis.setString(medNameSt);
+                    medCataDis.setString(medCataSt);
+                    medPriceDis.setString(medPriceSt);
+                    medQuantityDis.setString(medQuantitySt);
+                    medConcDis.setString(medConcSt);
+        
                 }
 
                 if (medNameSt != "" && medConcSt != "" && medCataSt != "" && medDescSt != "" && medPriceSt != "" && medQuantitySt != "")
@@ -4042,8 +4290,8 @@ void functioningAddMedicine()
                     if (medCataSt.size() < 25) {
                         medCataSt += static_cast<char>(evnt.text.unicode);
                         medCataDis.setString(medCataSt);
-                        window.draw(medCataDis);
-                        window.display();
+                       // window.draw(medCataDis);
+                        //window.display();
                     }
                 }
                 else if (medPriceSc)
@@ -4087,8 +4335,7 @@ void functioningAddMedicine()
                     if (!medNameSt.empty()) {
                         medNameSt.pop_back();
                         medNameDis.setString(medNameSt);
-                        window.draw(medNameDis);
-                        window.display();
+                       
                     }
                 }
                 else if (medPriceSc)
@@ -4096,8 +4343,7 @@ void functioningAddMedicine()
                     if (!medPriceSt.empty()) {
                         medPriceSt.pop_back();
                         medPriceDis.setString(medPriceSt);
-                        window.draw(medPriceDis);
-                        window.display();
+                     
                     }
                 }
                 else if (medCataSc)
@@ -4105,8 +4351,7 @@ void functioningAddMedicine()
                     if (!medCataSt.empty()) {
                         medCataSt.pop_back();
                         medCataDis.setString(medCataSt);
-                        window.draw(medCataDis);
-                        window.display();
+                      
                     }
                 }
                 else if (medQuantitySc)
@@ -4114,8 +4359,7 @@ void functioningAddMedicine()
                     if (!medQuantitySt.empty()) {
                         medQuantitySt.pop_back();
                         medQuantityDis.setString(medQuantitySt);
-                        window.draw(medQuantityDis);
-                        window.display();
+                       
                     }
                 }
                 else if (medConcSc)
@@ -4123,8 +4367,7 @@ void functioningAddMedicine()
                     if (!medConcSt.empty()) {
                         medConcSt.pop_back();
                         medConcDis.setString(medConcSt);
-                        window.draw(medConcDis);
-                        window.display();
+                       
                     }
                 }
                 else if (medDescSc)
@@ -4132,8 +4375,7 @@ void functioningAddMedicine()
                     if (!medDescSt.empty()) {
                         medDescSt.pop_back();
                         medDescDis.setString(medDescSt);
-                        window.draw(medDescDis);
-                        window.display();
+                       
                     }
                 }
 
@@ -4146,7 +4388,38 @@ void functioningAddMedicine()
             saveAllDataLocally();
             window.close();
         }
-
+        
+        if (medNameSc && cursorVisible)
+        {
+            addmed1 = medNameSt;
+            addmed1 += "_";
+            medNameDis.setString(addmed1);
+        }
+        if (medPriceSc && cursorVisible)
+        {
+            addmed2 =medPriceSt ;
+            addmed2 += "_";
+            medPriceDis.setString(addmed2);
+        }
+        
+        if (medConcSc && cursorVisible)
+        {
+            addmed4 = medConcSt;
+            addmed4 += "_";
+            medConcDis.setString(addmed4);
+        }
+        if (medQuantitySc && cursorVisible)
+        {
+            addmed5 = medQuantitySt;
+            addmed5 += "_";
+            medQuantityDis.setString(addmed5);
+        }
+        if (medDescSc && cursorVisible)
+        {
+            addmed6 = medDescSt;
+            addmed6 += "_";
+            medDescDis.setString(addmed6);
+        }
     }
 }
 
@@ -4833,15 +5106,23 @@ void showPaymentMehtode(vector<string> x) {
 }
 void ManagePayment_functional()
 {
+
     vector<string>::iterator it = paymentMethods.begin();
 
     string newMethode;
-
+    bool cursorVisible = true;
+    Clock cursorTimer;
+    activeDisplay = true;
     bool breaked = false;
     bool found = false;
 
     while (window.isOpen()) {
         Event event;
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
+        }
+
         window.clear();
         Draw_managePayment(manage_payment);
         window.draw(managetext1);
@@ -4880,6 +5161,7 @@ void ManagePayment_functional()
 
                 if (manage_payment.valuefield1.getGlobalBounds().contains(mousePos)) {
                     activeDisplay = true;
+                    managetext2.setString(managedisplay2);
 
                 }
                 if (manage_payment.confirm_button.getGlobalBounds().contains(mousePos)) {
@@ -4940,6 +5222,8 @@ void ManagePayment_functional()
 
                 else if (manage_payment.valuefield2.getGlobalBounds().contains(mousePos)) {
                     activeDisplay = false;
+                    managetext1.setString(managedisplay1);
+
                 }
                 if (manage_payment.mainbutton.getGlobalBounds().contains(mousePos))
                 {
@@ -5040,6 +5324,20 @@ void ManagePayment_functional()
         }
         if (breaked) {
             break;
+        }
+        if (activeDisplay == true && cursorVisible)
+        {
+            managep1 = managedisplay1;
+            managep1 += "_";
+            managetext1.setString(managep1);
+
+        }
+        if (activeDisplay == false && cursorVisible)
+        {
+            managep2 = managedisplay2;
+            managep2 += "_";
+            managetext2.setString(managep2);
+
         }
     }
 }
@@ -5214,9 +5512,12 @@ void functioning_manageMedicine()
 }
 
 void editUser_functional(int index)
-
 {
     bool breaked = false;
+    bool cursorVisible = true;
+    Clock cursorTimer;
+    editUactive = true;
+
     while (window.isOpen()) {
 
         window.clear();
@@ -5226,6 +5527,11 @@ void editUser_functional(int index)
         window.draw(editUtext1);
         window.draw(editUtext2);
         window.display();
+
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
+        }
 
         Event event;
 
@@ -5247,13 +5553,14 @@ void editUser_functional(int index)
 
                 if (edit_info.valuefield1.getGlobalBounds().contains(mousePos)) {
                     editUactive = true;
-
+                    editUtext2.setString(editUdisplay2);
                 }
 
                 // Check if the mouse click is inside the second text field
 
                 else if (edit_info.valuefield2.getGlobalBounds().contains(mousePos)) {
                     editUactive = false;
+                    editUtext1.setString(editUdisplay1);
                 }
                 if (edit_info.mainbutton.getGlobalBounds().contains(mousePos))
                 {
@@ -5473,6 +5780,23 @@ void editUser_functional(int index)
         if (breaked) {
             break;
         }
+        if (editUactive == true && cursorVisible)
+        {
+            editu1 = editUdisplay1;
+
+            editu1 += "_";
+            editUtext1.setString(editu1);
+
+        }
+        if (editUactive == false && cursorVisible)
+        {
+            editu2 = editUdisplay2;
+
+            editu2 += "_";
+            editUtext2.setString(editu2);
+
+        }
+
 
     }
 }
@@ -6560,6 +6884,8 @@ void Draw_Requestadrug(RequestaDrug& requestadrug) {
 }
 void Requestadrug_showfunctional(bool& requestdrug) {
     requestdrug = 1;
+    bool cursorVisible = true;
+    Clock cursorTimer;
     Text mediName;
     mediName.setFont(Calibri);
     mediName.setString("Medicine Name:");
@@ -6575,6 +6901,7 @@ void Requestadrug_showfunctional(bool& requestdrug) {
     requesttext2.setPosition(290, 390);
     requesttext2.setFillColor(sf::Color::Black);
     bool  brokenwindow = false;
+    requestactive1 = true;
     while (window.isOpen()) {
 
         Draw_Requestadrug(requestadrug);
@@ -6583,6 +6910,12 @@ void Requestadrug_showfunctional(bool& requestdrug) {
         window.draw(requesttext1);
         window.draw(requesttext2);
         window.display();
+
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
+        }
+
         Event event;
         while (window.pollEvent(event))
         {
@@ -6597,12 +6930,14 @@ void Requestadrug_showfunctional(bool& requestdrug) {
 
                 if (requestadrug.valuefield1.getGlobalBounds().contains(mousePos)) {
                     requestactive1 = true;
+                    requesttext2.setString(strequest2);
                 }
 
                 // Check if the mouse click is inside the second text field
 
                 if (requestadrug.valuefield2.getGlobalBounds().contains(mousePos)) {
                     requestactive1 = false;
+                    requesttext1.setString(strequest1);
                 }
 
                 if (requestadrug.request.getGlobalBounds().contains(mousePos))
@@ -6711,7 +7046,19 @@ void Requestadrug_showfunctional(bool& requestdrug) {
         {
             break;
         }
+        if (cursorVisible && requestactive1)
+        {
+            makerequest1 = strequest1;
+            makerequest1 += "_";
+            requesttext1.setString(makerequest1);
 
+        }
+        if (!requestactive1 && cursorVisible)
+        {
+            makerequest2 = strequest2;
+            makerequest2 += "_";
+            requesttext2.setString(makerequest2);
+        }
     }
 }
 
