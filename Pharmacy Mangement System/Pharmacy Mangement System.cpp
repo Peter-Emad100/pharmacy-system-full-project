@@ -130,7 +130,9 @@ string addmed1, addmed2, addmed3, addmed4, addmed5, addmed6;
 string editad1, editad2, editad3;
 string editu1, editu2;
 string makeOrd1, makeOrd2, makeOrd3;
-string managep1, managep2;
+string managep1, managep2, manageU1, manageM1;
+string manageOrd1, manageOrd2;
+string addu1, addu2, addu3, addu4, addu5;
 
 struct medicine {
     int ID;
@@ -4894,12 +4896,20 @@ void draw_manageUser(manageUser manage_user) {
 void functioning_manageUser()
 {
     int brokenwindow = false;
+    bool cursorVisible = true;
+    Clock cursorTimer;
 
     window.clear();
     while (window.isOpen())
     {
         if (brokenwindow)
             break;
+
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
+        }
+
 
         draw_manageUser(manage_user);
         window.display();
@@ -4909,11 +4919,8 @@ void functioning_manageUser()
 
             if (event.type == Event::TextEntered && isprint(event.text.unicode) && inputUserID.size() < 17)
             {
-
-
                 inputUserID += static_cast<char>(event.text.unicode);
                 inputUserIDText.setString(inputUserID);
-
 
             }
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::BackSpace)
@@ -4923,6 +4930,11 @@ void functioning_manageUser()
                     inputUserID.pop_back();
                     inputUserIDText.setString(inputUserID);
                 }
+            }
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+            {
+                saveAllDataLocally();
+                window.close();
             }
 
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
@@ -5003,6 +5015,13 @@ void functioning_manageUser()
                 }
 
             }
+
+        }
+        if (cursorVisible)
+        {
+            manageU1 = inputUserID;
+            manageU1 += "_";
+            inputUserIDText.setString(manageU1);
 
         }
     }
@@ -5404,12 +5423,22 @@ void draw_manageMedicine(manageMedicine manage_medicine)
 void functioning_manageMedicine()
 {
     bool brokenWindow = false;
+    bool cursorVisible = true;
+    Clock cursorTimer;
+
+
     window.clear();
     while (window.isOpen())
     {
         draw_manageMedicine(manage_medicine);
         window.display();
         Event event;
+
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
+        }
+
         while (window.pollEvent(event))
         {
             if (event.type == Event::TextEntered && isprint(event.text.unicode) && inputMedicineID.size() < 17)
@@ -5424,6 +5453,10 @@ void functioning_manageMedicine()
                     inputMedicineID.pop_back();
                     inputMedicineIDText.setString(inputMedicineID);
                 }
+            }
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape) {
+                saveAllDataLocally();
+                window.close();
             }
 
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left)
@@ -5477,7 +5510,6 @@ void functioning_manageMedicine()
                     }
                     else
                     {
-
                         removeMedicine(stoi(inputMedicineID));
                         inputMedicineID.resize(0);
                         inputMedicineIDText.setString(inputMedicineID);
@@ -5508,6 +5540,13 @@ void functioning_manageMedicine()
         }
         if (brokenWindow)
             break;
+        if (cursorVisible)
+        {
+            manageM1 = inputMedicineID;
+            manageM1 += "_";
+            inputMedicineIDText.setString(manageM1);
+
+        }
     }
 }
 
@@ -6224,14 +6263,14 @@ void SetEditOrderInfo(EditOrderInfo& edit) {
     orderId_text.setPosition(180, 300);
     orderId_text.setFillColor(Color::Black);
     orderId_text.setString(orderdisplay_Id);
-    orderId_text.setPosition(800, 180);
+    orderId_text.setPosition(770, 180);
 
     //set text for changing price
     orderPrice_text.setFont(Calibri);
     orderPrice_text.setScale(1, 1);
     orderPrice_text.setFillColor(Color::Black);
     orderPrice_text.setString(orderdisplay_Price);
-    orderPrice_text.setPosition(850, 630);
+    orderPrice_text.setPosition(850, 620);
 
     // confirm button
     edit.confirm.setTexture(edit.confirm_button);
@@ -6597,6 +6636,10 @@ void manageOrder_functional() {
     bool found = false;
     int index = 0;
     bool breaked = false;
+    bool cursorVisible = true;
+    Clock cursorTimer;
+    order_display = true;
+
     while (window.isOpen()) {
 
         window.clear();
@@ -6609,6 +6652,11 @@ void manageOrder_functional() {
         window.draw(editOrder.ordstate);
         window.draw(editOrder.price);
         window.display();
+
+        if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
+            cursorVisible = !cursorVisible;
+            cursorTimer.restart();
+        }
 
         while (window.pollEvent(event)) {
             // Handle mouse click
@@ -6651,6 +6699,7 @@ void manageOrder_functional() {
                 if (editOrder.textboxID.getGlobalBounds().contains(mousePos)) {
 
                     order_display = true;
+                    orderPrice_text.setString(orderdisplay_Price);
                 }
 
                 // Check if the mouse click is inside the second text field
@@ -6658,6 +6707,7 @@ void manageOrder_functional() {
                 if (editOrder.textBoxPrice.getGlobalBounds().contains(mousePos)) {
 
                     order_display = false;
+                    orderId_text.setString(orderdisplay_Id);
                 }
 
                 if (orderdisplay_Id.size() > 0 and editOrder.confirm.getGlobalBounds().contains(mousePos)) {
@@ -6827,9 +6877,7 @@ void manageOrder_functional() {
                     if (!orderdisplay_Id.empty()) {
                         orderdisplay_Id.pop_back();
                         orderId_text.setString(orderdisplay_Id);
-                        window.draw(orderId_text);
-                        window.display();
-
+                      
                     }
                 }
                 else {
@@ -6837,8 +6885,7 @@ void manageOrder_functional() {
                     if (!orderdisplay_Price.empty()) {
                         orderdisplay_Price.pop_back();
                         orderPrice_text.setString(orderdisplay_Price);
-                        window.draw(orderPrice_text);
-                        window.display();
+                       
 
                     }
                 }
@@ -6849,6 +6896,20 @@ void manageOrder_functional() {
         }
         if (breaked) {
             break;
+        }
+        if (order_display==true && cursorVisible)
+        {
+            manageOrd1 = orderdisplay_Id;
+            manageOrd1 += "_";
+            orderId_text.setString(manageOrd1);
+
+        }
+        if (order_display==false && cursorVisible)
+        {
+            manageOrd2 = orderdisplay_Price;
+            manageOrd2 += "_";
+            orderPrice_text.setString(manageOrd2);
+
         }
     }
 
