@@ -43,8 +43,8 @@ bool issignin = false; //check if i need to switch to sign in page
 bool doneAdding = false;//to add
 bool active_1 = false, active_2 = false, active_3 = false; // switches between input fields in Medicine Edit page
 
-//RenderWindow window(VideoMode(1366, 768), "Your pharmacy",Style::Fullscreen);
-RenderWindow window(VideoMode(1366, 768), "Your pharmacy", Style::Titlebar);
+RenderWindow window(VideoMode(1366, 768), "Your pharmacy",Style::Fullscreen);
+//RenderWindow window(VideoMode(1366, 768), "Your pharmacy",Style::Titlebar);
 
 Font Calibri;
 Texture BackgroundSign;
@@ -884,7 +884,11 @@ void searchForMedicineByCategory(string category) {
     if (category[0] >= 'a' && category[0] <= 'z') {
         category[0] -= 32;
     }
+   
     for (int i = 0; i < Size; i++) {
+        if (medicines[i].category[0] >= 'a' && medicines[i].category[0] <= 'z') {
+            medicines[i].category[0] -= 32;
+        }
         if (category == medicines[i].category) {
             if (category == "") {
                 found = true;
@@ -1593,7 +1597,7 @@ void TextureAFonts() {
     resultTable.loadFromFile("Assets/result_show.png");
     byName.loadFromFile("Assets/by_name.png");
     byCategory.loadFromFile("Assets/by_category.png");
-    searchBar.loadFromFile("Assets/bar_search.png");
+    searchBar.loadFromFile("Assets/searchBar.png");
     backgroundsearch.loadFromFile("Assets/pharmacy3.jpg");
     backgroundShowReceipt.loadFromFile("Assets/pharmacy_order.jpg");
     showTable.loadFromFile("Assets/receipt_back.png");
@@ -3007,8 +3011,8 @@ void functioningAdminMenu() {
 
 void DrawSearch(searchMedicine searchmedicine) {
     window.draw(searchmedicine.backgroundx);
-    window.draw(searchmedicine.searchBar);
     window.draw(searchmedicine.resultTable);
+    window.draw(searchmedicine.searchBar);
     window.draw(searchmedicine.byCategory);
     window.draw(searchmedicine.byName);
     window.draw(searchmedicine.mainbutton);
@@ -3021,23 +3025,23 @@ void SetSearch(searchMedicine& searchmedicine) {
     searchmedicine.mainbutton.setTexture(mainmenuButton);
     searchmedicine.mainbutton.setPosition(90, 15);
     searchmedicine.mainbutton.setScale(0.08, 0.08);
-
+    // setting resultTable
+    searchmedicine.resultTable.setTexture(showTable);
+    searchmedicine.resultTable.setScale(2.99, 1);
+    searchmedicine.resultTable.setPosition(0, 252);
     // setting byname
     searchmedicine.byName.setTexture(byName);
-    searchmedicine.byName.setScale(0.332, 0.42);
-    searchmedicine.byName.setPosition(184, 181);
+    searchmedicine.byName.setScale(0.302, 0.42);
+    searchmedicine.byName.setPosition(600, 181);
     // setting bycategory
     searchmedicine.byCategory.setTexture(byCategory);
-    searchmedicine.byCategory.setScale(0.332, 0.42);
-    searchmedicine.byCategory.setPosition(0.3, 181);
+    searchmedicine.byCategory.setScale(0.302, 0.42);
+    searchmedicine.byCategory.setPosition(434, 181);
     // setting searchbar
     searchmedicine.searchBar.setTexture(searchBar);
-    searchmedicine.searchBar.setScale(0.69, 0.55);
-    searchmedicine.searchBar.setPosition(366.4, 181.5);
-    // setting resultTable
-    searchmedicine.resultTable.setTexture(resultTable);
-    searchmedicine.resultTable.setScale(0.71, 0.49);
-    searchmedicine.resultTable.setPosition(0, 254);
+    searchmedicine.searchBar.setScale(0.257, 0.35);
+    searchmedicine.searchBar.setPosition(0.4, 184.5);
+
 }
 void functioningsearch()
 {
@@ -3050,7 +3054,7 @@ void functioningsearch()
     Tsearchentered.setFont(Calibri);
     Tsearchentered.setScale(1.5, 1.5);
     Tsearchentered.setFillColor(Color::Black);
-    Tsearchentered.setPosition(486.4, 185.5);
+    Tsearchentered.setPosition(52.4, 185.5);
     makerequ.setTexture(makereq);
     makerequ.setScale(0.4, 0.4);
     makerequ.setPosition(367, 590);
