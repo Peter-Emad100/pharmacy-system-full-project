@@ -1597,7 +1597,7 @@ void TextureAFonts() {
     resultTable.loadFromFile("Assets/result_show.png");
     byName.loadFromFile("Assets/by_name.png");
     byCategory.loadFromFile("Assets/by_category.png");
-    searchBar.loadFromFile("Assets/searchBar.png");
+    searchBar.loadFromFile("Assets/image.png");
     backgroundsearch.loadFromFile("Assets/pharmacy3.jpg");
     backgroundShowReceipt.loadFromFile("Assets/pharmacy_order.jpg");
     showTable.loadFromFile("Assets/receipt_back.png");
@@ -3039,8 +3039,8 @@ void SetSearch(searchMedicine& searchmedicine) {
     searchmedicine.byCategory.setPosition(434, 181);
     // setting searchbar
     searchmedicine.searchBar.setTexture(searchBar);
-    searchmedicine.searchBar.setScale(0.257, 0.35);
-    searchmedicine.searchBar.setPosition(0.4, 184.5);
+    searchmedicine.searchBar.setScale(0.6, 0.6);
+    searchmedicine.searchBar.setPosition(-0.9, 170.5);
 
 }
 void functioningsearch()
@@ -3054,7 +3054,7 @@ void functioningsearch()
     Tsearchentered.setFont(Calibri);
     Tsearchentered.setScale(1.5, 1.5);
     Tsearchentered.setFillColor(Color::Black);
-    Tsearchentered.setPosition(52.4, 185.5);
+    Tsearchentered.setPosition(71, 185.5);
     makerequ.setTexture(makereq);
     makerequ.setScale(0.4, 0.4);
     makerequ.setPosition(367, 590);
