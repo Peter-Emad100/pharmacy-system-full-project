@@ -3874,12 +3874,12 @@ void setAddMedicine(AddMedicine& addmedicine)
 {
     // buttons
 
+    //confirm button
     addmedicine.optionsbutton.setTexture(buttonTex);
-
     addmedicine.optionsbutton.setScale(0.39, 0.39);
+    addmedicine.optionsbutton.setPosition(580, 630);
 
-    addmedicine.optionsbutton.setPosition(580, 690);
-
+    //main button
     addmedicine.mainbutton.setTexture(mainmenuButton);
     addmedicine.mainbutton.setPosition(90, 35);
     addmedicine.mainbutton.setScale(0.08, 0.08);
@@ -3888,72 +3888,73 @@ void setAddMedicine(AddMedicine& addmedicine)
 
     medNameDis.setFont(Calibri);
     medNameDis.setScale(0.6, 0.6);
-    medNameDis.setPosition(460, 180);
+    medNameDis.setPosition(460, 155);
     medNameDis.setFillColor(Color::Black);
     medNameDis.setCharacterSize(55);
 
     medCataDis.setFont(Calibri);
     medCataDis.setScale(0.6, 0.6);
-    medCataDis.setPosition(460, 270);
+    medCataDis.setPosition(460, 230);
     medCataDis.setFillColor(Color::Black);
     medCataDis.setCharacterSize(55);
 
 
     medConcDis.setFont(Calibri);
     medConcDis.setScale(0.6, 0.6);
-    medConcDis.setPosition(460, 360);
+    medConcDis.setPosition(460, 310);
     medConcDis.setFillColor(Color::Black);
     medConcDis.setCharacterSize(55);
 
     medPriceDis.setFont(Calibri);
     medPriceDis.setScale(0.6, 0.6);
-    medPriceDis.setPosition(460, 450);
+    medPriceDis.setPosition(460, 380);
     medPriceDis.setFillColor(Color::Black);
     medPriceDis.setCharacterSize(55);
 
     medQuantityDis.setFont(Calibri);
     medQuantityDis.setScale(0.6, 0.6);
-    medQuantityDis.setPosition(460, 540);
+    medQuantityDis.setPosition(460, 460);
     medQuantityDis.setFillColor(Color::Black);
     medQuantityDis.setCharacterSize(55);
 
     medDescDis.setFont(Calibri);
     medDescDis.setScale(0.6, 0.6);
-    medDescDis.setPosition(460, 630);
+    medDescDis.setPosition(460, 540);
     medDescDis.setFillColor(Color::Black);
     medDescDis.setCharacterSize(55);
 
     // textboxes
 
     addmedicine.medNametextbox.setTexture(textboxTex);
-    addmedicine.medNametextbox.setScale(0.6, 0.6);
-    addmedicine.medNametextbox.setPosition(450, 160);
+    addmedicine.medNametextbox.setScale(0.6, 0.4);
+    addmedicine.medNametextbox.setPosition(450, 150);
 
     addmedicine.medCatagorytextbox.setTexture(textboxTex);
-    addmedicine.medCatagorytextbox.setScale(0.6, 0.6);
-    addmedicine.medCatagorytextbox.setPosition(450, 250);
+    addmedicine.medCatagorytextbox.setScale(0.6, 0.4);
+    addmedicine.medCatagorytextbox.setPosition(450, 220);
 
     addmedicine.medConcentrationtextbox.setTexture(textboxTex);
-    addmedicine.medConcentrationtextbox.setScale(0.6, 0.6);
-    addmedicine.medConcentrationtextbox.setPosition(450, 340);
+    addmedicine.medConcentrationtextbox.setScale(0.6, 0.4);
+    addmedicine.medConcentrationtextbox.setPosition(450, 300);
 
     addmedicine.medPricetextbox.setTexture(textboxTex);
-    addmedicine.medPricetextbox.setScale(0.6, 0.6);
-    addmedicine.medPricetextbox.setPosition(450, 430);
+    addmedicine.medPricetextbox.setScale(0.6, 0.4);
+    addmedicine.medPricetextbox.setPosition(450, 370);
 
     addmedicine.medQuantitytextbox.setTexture(textboxTex);
-    addmedicine.medQuantitytextbox.setScale(0.6, 0.6);
-    addmedicine.medQuantitytextbox.setPosition(450, 520);
+    addmedicine.medQuantitytextbox.setScale(0.6, 0.4);
+    addmedicine.medQuantitytextbox.setPosition(450, 450);
 
     addmedicine.medDesctextbox.setTexture(textboxTex);
-    addmedicine.medDesctextbox.setScale(0.6, 0.6);
-    addmedicine.medDesctextbox.setPosition(450, 610);
+    addmedicine.medDesctextbox.setScale(0.6, 0.4);
+    addmedicine.medDesctextbox.setPosition(450, 530);
 
     // medicine Name
 
     addmedicine.medNametext.setFont(Calibri);
     addmedicine.medNametext.setString("Name:");
-    addmedicine.medNametext.setPosition(100, 168);
+    addmedicine.medNametext.setScale(0.7, 0.7);
+    addmedicine.medNametext.setPosition(100, 150);
     addmedicine.medNametext.setFillColor(sf::Color::White);
     addmedicine.medNametext.setCharacterSize(55);
 
@@ -3961,7 +3962,8 @@ void setAddMedicine(AddMedicine& addmedicine)
 
     addmedicine.medCatagorytext.setFont(Calibri);
     addmedicine.medCatagorytext.setString("Catagory:");
-    addmedicine.medCatagorytext.setPosition(100, 258);
+    addmedicine.medCatagorytext.setScale(0.7, 0.7);
+    addmedicine.medCatagorytext.setPosition(100, 220);
     addmedicine.medCatagorytext.setFillColor(sf::Color::White);
     addmedicine.medCatagorytext.setCharacterSize(55);
 
@@ -3969,7 +3971,8 @@ void setAddMedicine(AddMedicine& addmedicine)
 
     addmedicine.medConcentrationtext.setFont(Calibri);
     addmedicine.medConcentrationtext.setString("Concentration:");
-    addmedicine.medConcentrationtext.setPosition(100, 348);
+    addmedicine.medConcentrationtext.setScale(0.7, 0.7);
+    addmedicine.medConcentrationtext.setPosition(100, 300);
     addmedicine.medConcentrationtext.setFillColor(sf::Color::White);
     addmedicine.medConcentrationtext.setCharacterSize(55);
 
@@ -3977,7 +3980,8 @@ void setAddMedicine(AddMedicine& addmedicine)
 
     addmedicine.medPricetext.setFont(Calibri);
     addmedicine.medPricetext.setString("Price:");
-    addmedicine.medPricetext.setPosition(100, 438);
+    addmedicine.medPricetext.setScale(0.7, 0.7);
+    addmedicine.medPricetext.setPosition(100, 380);
     addmedicine.medPricetext.setFillColor(sf::Color::White);
     addmedicine.medPricetext.setCharacterSize(55);
 
@@ -3985,14 +3989,16 @@ void setAddMedicine(AddMedicine& addmedicine)
 
     addmedicine.medQuantitytext.setFont(Calibri);
     addmedicine.medQuantitytext.setString("Quantity:");
-    addmedicine.medQuantitytext.setPosition(100, 528);
+    addmedicine.medQuantitytext.setScale(0.7, 0.7);
+    addmedicine.medQuantitytext.setPosition(100, 460);
     addmedicine.medQuantitytext.setFillColor(sf::Color::White);
     addmedicine.medQuantitytext.setCharacterSize(55);
 
     // medicines Description
     addmedicine.medDescriptiontext.setFont(Calibri);
     addmedicine.medDescriptiontext.setString("Description:");
-    addmedicine.medDescriptiontext.setPosition(100, 628);
+    addmedicine.medDescriptiontext.setScale(0.7, 0.7);
+    addmedicine.medDescriptiontext.setPosition(100, 540);
     addmedicine.medDescriptiontext.setFillColor(sf::Color::White);
     addmedicine.medDescriptiontext.setCharacterSize(55);
 
@@ -4000,15 +4006,15 @@ void setAddMedicine(AddMedicine& addmedicine)
 
     addmedicine.medConfirmationtext.setFont(Calibri);
     addmedicine.medConfirmationtext.setString("If input completed click confirm");
-    addmedicine.medConfirmationtext.setPosition(120, 700);
+    addmedicine.medConfirmationtext.setPosition(120, 650);
     addmedicine.medConfirmationtext.setCharacterSize(30);
     addmedicine.medConfirmationtext.setFillColor(sf::Color::Black);
 
     // options background
 
     addmedicine.secbackground.setTexture(secbackgroundTex);
-    addmedicine.secbackground.setPosition(65, 140);
-    addmedicine.secbackground.scale(0.95, 1.15);
+    addmedicine.secbackground.setPosition(65, 300);
+    addmedicine.secbackground.scale(0.95, 1.13);
 
     // main background
 
