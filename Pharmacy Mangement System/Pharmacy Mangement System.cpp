@@ -3742,6 +3742,8 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                     }
                     if (found == false)
                     {
+                        Texture empty;
+                        edit_info.button_role1.setTexture(empty);
                         RenderWindow window3(VideoMode(400, 200), "failure!");
                         // Main loop for the third window
                         while (window3.isOpen())
@@ -3768,8 +3770,34 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                             window3.display();
                         }
                     }
+                    if(found) {
+                        RenderWindow window4(VideoMode(400, 200), "Success!");
+                        while (window4.isOpen())
+                        {
+                            Event event4;
+                            while (window4.pollEvent(event4))
+                            {
+                                if (event4.type == Event::Closed)
+                                {
+                                    window4.close();
+                               
+                                }
+
+                            }
+
+                            window4.clear();
+                            Text text;
+                            text.setFont(Calibri);
+                            text.setString("ID found!");
+                            text.setScale(0.5, 0.5);
+                            window4.draw(text);
+                            // Draw whatever you want in the second window
+                            window4.display();
+                        }
+                    }
                     
                 }
+               
                 // change user to admin
                 if (found and users[userIndex].his_role == user::User and edit_info.button_role2.getGlobalBounds().contains(mousePos)) {
                     users[userIndex].his_role = user::Admin;
