@@ -1834,7 +1834,9 @@ void functioningSignUp() {
     activeS3 = false;
     activesS4 = false;
     activeS5 = false;
-   
+
+    string actualPassword;  
+
     while (window.isOpen())
     {
         if (brokenwindow)
@@ -1867,10 +1869,9 @@ void functioningSignUp() {
         while (window.pollEvent(event))
         {
             //if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape))
-            //{
-                //window.close();
-            //}
-
+         //{
+             //window.close();
+         //}
             if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
 
                 Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
@@ -1978,10 +1979,10 @@ void functioningSignUp() {
                         // Main loop for the second window
                         while (window2.isOpen())
                         {
-                            sf::Event event2;
+                             Event event2;
                             while (window2.pollEvent(event2))
                             {
-                                if (event2.type == sf::Event::Closed)
+                                if (event2.type == Event::Closed)
                                 {
                                     window2.close();
                                 }
@@ -1999,7 +2000,7 @@ void functioningSignUp() {
                         }
                     }
                     else {
-                        signUp(displayS1, displayS2, displayS3, displayS4, displayS5);
+                        signUp(displayS1, displayS2, displayS3, displayS4, actualPassword);
                         page_num = 1;
                         displayS1.resize(0);
                         displayStext1.setString(displayS1);
@@ -2062,7 +2063,8 @@ void functioningSignUp() {
                 else if (activeS5)
                 {
                     if (displayS5.size() < 20) {
-                        displayS5 += static_cast<char>(event.text.unicode);
+                        actualPassword += static_cast<char>(event.text.unicode);
+                        displayS5 += '*';
                         displayStext5.setString(displayS5);
                         window.draw(displayStext5);
                         window.display();
@@ -2111,13 +2113,13 @@ void functioningSignUp() {
                 else if (activeS5)
                 {
                     if (!displayS5.empty()) {
+                        actualPassword.pop_back();
                         displayS5.pop_back();
                         displayStext5.setString(displayS5);
                         window.draw(displayStext5);
                         window.display();
                     }
                 }
-
             }
             if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
             {
@@ -2127,7 +2129,7 @@ void functioningSignUp() {
         }
         if (activeS1 == true && cursorVisible)
         {
-           signup1 = displayS1;
+            signup1 = displayS1;
 
             signup1 += "_";
             displayStext1.setString(signup1);
@@ -2135,7 +2137,7 @@ void functioningSignUp() {
         }
         if (activeS2 == true && cursorVisible)
         {
-           signup2 = displayS2;
+            signup2 = displayS2;
 
             signup2 += "_";
             displayStext2.setString(signup2);
@@ -2143,7 +2145,7 @@ void functioningSignUp() {
         }
         if (activeS3 == true && cursorVisible)
         {
-           signup3 = displayS3;
+            signup3 = displayS3;
 
             signup3 += "_";
             displayStext3.setString(signup3);
@@ -2166,7 +2168,6 @@ void functioningSignUp() {
 
         }
     }
-
 }
 
 void DrawSignIn(SignIn signin) {
@@ -2236,6 +2237,8 @@ void functioningSignIn() {
     Clock cursorTimer;
     signine = display1;
     signinp = display2;
+    string actualPassword;  
+
     while (window.isOpen()) {
 
         if (cursorTimer.getElapsedTime().asSeconds() >= 0.2f) {
@@ -2265,7 +2268,7 @@ void functioningSignIn() {
 
                     activeDisplay = true;
                     displaytext2.setString(display2);
-                    
+
                 }
 
                 // Check if the mouse click is inside the second text field
@@ -2274,12 +2277,12 @@ void functioningSignIn() {
 
                     activeDisplay = false;
                     displaytext1.setString(display1);
-                   
+
                 }
 
                 if (signin.buttonin.getGlobalBounds().contains(mousePos))
                 {
-                    if (validateUser(display1, display2, currentUser))
+                    if (validateUser(display1, actualPassword, currentUser))
                     {
                         if (currentUser.his_role == user::User)
                         {
@@ -2311,6 +2314,7 @@ void functioningSignIn() {
                     }
                     else {
                         display1.resize(0);
+                        actualPassword.resize(0);
                         display2.resize(0);
                         displaytext1.setString(display1);
                         displaytext2.setString(display2);
@@ -2346,6 +2350,7 @@ void functioningSignIn() {
                 {
                     page_num = 0;
                     display1.resize(0);
+                    actualPassword.resize(0);
                     display2.resize(0);
                     displaytext1.setString(display1);
                     displaytext2.setString(display2);
@@ -2356,23 +2361,20 @@ void functioningSignIn() {
             }
 
             // Handle text input
-             // Handle text input
             if (event.type == Event::TextEntered && isprint(event.text.unicode)) {
                 if (activeDisplay) {
                     // Append the entered character to the first text display
                     if (display1.size() < 20) {
                         display1 += static_cast<char>(event.text.unicode);
-                        
                         displaytext1.setString(display1);
                     }
                 }
                 else {
                     // Append the entered character to the second text display
-                    if (display2.size() < 20) {
-                        display2 += static_cast<char>(event.text.unicode);
-                       
+                    if (actualPassword.size() < 20) {
+                        actualPassword += static_cast<char>(event.text.unicode);
+                        display2 += '*';
                         displaytext2.setString(display2);
-                        
                     }
                 }
 
@@ -2391,8 +2393,9 @@ void functioningSignIn() {
                 }
                 else {
                     // Delete the last character from the second text display
-                    if (!display2.empty()) {
-                        display2.pop_back();        
+                    if (!actualPassword.empty()) {
+                        actualPassword.pop_back();
+                        display2.pop_back();
                         displaytext2.setString(display2);
                     }
                 }
@@ -2411,7 +2414,6 @@ void functioningSignIn() {
         if (activeDisplay == true && cursorVisible)
         {
             signine = display1;
-
             signine += "_";
             displaytext1.setString(signine);
 
@@ -2419,12 +2421,10 @@ void functioningSignIn() {
         if (!activeDisplay && !cursorVisible)
         {
             signinp = display2;
-
             signinp += "_";
             displaytext2.setString(signinp);
 
         }
-
 
     }
 }
