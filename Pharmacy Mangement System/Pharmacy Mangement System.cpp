@@ -4912,7 +4912,7 @@ void set_manageUser(manageUser& manage_user) {
     manage_user.mainbutton.setScale(0.08, 0.08);
 
     manage_user.semiTransparent.setTexture(showTable);
-    manage_user.semiTransparent.setScale(2.95, 0.6);
+    manage_user.semiTransparent.setScale(2.95, 0.5);
     manage_user.semiTransparent.setPosition(12, 60);
 
     manage_user.Title.setFont(Calibri);
@@ -4931,16 +4931,16 @@ void set_manageUser(manageUser& manage_user) {
     manage_user.idTextBox.setPosition(150, 170);
 
     manage_user.removeUser.setTexture(buttonRemoveUser);
-    manage_user.removeUser.setScale(0.35, 0.37);
-    manage_user.removeUser.setPosition(556, 177);
+    manage_user.removeUser.setScale(0.33, 0.34);
+    manage_user.removeUser.setPosition(556, 181);
 
     manage_user.editUser.setTexture(buttonEditUser);
-    manage_user.editUser.setScale(0.6, 0.48);
-    manage_user.editUser.setPosition(20, 290);
+    manage_user.editUser.setScale(0.4, 0.4);
+    manage_user.editUser.setPosition(90, 290);
 
     manage_user.addUser.setTexture(buttonAddUser);
-    manage_user.addUser.setScale(0.6, 0.48);
-    manage_user.addUser.setPosition(400, 290);
+    manage_user.addUser.setScale(0.4, 0.4);
+    manage_user.addUser.setPosition(450, 290);
 
     inputUserIDText.setFont(Calibri);
     inputUserIDText.setScale(1, 1);
@@ -5439,7 +5439,7 @@ void set_manageMedicine(manageMedicine& manage_medicine) {
     manage_medicine.mainbutton.setScale(0.08, 0.08);
 
     manage_medicine.semiTransparent.setTexture(showTable);
-    manage_medicine.semiTransparent.setScale(2.95, 0.6);
+    manage_medicine.semiTransparent.setScale(2.95, 0.5);
     manage_medicine.semiTransparent.setPosition(12, 60);
 
     manage_medicine.Title.setFont(Calibri);
@@ -5457,16 +5457,16 @@ void set_manageMedicine(manageMedicine& manage_medicine) {
     manage_medicine.idTextBox.setPosition(150, 170);
 
     manage_medicine.removeMedicine.setTexture(buttonRemoveMedicine);
-    manage_medicine.removeMedicine.setScale(0.35, 0.37);
-    manage_medicine.removeMedicine.setPosition(556, 177);
+    manage_medicine.removeMedicine.setScale(0.33, 0.34);
+    manage_medicine.removeMedicine.setPosition(556, 181);
 
     manage_medicine.editMedicine.setTexture(buttonEditMedicine);
-    manage_medicine.editMedicine.setScale(0.6, 0.48);
-    manage_medicine.editMedicine.setPosition(20, 290);
+    manage_medicine.editMedicine.setScale(0.4, 0.4);
+    manage_medicine.editMedicine.setPosition(90, 290);
 
     manage_medicine.addMedicine.setTexture(buttonAddMedicine);
-    manage_medicine.addMedicine.setScale(0.6, 0.48);
-    manage_medicine.addMedicine.setPosition(400, 290);
+    manage_medicine.addMedicine.setScale(0.4, 0.4);
+    manage_medicine.addMedicine.setPosition(450, 290);
 
     inputMedicineIDText.setFont(Calibri);
     inputMedicineIDText.setScale(1, 1);
