@@ -4936,11 +4936,11 @@ void set_manageUser(manageUser& manage_user) {
 
     manage_user.editUser.setTexture(buttonEditUser);
     manage_user.editUser.setScale(0.4, 0.4);
-    manage_user.editUser.setPosition(90, 290);
+    manage_user.editUser.setPosition(90, 279);
 
     manage_user.addUser.setTexture(buttonAddUser);
     manage_user.addUser.setScale(0.4, 0.4);
-    manage_user.addUser.setPosition(450, 290);
+    manage_user.addUser.setPosition(450, 279);
 
     inputUserIDText.setFont(Calibri);
     inputUserIDText.setScale(1, 1);
@@ -5462,11 +5462,11 @@ void set_manageMedicine(manageMedicine& manage_medicine) {
 
     manage_medicine.editMedicine.setTexture(buttonEditMedicine);
     manage_medicine.editMedicine.setScale(0.4, 0.4);
-    manage_medicine.editMedicine.setPosition(90, 290);
+    manage_medicine.editMedicine.setPosition(90, 279);
 
     manage_medicine.addMedicine.setTexture(buttonAddMedicine);
     manage_medicine.addMedicine.setScale(0.4, 0.4);
-    manage_medicine.addMedicine.setPosition(450, 290);
+    manage_medicine.addMedicine.setPosition(450, 279);
 
     inputMedicineIDText.setFont(Calibri);
     inputMedicineIDText.setScale(1, 1);
