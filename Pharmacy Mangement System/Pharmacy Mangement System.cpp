@@ -47,6 +47,7 @@ bool active_1 = false, active_2 = false, active_3 = false; // switches between i
 RenderWindow window(VideoMode(1366, 768), "Your pharmacy",Style::Titlebar);
 
 Font Calibri;
+Texture emptytexture;
 Texture BackgroundSign;
 Texture ButtonTexture, TextTexture, darkbox, textbox, headerbox, Signbox,
 buttonup, buttonin;
@@ -1681,6 +1682,8 @@ void TextureAFonts() {
 
     //edit order page
     editOrder.confirm_button.loadFromFile("Assets/confirm.png");
+
+    emptytexture.loadFromFile("Assets/transparent_picture.png");
 }
 
 void DrawHeader(Header header) {
@@ -3590,8 +3593,8 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                     editAdisplay3.resize(0);
                     editAtext3.setString(editAdisplay3);
 
-                    edit_info.button_role1.setTexture(Texture());
-                    edit_info.button_role2.setTexture(Texture());
+                    edit_info.button_role1.setTexture(emptytexture);
+                    edit_info.button_role2.setTexture(emptytexture);
                     break;
 
                 }
@@ -3720,6 +3723,10 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                 if (edit_info.confirm.getGlobalBounds().contains(mousePos) and editAdisplay3.size() > 0) {
                     // Loop through the users until a user with userID = 0 is found,
                     // indicating that there are no more users in our database
+                    editAdisplay1.resize(0);
+                    editAtext1.setString(editAdisplay1);
+                    editAdisplay2.resize(0);
+                    editAtext2.setString(editAdisplay2);
                     found = false;
                     userIndex = 0;
                     while (users[userIndex].ID != 0) {
@@ -3742,8 +3749,8 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
                     }
                     if (found == false)
                     {
-                        Texture empty;
-                        edit_info.button_role1.setTexture(empty);
+                        edit_info.button_role1.setTexture(emptytexture);
+                        edit_info.button_role2.setTexture(emptytexture);
                         RenderWindow window3(VideoMode(400, 200), "failure!");
                         // Main loop for the third window
                         while (window3.isOpen())
