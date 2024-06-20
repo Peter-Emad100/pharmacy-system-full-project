@@ -4647,12 +4647,13 @@ void functioningAddUser()
     phoneSc = false;
     passwordSc = false;
 
-
     usernameDis.setString(usernameSt);
     passwordDis.setString(passwordSt);
     addressDis.setString(addressSt);
     phoneDis.setString(phoneSt);
     emailDis.setString(emailSt);
+
+    string actualPassword;  
 
     while (window.isOpen())
     {
@@ -4664,7 +4665,6 @@ void functioningAddUser()
             cursorVisible = !cursorVisible;
             cursorTimer.restart();
         }
-
 
         drawAddusers(adduser);
         window.draw(usernameDis);
@@ -4705,7 +4705,6 @@ void functioningAddUser()
                 }
                 if (adduser.usernametextbox.getGlobalBounds().contains(MousePosition))
                 {
-
                     usernameSc = true;
                     addressSc = false;
                     emailSc = false;
@@ -4715,11 +4714,9 @@ void functioningAddUser()
                     emailDis.setString(emailSt);
                     phoneDis.setString(phoneSt);
                     passwordDis.setString(passwordSt);
-
                 }
                 if (adduser.addresstextbox.getGlobalBounds().contains(MousePosition))
                 {
-
                     usernameSc = false;
                     addressSc = true;
                     emailSc = false;
@@ -4729,11 +4726,9 @@ void functioningAddUser()
                     emailDis.setString(emailSt);
                     phoneDis.setString(phoneSt);
                     passwordDis.setString(passwordSt);
-
                 }
                 if (adduser.emailtextbox.getGlobalBounds().contains(MousePosition))
                 {
-
                     usernameSc = false;
                     addressSc = false;
                     emailSc = true;
@@ -4743,11 +4738,9 @@ void functioningAddUser()
                     addressDis.setString(addressSt);
                     phoneDis.setString(phoneSt);
                     passwordDis.setString(passwordSt);
-
                 }
                 if (adduser.phonetextbox.getGlobalBounds().contains(MousePosition))
                 {
-
                     usernameSc = false;
                     addressSc = false;
                     emailSc = false;
@@ -4757,11 +4750,9 @@ void functioningAddUser()
                     addressDis.setString(addressSt);
                     emailDis.setString(emailSt);
                     passwordDis.setString(passwordSt);
-
                 }
                 if (adduser.passwordtextbox.getGlobalBounds().contains(MousePosition))
                 {
-
                     usernameSc = false;
                     addressSc = false;
                     emailSc = false;
@@ -4771,30 +4762,29 @@ void functioningAddUser()
                     addressDis.setString(addressSt);
                     emailDis.setString(emailSt);
                     phoneDis.setString(phoneSt);
-
                 }
                 if (adduser.roleAdminbutton.getGlobalBounds().contains(MousePosition))
                 {
                     // make rule of new user admin.
                     roleChoice = 1;
-
                 }
                 if (adduser.roleUserbutton.getGlobalBounds().contains(MousePosition))
                 {
                     // make rule of new user a User.
                     roleChoice = 0;
                 }
-                if (usernameSt != "" && addressSt != "" && emailSt != "" && passwordSt != "" && phoneSt != "" && roleChoice != -1)
+                if (usernameSt != "" && addressSt != "" && emailSt != "" && actualPassword != "" && phoneSt != "" && roleChoice != -1)
                 {
                     if (adduser.optionsbutton.getGlobalBounds().contains(MousePosition))
                     {
-                        addUser(usernameSt, addressSt, emailSt, passwordSt, phoneSt, roleChoice);
+                        addUser(usernameSt, addressSt, emailSt, actualPassword, phoneSt, roleChoice);
 
                         usernameSt = "";
-                        passwordSt = "";
+                        actualPassword = "";
                         addressSt = "";
                         phoneSt = "";
                         emailSt = "";
+                        passwordSt = "";  
 
                         brokenwindow = true;
                         page_num = 3;
@@ -4807,7 +4797,6 @@ void functioningAddUser()
                     if (usernameSt.size() < 30) {
                         usernameSt += static_cast<char>(evnt.text.unicode);
                         usernameDis.setString(usernameSt);
-                      
                     }
                 }
                 else if (phoneSc)
@@ -4817,9 +4806,7 @@ void functioningAddUser()
                         {
                             phoneSt += static_cast<char>(evnt.text.unicode);
                             phoneDis.setString(phoneSt);
-                          
                         }
-
                     }
                 }
                 else if (emailSc)
@@ -4827,7 +4814,6 @@ void functioningAddUser()
                     if (emailSt.size() < 40) {
                         emailSt += static_cast<char>(evnt.text.unicode);
                         emailDis.setString(emailSt);
-                       
                     }
                 }
                 else if (addressSc)
@@ -4835,28 +4821,23 @@ void functioningAddUser()
                     if (addressSt.size() < 50) {
                         addressSt += static_cast<char>(evnt.text.unicode);
                         addressDis.setString(addressSt);
-                       
                     }
                 }
                 else if (passwordSc)
                 {
-                    if (passwordSt.size() < 20) {
-                        passwordSt += static_cast<char>(evnt.text.unicode);
+                    if (actualPassword.size() < 20) {
+                        actualPassword += static_cast<char>(evnt.text.unicode);
+                        passwordSt += '*';  
                         passwordDis.setString(passwordSt);
-                       
-
                     }
                 }
             }
 
-
             if (evnt.type == Event::KeyPressed && evnt.key.code == Keyboard::BackSpace) {
                 if (usernameSc) {
-                    // Delete the last character from the first text display
                     if (!usernameSt.empty()) {
                         usernameSt.pop_back();
                         usernameDis.setString(usernameSt);
-                      
                     }
                 }
                 else if (addressSc)
@@ -4864,7 +4845,6 @@ void functioningAddUser()
                     if (!addressSt.empty()) {
                         addressSt.pop_back();
                         addressDis.setString(addressSt);
-                      
                     }
                 }
                 else if (emailSc)
@@ -4872,15 +4852,14 @@ void functioningAddUser()
                     if (!emailSt.empty()) {
                         emailSt.pop_back();
                         emailDis.setString(emailSt);
-                       
                     }
                 }
                 else if (passwordSc)
                 {
-                    if (!passwordSt.empty()) {
-                        passwordSt.pop_back();
+                    if (!actualPassword.empty()) {
+                        actualPassword.pop_back();
+                        passwordSt.pop_back();  
                         passwordDis.setString(passwordSt);
-                      
                     }
                 }
                 else if (phoneSc)
@@ -4888,10 +4867,8 @@ void functioningAddUser()
                     if (!phoneSt.empty()) {
                         phoneSt.pop_back();
                         phoneDis.setString(phoneSt);
-                      
                     }
                 }
-
             }
         }
         if (Keyboard::isKeyPressed(Keyboard::Key::Escape))
@@ -4904,38 +4881,34 @@ void functioningAddUser()
             addu1 = usernameSt;
             addu1 += "_";
             usernameDis.setString(addu1);
-
         }
         if (passwordSc && cursorVisible)
         {
             addu2 = passwordSt;
             addu2 += "_";
             passwordDis.setString(addu2);
-
         }
         if (emailSc && cursorVisible)
         {
             addu3 = emailSt;
             addu3 += "_";
             emailDis.setString(addu3);
-
         }
         if (phoneSc && cursorVisible)
         {
             addu4 = phoneSt;
             addu4 += "_";
             phoneDis.setString(addu4);
-
         }
         if (addressSc && cursorVisible)
         {
             addu5 = addressSt;
             addu5 += "_";
             addressDis.setString(addu5);
-
         }
     }
 }
+
 
 void set_manageUser(manageUser& manage_user) {
     manage_user.background.setTexture(backgroundManageUser);
@@ -4946,7 +4919,7 @@ void set_manageUser(manageUser& manage_user) {
     manage_user.mainbutton.setScale(0.08, 0.08);
 
     manage_user.semiTransparent.setTexture(showTable);
-    manage_user.semiTransparent.setScale(2.95, 0.6);
+    manage_user.semiTransparent.setScale(2.95, 0.5);
     manage_user.semiTransparent.setPosition(12, 60);
 
     manage_user.Title.setFont(Calibri);
@@ -4965,16 +4938,16 @@ void set_manageUser(manageUser& manage_user) {
     manage_user.idTextBox.setPosition(150, 170);
 
     manage_user.removeUser.setTexture(buttonRemoveUser);
-    manage_user.removeUser.setScale(0.35, 0.37);
-    manage_user.removeUser.setPosition(556, 177);
+    manage_user.removeUser.setScale(0.33, 0.34);
+    manage_user.removeUser.setPosition(556, 181);
 
     manage_user.editUser.setTexture(buttonEditUser);
-    manage_user.editUser.setScale(0.6, 0.48);
-    manage_user.editUser.setPosition(20, 290);
+    manage_user.editUser.setScale(0.4, 0.4);
+    manage_user.editUser.setPosition(90, 279);
 
     manage_user.addUser.setTexture(buttonAddUser);
-    manage_user.addUser.setScale(0.6, 0.48);
-    manage_user.addUser.setPosition(400, 290);
+    manage_user.addUser.setScale(0.4, 0.4);
+    manage_user.addUser.setPosition(450, 279);
 
     inputUserIDText.setFont(Calibri);
     inputUserIDText.setScale(1, 1);
@@ -5473,7 +5446,7 @@ void set_manageMedicine(manageMedicine& manage_medicine) {
     manage_medicine.mainbutton.setScale(0.08, 0.08);
 
     manage_medicine.semiTransparent.setTexture(showTable);
-    manage_medicine.semiTransparent.setScale(2.95, 0.6);
+    manage_medicine.semiTransparent.setScale(2.95, 0.5);
     manage_medicine.semiTransparent.setPosition(12, 60);
 
     manage_medicine.Title.setFont(Calibri);
@@ -5491,16 +5464,16 @@ void set_manageMedicine(manageMedicine& manage_medicine) {
     manage_medicine.idTextBox.setPosition(150, 170);
 
     manage_medicine.removeMedicine.setTexture(buttonRemoveMedicine);
-    manage_medicine.removeMedicine.setScale(0.35, 0.37);
-    manage_medicine.removeMedicine.setPosition(556, 177);
+    manage_medicine.removeMedicine.setScale(0.33, 0.34);
+    manage_medicine.removeMedicine.setPosition(556, 181);
 
     manage_medicine.editMedicine.setTexture(buttonEditMedicine);
-    manage_medicine.editMedicine.setScale(0.6, 0.48);
-    manage_medicine.editMedicine.setPosition(20, 290);
+    manage_medicine.editMedicine.setScale(0.4, 0.4);
+    manage_medicine.editMedicine.setPosition(90, 279);
 
     manage_medicine.addMedicine.setTexture(buttonAddMedicine);
-    manage_medicine.addMedicine.setScale(0.6, 0.48);
-    manage_medicine.addMedicine.setPosition(400, 290);
+    manage_medicine.addMedicine.setScale(0.4, 0.4);
+    manage_medicine.addMedicine.setPosition(450, 279);
 
     inputMedicineIDText.setFont(Calibri);
     inputMedicineIDText.setScale(1, 1);
