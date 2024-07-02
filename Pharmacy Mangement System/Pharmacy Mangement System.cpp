@@ -1196,6 +1196,7 @@ void addUser(string username, string address, string email, string password, str
     newUser.password = password;
     newUser.phone = phone;
     newUser.address = address;
+    
 
     if (role == 1)
     {
@@ -2663,12 +2664,14 @@ void makeOrderFunctional(StmakeOrder& makeorder) {
                     makeordertext3.setString(stmakeorder3);
                     if (currentUser.his_role == user::User)
                     {
+                        saveAllDataLocally();
                         page_num = 2;
                         breaked = true;
                         break;
                     }
                     else if (currentUser.his_role == user::Admin)
                     {
+                        saveAllDataLocally();
                         page_num = 3;
                         breaked = true;
                         break;
@@ -4639,6 +4642,7 @@ void functioningAddUser()
     setAddusers(adduser);
     bool brokenwindow = false;
     bool cursorVisible = true;
+    bool validated = true;
     Clock cursorTimer;
 
     usernameSc = false;
@@ -4777,17 +4781,68 @@ void functioningAddUser()
                 {
                     if (adduser.optionsbutton.getGlobalBounds().contains(MousePosition))
                     {
-                        addUser(usernameSt, addressSt, emailSt, actualPassword, phoneSt, roleChoice);
+                        validated = true;
+                        for (int i = 0;i < Size;i++)
+                        {
+                            if (users[i].ID == -1)
+                            {
+                                continue;
 
-                        usernameSt = "";
-                        actualPassword = "";
-                        addressSt = "";
-                        phoneSt = "";
-                        emailSt = "";
-                        passwordSt = "";  
+                            }
+                            if (users[i].ID == 0)
+                            {
+                                break;
 
-                        brokenwindow = true;
-                        page_num = 3;
+                            }
+                            if (users[i].username == usernameSt)
+                            {
+                                validated = false;
+                            }
+                        }
+                        if (validated == true)
+                        {
+                            addUser(usernameSt, addressSt, emailSt, actualPassword, phoneSt, roleChoice);
+
+                            usernameSt = "";
+                            actualPassword = "";
+                            addressSt = "";
+                            phoneSt = "";
+                            emailSt = "";
+                            passwordSt = "";
+
+                            brokenwindow = true;
+                            page_num = 3;
+                        } 
+                        else {
+                            usernameSt = "";
+                            usernameSc = true;
+                            addressSc = false;
+                            emailSc = false;
+                            phoneSc = false;
+                            passwordSc = false;
+
+                            RenderWindow window2(sf::VideoMode(400, 200), "Warning!");
+                            while (window2.isOpen())
+                            {
+                                sf::Event event2;
+                                while (window2.pollEvent(event2))
+                                {
+                                    if (event2.type == sf::Event::Closed)
+                                    {
+                                        window2.close();
+                                    }
+
+                                }
+
+                                window2.clear();
+                                Text text;
+                                text.setFont(Calibri);
+                                text.setString("Username taken, Please use another username!");
+                                text.setScale(0.5, 0.5);
+                                window2.draw(text);
+                                window2.display();
+                            }
+                        }
                     }
                 }
             }
@@ -6503,8 +6558,8 @@ bool validateUser(string username, string password, user& currentUser) {
             continue;
         }
         // Check if the user's username and password match
-        if (users[userIndex].username == username &&
-            users[userIndex].password == password) {
+        if (users[userIndex].username == username && users[userIndex].password == password) 
+        {
             currentUser = users[userIndex];
             userFound = true; // Set the flag to true if user is found
             break; // No need to continue loop once user is found
