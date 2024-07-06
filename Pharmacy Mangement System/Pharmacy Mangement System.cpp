@@ -282,7 +282,7 @@ struct AddUsers
 {
     Sprite background, secbackground, usernametextbox, addresstextbox,
         emailtextbox, phonetextbox, passwordtextbox, optionsbutton,
-        roleAdminbutton, roleUserbutton, mainbutton;
+        Role_Adminbutton, Role_Userbutton, mainbutton;
 
     Text headerText, usernametext, addresstext, emailtext, phonetext,
         passwordtext, roletext, confirmationtext;
@@ -4520,13 +4520,13 @@ void setAddusers(AddUsers& adduser)
     adduser.optionsbutton.setScale(0.39, 0.39);
     adduser.optionsbutton.setPosition(590, 650);
 
-    adduser.roleAdminbutton.setTexture(roleAdminbuttonTex);
-    adduser.roleAdminbutton.setScale(0.35, 0.35);
-    adduser.roleAdminbutton.setPosition(455, 570);
+    adduser.Role_Adminbutton.setScale(0.35, 0.35);
+    adduser.Role_Adminbutton.setPosition(455, 570);
 
-    adduser.roleUserbutton.setTexture(roleUserbuttonTex);
-    adduser.roleUserbutton.setScale(0.35, 0.35);
-    adduser.roleUserbutton.setPosition(670, 570);
+    adduser.Role_Userbutton.setScale(0.35, 0.35);
+    adduser.Role_Userbutton.setPosition(670, 570);
+
+
 
     // textboxes
     adduser.usernametextbox.setTexture(textboxTex);
@@ -4659,8 +4659,8 @@ void drawAddusers(AddUsers& adduser)
     window.draw(adduser.passwordtextbox);
     window.draw(adduser.phonetextbox);
     window.draw(adduser.optionsbutton);
-    window.draw(adduser.roleAdminbutton);
-    window.draw(adduser.roleUserbutton);
+    window.draw(adduser.Role_Adminbutton);
+    window.draw(adduser.Role_Userbutton);
     window.draw(adduser.usernametext);
     window.draw(adduser.addresstext);
     window.draw(adduser.emailtext);
@@ -4676,8 +4676,11 @@ void functioningAddUser()
     setAddusers(adduser);
     bool brokenwindow = false;
     bool cursorVisible = true;
-    bool validated = true;
     Clock cursorTimer;
+
+    adduser.Role_Adminbutton.setTexture(notadminButton);
+    adduser.Role_Userbutton.setTexture(roleUserbuttonTex);
+
 
     usernameSc = false;
     addressSc = false;
@@ -4691,7 +4694,7 @@ void functioningAddUser()
     phoneDis.setString(phoneSt);
     emailDis.setString(emailSt);
 
-    string actualPassword;  
+    string actualPassword;
 
     while (window.isOpen())
     {
@@ -4801,82 +4804,46 @@ void functioningAddUser()
                     emailDis.setString(emailSt);
                     phoneDis.setString(phoneSt);
                 }
-                if (adduser.roleAdminbutton.getGlobalBounds().contains(MousePosition))
+                if (adduser.Role_Adminbutton.getGlobalBounds().contains(MousePosition))
                 {
+
+                    if (roleChoice == 0) { // check the states of the buttons
+                        adduser.Role_Adminbutton.setTexture(roleAdminbuttonTex);
+                        adduser.Role_Userbutton.setTexture(notuserButton);
+                    }
+
                     // make rule of new user admin.
                     roleChoice = 1;
+
                 }
-                if (adduser.roleUserbutton.getGlobalBounds().contains(MousePosition))
+                if (adduser.Role_Userbutton.getGlobalBounds().contains(MousePosition))
                 {
+
+                    if (roleChoice == 1) { // check the states of the buttons
+                        adduser.Role_Adminbutton.setTexture(notadminButton);
+                        adduser.Role_Userbutton.setTexture(roleUserbuttonTex);
+                    }
+
                     // make rule of new user a User.
                     roleChoice = 0;
+
                 }
+
                 if (usernameSt != "" && addressSt != "" && emailSt != "" && actualPassword != "" && phoneSt != "" && roleChoice != -1)
                 {
                     if (adduser.optionsbutton.getGlobalBounds().contains(MousePosition))
                     {
-                        validated = true;
-                        for (int i = 0;i < Size;i++)
-                        {
-                            if (users[i].ID == -1)
-                            {
-                                continue;
+                        addUser(usernameSt, addressSt, emailSt, actualPassword, phoneSt, roleChoice);
 
-                            }
-                            if (users[i].ID == 0)
-                            {
-                                break;
+                        usernameSt = "";
+                        actualPassword = "";
+                        addressSt = "";
+                        phoneSt = "";
+                        emailSt = "";
+                        passwordSt = "";
 
-                            }
-                            if (users[i].username == usernameSt)
-                            {
-                                validated = false;
-                            }
-                        }
-                        if (validated == true)
-                        {
-                            addUser(usernameSt, addressSt, emailSt, actualPassword, phoneSt, roleChoice);
-
-                            usernameSt = "";
-                            actualPassword = "";
-                            addressSt = "";
-                            phoneSt = "";
-                            emailSt = "";
-                            passwordSt = "";
-
-                            brokenwindow = true;
-                            page_num = 3;
-                        } 
-                        else {
-                            usernameSt = "";
-                            usernameSc = true;
-                            addressSc = false;
-                            emailSc = false;
-                            phoneSc = false;
-                            passwordSc = false;
-
-                            RenderWindow window2(sf::VideoMode(400, 200), "Warning!");
-                            while (window2.isOpen())
-                            {
-                                sf::Event event2;
-                                while (window2.pollEvent(event2))
-                                {
-                                    if (event2.type == sf::Event::Closed)
-                                    {
-                                        window2.close();
-                                    }
-
-                                }
-
-                                window2.clear();
-                                Text text;
-                                text.setFont(Calibri);
-                                text.setString("Username taken, Please use another username!");
-                                text.setScale(0.5, 0.5);
-                                window2.draw(text);
-                                window2.display();
-                            }
-                        }
+                        brokenwindow = true;
+                        page_num = 3;
                     }
                 }
             }
@@ -4916,7 +4883,7 @@ void functioningAddUser()
                 {
                     if (actualPassword.size() < 20) {
                         actualPassword += static_cast<char>(evnt.text.unicode);
-                        passwordSt += '*';  
+                        passwordSt += '*';
                         passwordDis.setString(passwordSt);
                     }
                 }
@@ -4947,7 +4914,7 @@ void functioningAddUser()
                 {
                     if (!actualPassword.empty()) {
                         actualPassword.pop_back();
-                        passwordSt.pop_back();  
+                        passwordSt.pop_back();
                         passwordDis.setString(passwordSt);
                     }
                 }
@@ -4997,6 +4964,7 @@ void functioningAddUser()
         }
     }
 }
+
 
 
 void set_manageUser(manageUser& manage_user) {
