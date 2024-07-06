@@ -47,7 +47,7 @@ bool active_1 = false, active_2 = false, active_3 = false; // switches between i
 RenderWindow window(VideoMode(1366, 768), "Your pharmacy",Style::Titlebar);
 
 Font Calibri;
-Texture emptytexture;
+Texture emptytexture, personinfo;
 Texture BackgroundSign;
 Texture ButtonTexture, TextTexture, darkbox, textbox, headerbox, Signbox,
 buttonup, buttonin;
@@ -365,7 +365,7 @@ SignIn signin;
 struct userMenu {
     Sprite buttonEditInfo, buttonLogOut, buttonMakeOrder, buttonsearch,
         buttonViewPrev;
-    Sprite background;
+    Sprite background, personalinfo;
 };
 userMenu usermenu;
 
@@ -373,7 +373,7 @@ struct adminMenu {
     Sprite buttonViewPrev, buttonsearch, buttonManageUser, buttonManagePay,
         buttonManageOrder, buttonManageMedicine, buttonLogOut, buttonEditInfo,
         buttonMakeorder;
-    Sprite background;
+    Sprite background, personalinfo;
 };
 adminMenu adminmenu;
 
@@ -389,6 +389,12 @@ struct EditOrderInfo {
     Text medname, medconc, ordDate, ordstate, price;
 };
 EditOrderInfo editOrder;
+
+struct personalInfo{
+    Text info;
+    Sprite Background, semitransp, mainbutton;
+};
+personalInfo personalinfo;
 
 //********Function Declares***********//
 void manage_orders(order orders[Size]);
@@ -421,6 +427,11 @@ void logInInterface(string username, string password);
 
 //**********GUI FUNCTIONS DECLARATION***********//
 void TextureAFonts();
+
+//userdata
+void SetPersonalInfo(personalInfo& personalinfo);
+void DrawPersonalInfo(personalInfo personalinfo);
+void functioningPersonalInfo(user currentUser);
 
 // user menu
 void DrawUserMenu(userMenu usermenu);
@@ -562,6 +573,7 @@ int main() {
     set_manageMedicine(manage_medicine);
     MedicineEditShow();
     Set_Request_drug(requestadrug);
+    SetPersonalInfo(personalinfo);
     // functioningSignUp();
     // window display
 
@@ -1620,6 +1632,7 @@ void TextureAFonts() {
     quantity.loadFromFile("Assets/edit_quantity.png");
     makereq.loadFromFile("Assets/request.png");
     mainmenuButton.loadFromFile("Assets/menuButton2.png");
+    personinfo.loadFromFile("Assets/personalinfo.png");
     Request.loadFromFile("Assets/request.png");
     // edit info images
     edit_info.edit_background.loadFromFile(
@@ -2018,7 +2031,6 @@ void functioningSignUp() {
                         displayStext5.setString(displayS5);
                         brokenwindow = true;
                         break;
-
                     }
                 }
             }
@@ -2806,6 +2818,10 @@ void SetUserMenu(userMenu& usermenu) {
     usermenu.buttonViewPrev.setTexture(ButtonViewPrev);
     usermenu.buttonViewPrev.setPosition(860, 420);
     usermenu.buttonViewPrev.setScale(0.7, 0.7);
+
+    usermenu.personalinfo.setTexture(personinfo);
+    usermenu.personalinfo.setPosition(1160, 50);
+    usermenu.personalinfo.setScale(0.25, 0.25);
 }
 void DrawUserMenu(userMenu usermenu) {
     window.draw(usermenu.background);
@@ -2814,6 +2830,7 @@ void DrawUserMenu(userMenu usermenu) {
     window.draw(usermenu.buttonMakeOrder);
     window.draw(usermenu.buttonsearch);
     window.draw(usermenu.buttonViewPrev);
+    window.draw(usermenu.personalinfo);
 }
 void functioningUserMenu() {
     while (window.isOpen())
@@ -2861,7 +2878,12 @@ void functioningUserMenu() {
                     breaked = true;
                     break;
                 }
-
+                if (usermenu.personalinfo.getGlobalBounds().contains(mousePos))
+                {
+                    page_num = 18;
+                    breaked = true;
+                    break;
+                }
             }
             if (Keyboard::isKeyPressed(Keyboard::Key::Escape)) {
                 window.close();
@@ -2924,6 +2946,10 @@ void SetAdminMenu(adminMenu& adminmenu) {
     adminmenu.buttonViewPrev.setTexture(ButtonViewPrev);
     adminmenu.buttonViewPrev.setScale(0.5, 0.5);
     adminmenu.buttonViewPrev.setPosition(950, 540);
+
+    adminmenu.personalinfo.setTexture(personinfo);
+    adminmenu.personalinfo.setPosition(1160, 30);
+    adminmenu.personalinfo.setScale(0.25, 0.25);
 }
 void DrawAdminMenu(adminMenu adminmenu) {
     window.draw(adminmenu.background);
@@ -2936,6 +2962,7 @@ void DrawAdminMenu(adminMenu adminmenu) {
     window.draw(adminmenu.buttonManageUser);
     window.draw(adminmenu.buttonsearch);
     window.draw(adminmenu.buttonViewPrev);
+    window.draw(adminmenu.personalinfo);
 }
 void functioningAdminMenu() {
     while (window.isOpen())
@@ -3001,6 +3028,12 @@ void functioningAdminMenu() {
                 if (adminmenu.buttonViewPrev.getGlobalBounds().contains(mousePos))
                 {
                     page_num = 9;
+                    breaked = true;
+                    break;
+                }
+                if (adminmenu.personalinfo.getGlobalBounds().contains(mousePos))
+                {
+                    page_num = 18;
                     breaked = true;
                     break;
                 }
@@ -3574,6 +3607,7 @@ void EditInfo_Admin_functional(Edit_Info& edit_info) {
 
                 if (edit_info.mainbutton.getGlobalBounds().contains(mousePos))
                 {
+                  
                     if (currentUser.his_role == user::User)
                     {
                         page_num = 2;
@@ -7290,6 +7324,118 @@ void Requestadrug_showfunctional(bool& requestdrug) {
     }
 }
 
+void SetPersonalInfo(personalInfo& personalinfo) {
+    personalinfo.Background.setTexture(backgroundsearch);
+    personalinfo.Background.setScale(0.276, 0.24);
+
+    personalinfo.semitransp.setTexture(semitransparent);
+    personalinfo.semitransp.setPosition(100, 120);
+    personalinfo.semitransp.setScale(2.9, 0.9);
+
+    personalinfo.info.setFont(Calibri);
+    personalinfo.info.setPosition(110, 140);
+    personalinfo.info.setScale(1, 1);
+    personalinfo.info.setString("Personal Information:");
+
+    personalinfo.mainbutton.setTexture(mainmenuButton);
+    personalinfo.mainbutton.setScale(0.08, 0.08);
+    personalinfo.mainbutton.setPosition(90, 25);
+}
+void DrawPersonalInfo(personalInfo personalinfo) {
+    window.draw(personalinfo.Background);
+    window.draw(personalinfo.semitransp);
+    window.draw(personalinfo.mainbutton);
+    window.draw(personalinfo.info);
+}
+void functioningPersonalInfo(user currentUser) {
+    Text text;
+    string texts = "";
+    bool windowbroken = false;
+    text.setString(texts);
+    text.setFont(Calibri);
+    text.setPosition(110, 170);
+    //bool theSame = true;
+    for (int i = 0;i < Size;i++)
+    {
+        if (users[i].ID == 0)
+        {
+            break;
+        }
+        if (users[i].ID == -1)
+        {
+            continue;
+        }
+        if (currentUser.ID == users[i].ID)
+        {
+            texts += "------------------------------\n";
+            texts += "Username: " + users[i].username + "\n";
+            texts += "Phone number: " + users[i].phone + "\n";
+            texts += "Email: " + users[i].email + "\n";
+            texts += "Address: " + users[i].address + "\n";
+            if (currentUser.his_role == users[i].his_role)
+            {
+
+                if (users[i].his_role == user::Admin)
+                {
+                    texts += "Role: Admin\n";
+                }
+                else
+                {
+                    texts += "Role: User\n";
+                }
+
+            }
+            break;
+        }
+
+    }
+    text.setString(texts);
+    while (window.isOpen())
+    {
+        window.clear();
+        DrawPersonalInfo(personalinfo);
+        window.draw(text);
+        window.display();
+
+        Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == Event::KeyPressed && event.key.code == Keyboard::Escape)
+            {
+                saveAllDataLocally();
+                window.close();
+            }
+            if (event.type == Event::MouseButtonPressed && event.mouseButton.button == Mouse::Left) {
+
+                Vector2f mousePos = window.mapPixelToCoords({ event.mouseButton.x, event.mouseButton.y });
+                if (personalinfo.mainbutton.getGlobalBounds().contains(mousePos))
+                {
+                    if (currentUser.his_role == user::User)
+                    {
+                        page_num = 2;
+                        windowbroken = true;
+                        break;
+                    }
+                    else
+                    {
+                        page_num = 3;
+                        windowbroken = true;
+                        break;
+                    }
+                }
+            }
+
+        }
+        if (windowbroken == true)
+        {
+            break;
+        }
+
+    }
+
+    
+}
+
 void page_switcher(Header& header, SignUp& signup, SignIn& signin,
     userMenu& usermenu, adminMenu& adminmenu,
     searchMedicine& searchmedicine, showReceipt& showreceipt,
@@ -7378,6 +7524,10 @@ void page_switcher(Header& header, SignUp& signup, SignIn& signin,
     case 17:
         Requestadrug_showfunctional(requestdrug);
         window.display();
+        break;
+    case 18:
+        window.clear();
+        functioningPersonalInfo(currentUser);
         break;
     }
 }
